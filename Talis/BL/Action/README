@@ -1,0 +1,7 @@
+Actions in the system usually cause modification of data
+or requires some complex return status.
+This folder provides the facility to support the
+common things Actions have
+- Log it
+- Responses
+- ???
