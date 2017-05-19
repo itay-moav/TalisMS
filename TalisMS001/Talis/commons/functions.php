@@ -1,4 +1,4 @@
-<?php namespace commons;
+<?php namespace Talis\commons;
 
 /**
  * functions.php
@@ -16,7 +16,7 @@
 function autoload($class) {
 	$file_path = str_replace(['_','\\'],'/',$class) . '.php';
 	if(!@include_once $file_path){
-		throw new \Exception\ClassNotFound("{$file_path} {$class}");
+		throw new \Talis\Exception\ClassNotFound("{$file_path} {$class}");
 	}
 }
 

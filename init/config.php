@@ -4,8 +4,7 @@ ini_set('error_reporting', E_ALL|E_STRICT);
  * Common config values all subdomains and CLI will be using
  */
 //generic paths
-\define('CORE_PATH', 		\app_env()['paths']['root']);
-\define('TALIS_PATH', 		CORE_PATH . '/Talis'); //TODO change to centrlized place, /usr/share/php/talisms/talisms1_0_0
+\define('CORE_PATH', 		\app_env()['paths']['root_path']);
 \define('APP_PATH', 		CORE_PATH . '/application');
 \define('LOG_PATH',			'/var/log/lms2/');
 
@@ -16,8 +15,8 @@ ini_set('error_reporting', E_ALL|E_STRICT);
 \define('PREVENT_FORCE_HTTPS',-1); //a value u send to the url function to force the use of http (prevent https)
 
 \ini_set('include_path', '.' .
-	PATH_SEPARATOR . TALIS_PATH .
-    PATH_SEPARATOR . APP_PATH   .
+	PATH_SEPARATOR . '/usr/share/php/TalisMS001'.
+    PATH_SEPARATOR . APP_PATH   . '/model' . 
     PATH_SEPARATOR . '/usr/share/php/ZendFW2411'
 );
 

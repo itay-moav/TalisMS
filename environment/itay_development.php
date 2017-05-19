@@ -11,8 +11,9 @@ function app_env(){
 			],
 	
 			'paths'=> [
-				'root'		=> '/home/admin/dev/talisms',
-			    'base_url'  => '192.168.12.148/api/scheduler'
+				'root_path'	=> '/home/admin/dev/talisms',
+				'domain'	=> '192.168.12.148',
+			    'root_uri'  => '/api/scheduler'
 			],
 			
 			'microservices' => [

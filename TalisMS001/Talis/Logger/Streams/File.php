@@ -1,5 +1,5 @@
-<?php
-class Logger_Streams_File extends Logger_MainZim{
+<?php namespace Talis\Logger\Streams;
+class File extends AbstractStream{
 	protected function init(){
 		$this->log_name = $this->target_stream . $this->log_name . @date('m_d_Y', time()).'.log';
 		return $this;	

@@ -1,4 +1,4 @@
-<?php namespace Exception;
+<?php namespace Talis\Exception;
 /**
  * Could not find class for inclusion
  */
