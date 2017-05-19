@@ -1,12 +1,16 @@
-<?php
+<?php namespace init;
 /**
- * Main entry point, ala front controller.
- *
+ * Main entry point for the request chain
+ * Translate the input into the initial request object
+ * and moves it along
+ * 
+ * Will assume 4 levels [version][action][subaction][type] for example 1/event/repeat/create|update|read|delete
+ * 
  * Loads the right controller and action.
  * Renders the $Result of the action
  * Can handle page caching.
  * Error handling
- * Will assume 4 levels [protocol][version][subprotocol][[type] - 
+ *  
  */
 class Talis{
 	/**

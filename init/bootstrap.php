@@ -1,13 +1,17 @@
 <?php
-class Monitor_Process_All{
-public function __construct(){
-die;
-}
-}
+require_once app_env()['paths']['root']. '/init/config.php';
+//some other bootstrapping and important functions and the ENVIRONMENT definitions
+include TALIS_PATH . '/commons/functions.php';
+spl_autoload_register('commons\autoload');
 
-/**
- * Private bootstrap file for the api subdomain.
- */
-set_logger('API_WEB_');
-require_once DOMAIN_PATH . '/init/Talis.php';
-(new Talis)->gogogo();
+//Logger
+Logger_MainZim::factory(
+		app_env()['log']['name'],
+		app_env()['log']['handler'],
+		app_env()['log']['verbosity'],
+		app_env()['log']['uri']
+);
+
+
+require_once CORE_PATH . '/init/Talis.php';
+(new init\Talis)->gogogo();

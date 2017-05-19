@@ -1,5 +1,3 @@
 <?php
-// change the following paths if necessary
-define('SUBDOMAIN','api');
-require_once '../../../main_bootstrap.php';
-require_once DOMAIN_PATH . '/init/bootstrap.php';
+require_once '../environment/'.lifeCycle().'.php';
+require_once app_env()['paths']['root']. '/init/bootstrap.php';
