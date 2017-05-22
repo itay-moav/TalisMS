@@ -6,13 +6,10 @@ use Talis\Logger as L;
  * @author Itay Moav
  * @Date  2017-05-19
  */
-class TestPingRead implements \Talis\Chain\iReqRes{
-	public function process():\Talis\Chain\iReqRes{
-		return $this;
-	}
-	
+class TestPingRead extends \Talis\Chain\AFilteredValidatedChainLink implements \Talis\commons\iRenderable{
+
 	public function render():void{
 		L\dbgn('PONG');
-		echo "{type:test,msg:BOOOM}";
+		echo "{type:test,msg:BOOOM}" . print_r($this->get_params,true);
 	}
 }

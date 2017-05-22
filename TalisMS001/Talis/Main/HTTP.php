@@ -15,25 +15,40 @@ use Talis\Logger as L;
  */
 class HTTP{
 	/**
-	 * @var Talis\Chain\Corwin
-	 */
-	private $Request = null;
-	
-	public function __construct(){
-		$this->Request = new \Talis\Chain\Corwin($_SERVER,file_get_contents('php://input')); //Corwin is the first step in the chain. It is tailored specificly for the http request.
-	}
-	
-	/**
 	 * Starts the chain reaction. builds request/check dependencies/run main logic
 	 */
 	public function gogogo(){
+		$response = null;
 		try{
-			$response = $this->Request->process();
+			$Request = new \Talis\Chain\Corwin;
+			$Request->begin($this->get_uri_from_server(),$this->get_request_body()); //Corwin is the first step in the chain. It is tailored specificly for the http request.
+			$response = $Request->process();
 
 		}catch(Exception $E){ // TODO for now, all errors are Corwin, better handling later
 			L\fatal($E);
+			//TODO $response = ErrorResponse($E);
 		}
 		$response->render();
+	}
+	
+	/**
+	 * Parses the server input to generate raw uri parts
+	 */
+	private function get_uri_from_server():array{
+		$uri 		   = explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1];
+		$request_parts = explode('/',$uri);
+		return $request_parts;
+	}
+	
+	/**
+	 * Parses the http input stream to get the body and decode into stdClass
+	 * @return stdClass
+	 */
+	private function get_request_body():?stdClass{
+		$json_request_body = file_get_contents('php://input');
+		L\dbgn('RAW INPUT FROM CLIENT');
+		L\dbgn("==============={$json_request_body}===============");
+		return json_decode($json_request_body);
 	}
 }
 

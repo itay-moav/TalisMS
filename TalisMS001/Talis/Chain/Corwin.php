@@ -8,7 +8,7 @@ use Talis\Logger as L;
  * @author Itay Moav
  * @Date  2017-05-19
  */
-class Corwin implements iReqRes{
+class Corwin{
 	
 	/**
 	 * @var array
@@ -23,17 +23,18 @@ class Corwin implements iReqRes{
 	 * Body of the request, json decoded string
 	 * @var stdClass
 	 */
-	private $body  = null;
+	private $req_body  = null;
 	
 	/**
 	 * @var iReqRes
 	 */
 	private $Response = null;
 	
-	public function __construct(array $server,string $json_request_body){
+	public function begin(array $request_parts,?stdClass $request_body){
+		$this->req_body = $request_body;
 		try{
-			$this->generate_route($server);
-			$this->generate_body($json_request_body);
+			$this->generate_route($request_parts);
+			$this->generate_query($request_parts);
 			$this->prepareResponse();
 		} catch(\Talis\Exception\BadUri $e){
 			$this->Response = new Errors\ApiNotFound($e->getMessage());
@@ -45,15 +46,21 @@ class Corwin implements iReqRes{
 	 * 
 	 * @return iReqRes
 	 */
-	public function process():iReqRes{
+	public function process():AChainLink{
 		return $this->Response->process();
 	}
 	
+	/**
+	 * Instantiate the first step in the chain, The API class that we got from the route.
+	 * Or, an error response, if API does not exist
+	 * 
+	 * @throws \Talis\Exception\BadUri
+	 */
 	private function prepareResponse():void{
-		if(!@include_once $this->route['route']){
+		if(!include_once $this->route['route']){
 			throw new \Talis\Exception\BadUri($this->route['route']);
 		}
-		$this->Response = new $this->route['classname']($this->body);
+		$this->Response = new $this->route['classname']($this->route['extra_params'],$this->req_body);
 	}
 	
 	/**
@@ -61,23 +68,25 @@ class Corwin implements iReqRes{
 	 * ASSUMES CONVENTION OF 4 LEVELS URL [version][action][subaction][type]
 	 * @param array $server
 	 */
-	private function generate_route(array $server):void{
-		$uri 		   = explode(\app_env()['paths']['root_uri'],$server['REQUEST_URI'])[1];
-		$request_parts = explode('/',$uri);
+	private function generate_route(array $request_parts):void{
 		if(count($request_parts) < 4){
 			throw new \Talis\Exception\BadUri($uri);
 		}
-		
 		$this->route['route'] = APP_PATH . "/api/version{$request_parts[1]}/{$request_parts[2]}/{$request_parts[3]}/{$request_parts[4]}.php";
 		L\dbgn("Doing route [{$this->route['route']}]");
-		unset($request_parts[1]); //version is not part of the class name
-		$r = array_reduce($request_parts,function($carry, $item){$carry .= ucfirst($item);return $carry;},'');
+		$r = $request_parts[2].$request_parts[3].$request_parts[4];
 		$this->route['classname'] = '\Api\\' . $r;
 	}
 	
-	private function generate_body(string $json_request_body):void{
-		L\dbgn('RAW INPUT FROM CLIENT');
-		L\dbgn("==============={$json_request_body}===============");
-		$this->body = json_decode($json_request_body);
+	/**
+	 * See if part of the uri is actually a query string. Accepts ONLY /field/value/ffield/value...
+	 * @param array $request_parts
+	 */
+	private function generate_query(array $request_parts):void{
+		$c = count($request_parts);
+		for($i=5; $i<$c;$i+=2){
+			$this->route['extra_params'][$request_parts[$i]] = $request_parts[$i+1];
+		}
+		L\dbgr('GET PARAMS',$this->route['extra_params']);
 	}
 }
