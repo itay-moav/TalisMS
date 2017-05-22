@@ -1,4 +1,4 @@
-<?php namespace init;
+<?php namespace Talis\Main;
 use Talis\Logger as L;
 /**
  * Main entry point for the request chain
@@ -13,7 +13,7 @@ use Talis\Logger as L;
  * Error handling
  *  
  */
-class TalisHTTP{
+class HTTP{
 	/**
 	 * @var Talis\Chain\Corwin
 	 */
