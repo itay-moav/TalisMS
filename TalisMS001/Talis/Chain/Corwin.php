@@ -1,4 +1,13 @@
 <?php namespace Talis\Chain;
+use Talis\Logger as L;
+
+/**
+ * Responsebility: Parses the user input to identify the API class to instantiate
+ * This is the ROUTER
+ * 
+ * @author Itay Moav
+ * @Date  2017-05-19
+ */
 class Corwin implements iReqRes{
 	
 	/**
@@ -41,7 +50,9 @@ class Corwin implements iReqRes{
 	}
 	
 	private function prepareResponse():void{
-		require_once $this->route['route'];
+		if(!@include_once $this->route['route']){
+			throw new \Talis\Exception\BadUri($this->route['route']);
+		}
 		$this->Response = new $this->route['classname']($this->body);
 	}
 	
@@ -57,16 +68,16 @@ class Corwin implements iReqRes{
 			throw new \Talis\Exception\BadUri($uri);
 		}
 		
-		$this->route['route'] = APP_PATH . "/version{$request_parts[0]}/{$request_parts[1]}/{$request_parts[2]}/{$request_parts[3]}.php";
-		\Talis\Logger\dbgn("Doing route [{$this->route['route']}]");
-		unset($request_parts[0]); //version is not part of the class name
-		$r = array_reduce($request_parts,function($carry, $item){$carry .= ucfirst($item);return $item;},'');
-		$this->route['classname'] = "\Api\{$r}";
+		$this->route['route'] = APP_PATH . "/api/version{$request_parts[1]}/{$request_parts[2]}/{$request_parts[3]}/{$request_parts[4]}.php";
+		L\dbgn("Doing route [{$this->route['route']}]");
+		unset($request_parts[1]); //version is not part of the class name
+		$r = array_reduce($request_parts,function($carry, $item){$carry .= ucfirst($item);return $carry;},'');
+		$this->route['classname'] = '\Api\\' . $r;
 	}
 	
 	private function generate_body(string $json_request_body):void{
-		dbgn('RAW INPUT FROM CLIENT');
-		dbgn("==============={$json_request_body}===============");
-		$this->body = json_decode($input);
+		L\dbgn('RAW INPUT FROM CLIENT');
+		L\dbgn("==============={$json_request_body}===============");
+		$this->body = json_decode($json_request_body);
 	}
 }

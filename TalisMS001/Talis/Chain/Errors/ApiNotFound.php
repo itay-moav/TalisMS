@@ -16,7 +16,7 @@ class ApiNotFound implements Chain\iReqRes{
 		return $this;
 	}
 	
-	public function render(){
+	public function render():void{
 		echo "{type:error,msg:API {$this->error}}";
 	}
 }
