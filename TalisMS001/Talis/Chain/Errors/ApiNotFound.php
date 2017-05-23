@@ -1,7 +1,7 @@
 <?php namespace Talis\Chain\Errors;
 use \Talis\Chain as Chain;
 
-class ApiNotFound implements Chain\iReqRes{
+class ApiNotFound implements \Talis\Chain\aChainLink{
 	private $error = '';
 	
 	public function __construct(string $error){

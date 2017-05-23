@@ -5,7 +5,7 @@ use \Talis\Logger as L;
  * 
  * @author Itay Moav
  */
-class GetFieldExist extends ADependency{
+class GetFieldExist extends aDependency{
 	/**
 	 * 
 	 * {@inheritDoc}

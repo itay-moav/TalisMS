@@ -46,7 +46,7 @@ class Corwin{
 	 * 
 	 * @return iReqRes
 	 */
-	public function process():AChainLink{
+	public function process():aChainLink{
 		return $this->Response->process();
 	}
 	

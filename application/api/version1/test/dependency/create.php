@@ -6,7 +6,7 @@ use Talis\Logger as L;
  * @author Itay Moav
  * @Date  2017-05-19
  */
-class TestDependencyCreate extends \Talis\Chain\AFilteredValidatedChainLink{
+class TestDependencyCreate extends \Talis\Chain\aFilteredValidatedChainLink{
 
 	protected $filters                  = [],
 			  $dependencies 			= [

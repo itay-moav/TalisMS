@@ -8,8 +8,8 @@ use Talis\Logger as L;
  * @author Itay Moav
  * @Date  2017-05-22
  */
-class DoneSuccessfull extends AChainLink implements \Talis\commons\iRenderable{
-	public function process():AChainLink{
+class DoneSuccessfull extends aChainLink implements \Talis\commons\iRenderable{
+	public function process():aChainLink{
 		return $this;
 	}
 	

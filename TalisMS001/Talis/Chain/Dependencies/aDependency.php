@@ -1,7 +1,10 @@
 <?php namespace Talis\Chain\Dependencies;
-use Talis\Chain\AChainLink;
-
-abstract class ADependency extends \Talis\Chain\AChainLink implements \Talis\commons\iRenderable{
+/**
+ * 
+ * @author admin
+ *
+ */
+abstract class aDependency extends \Talis\Chain\aChainLink implements \Talis\commons\iRenderable{
 	/**
 	 * Params to know what to validate
 	 * 
@@ -33,13 +36,16 @@ abstract class ADependency extends \Talis\Chain\AChainLink implements \Talis\com
 	 */
 	final public function process():\Talis\Chain\AChainLink{
 		$response = $this;
-		if($this->validate() && !$this->chain_container->isEmpty()){
+		$valid    = $this->validate();
+		if($valid && !$this->chain_container->isEmpty()){
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
 			$next_link = new $name($this->get_params,$this->req_body,$params);
 			$next_link->set_chain_container($this->chain_container);
 			$response = $next_link->process();
+		} elseif($valid && $this->chain_container->isEmpty()) {//for clear sake I added the second condition...how can we have a dependency with no continue? There always must be a BL at the end.
+			$response =  new \Talis\Chain\Errors\BLLinkNotFound;
 		}
 		return $response;
 	}

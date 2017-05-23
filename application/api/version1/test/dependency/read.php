@@ -6,7 +6,7 @@ use Talis\Logger as L;
  * @author Itay Moav
  * @Date  2017-05-19
  */
-class TestDependencyRead extends \Talis\Chain\AFilteredValidatedChainLink implements \Talis\commons\iRenderable{
+class TestDependencyRead extends \Talis\Chain\aFilteredValidatedChainLink implements \Talis\commons\iRenderable{
 	public function render():void{
 		L\dbgn('dep read');
 		echo "{type:test,msg:dep read}";

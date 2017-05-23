@@ -9,7 +9,7 @@
  * @author Itay Moav
  * @Date  2017-05-19
  */
-abstract class AFilteredValidatedChainLink extends AChainLink{
+abstract class aFilteredValidatedChainLink extends aChainLink{
 	
 	/**
 	 * 

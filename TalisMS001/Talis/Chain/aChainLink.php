@@ -10,7 +10,7 @@
  * @author Itay Moav
  * @Date  2017-05-19
  */
-abstract class AChainLink{
+abstract class aChainLink{
 	
 	/**
 	 * @var array $get_params
@@ -33,9 +33,9 @@ abstract class AChainLink{
 	 * 
 	 * @param \Ds\Queue $chain_container
 	 */
-	public function set_chain_container(/*\Ds\Queue*/ $chain_container):void{
+	public function set_chain_container(\Ds\Queue $chain_container):void{
 		$this->chain_container = $chain_container;
 	}
 	
-	abstract public function process():AChainLink;
+	abstract public function process():aChainLink;
 }
