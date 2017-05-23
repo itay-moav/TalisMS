@@ -12,8 +12,9 @@ class GetFieldExist extends aDependency{
 	 * @see \Talis\Chain\Dependencies\ADependency::validate()
 	 */
 	protected function validate():bool{
-		L\dbgr('validaror ' . print_r($this->params,true),isset($this->get_params[$this->params['field']]));
-		return isset($this->get_params[$this->params['field']]);
+		$valid = isset($this->Request->getAllGetParams()[$this->params['field']]);
+		L\dbgr('validaror ' . self::class, 'params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
+		return $valid;
 	}
 	
 	public function render():void{

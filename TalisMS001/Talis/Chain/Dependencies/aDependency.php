@@ -24,8 +24,8 @@ abstract class aDependency extends \Talis\Chain\aChainLink implements \Talis\com
 	 * @param stdClass $req_body
 	 * @param array $params
 	 */
-	public function __construct(array $get_params,?stdClass $req_body,array $params=[]){
-		parent::__construct($get_params, $req_body);
+	public function __construct(\Talis\Message\Request $Request,array $params=[]){
+		parent::__construct($Request);
 		$this->params = $params;
 	}
 	
@@ -41,11 +41,11 @@ abstract class aDependency extends \Talis\Chain\aChainLink implements \Talis\com
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
-			$next_link = new $name($this->get_params,$this->req_body,$params);
+			$next_link = new $name($this->Request,$params);
 			$next_link->set_chain_container($this->chain_container);
 			$response = $next_link->process();
 		} elseif($valid && $this->chain_container->isEmpty()) {//for clear sake I added the second condition...how can we have a dependency with no continue? There always must be a BL at the end.
-			$response =  new \Talis\Chain\Errors\BLLinkMissingInChain(['BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO']);
+			$response =  new \Talis\Chain\Errors\BLLinkMissingInChain($this->Request);
 		}
 		return $response;
 	}

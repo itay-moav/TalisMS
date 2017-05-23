@@ -1,5 +1,7 @@
 <?php namespace Talis\Chain\Errors;
 
+use Talis\Chain\aChainLink;
+
 /**
  * basic error/problem class
  * 
@@ -14,7 +16,8 @@ abstract class aError extends \Talis\Chain\aChainLink{
 	
 	abstract protected function format_human_message():string;
 	
-	public function __construct(array $error_params=[]){
+	public function __construct(\Talis\Message\Request $Request,array $error_params=[]){
+		parent::__construct($Request);
 		$this->error_params = $error_params;
 	}
 	

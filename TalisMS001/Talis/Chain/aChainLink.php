@@ -13,19 +13,16 @@
 abstract class aChainLink{
 	
 	/**
-	 * @var array $get_params
-	 * @var ?stdClass $req_body
+	 * @var \Talis\Message\Request $Request
 	 * @var \Ds\Queue $chain_container
 	 */
-	protected $req_body					= null,
-			  $get_params				= [],
+	protected $Request 					= null,
 			  $chain_container          = null
 			  
 	;
 	
-	public function __construct(array $get_params,?stdClass $req_body){
-		$this->get_params = $get_params;
-		$this->req_body   = $req_body;
+	public function __construct(?\Talis\Message\Request $Request){
+		$this->Request = $Request;
 	}
 	
 	/**

@@ -14,29 +14,31 @@ use Talis\Logger as L;
  *  
  */
 class HTTP{
+	private $full_uri = '';
+	
 	/**
 	 * Starts the chain reaction. builds request/check dependencies/run main logic
 	 */
 	public function gogogo(){
-		$response = null;
+		$ChainConclusion = null;
 		try{
-			$Request = new \Talis\Chain\Corwin;
-			$Request->begin($this->get_uri_from_server(),$this->get_request_body()); //Corwin is the first step in the chain. It is tailored specificly for the http request.
-			$response = $Request->process();
+			$TopChain = new \Talis\Chain\Corwin;
+			$TopChain->begin($this->get_uri_from_server(),$this->get_request_body(),$this->full_uri); //Corwin is the first step in the chain. It is tailored specificly for the http request.
+			$ChainConclusion = $TopChain->process();
 
 		}catch(Exception $E){ // TODO for now, all errors are Corwin, better handling later
 			L\fatal($E);
 			//TODO $response = ErrorResponse($E);
 		}
-		$response->render();
+		$ChainConclusion->render();
 	}
 	
 	/**
 	 * Parses the server input to generate raw uri parts
 	 */
 	private function get_uri_from_server():array{
-		$uri 		   = explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1];
-		$request_parts = explode('/',$uri);
+		$this->full_uri = explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1];
+		$request_parts  = explode('/',$this->full_uri);
 		return $request_parts;
 	}
 	

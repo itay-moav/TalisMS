@@ -26,17 +26,22 @@ class Corwin{
 	private $req_body  = null;
 	
 	/**
+	 * @var \Talis\Chain\aChainLink $Response
+	 * @var \Talis\Message\Request $Request
 	 */
-	private $Response = null;
+	private $Response = null,
+			$Request  = Null
+	;
 	
-	public function begin(array $request_parts,?stdClass $request_body){
+	public function begin(array $request_parts,?stdClass $request_body,string $full_uri){
 		$this->req_body = $request_body;
 		try{
 			$this->generate_route($request_parts);
 			$this->generate_query($request_parts);
+			$this->build_request($full_uri);
 			$this->prepareResponse();
 		} catch(\Talis\Exception\BadUri $e){
-			$this->Response = new Errors\ApiNotFound([$e->getMessage()]);
+			$this->Response = new Errors\ApiNotFound(null,[$e->getMessage()]);
 		}
 	}
 	
@@ -49,6 +54,10 @@ class Corwin{
 		return $this->Response->process();
 	}
 	
+	private function build_request(string $full_uri):void{
+		$this->Request = new \Talis\Message\Request($full_uri,$this->route['extra_params'],$this->req_body);
+	}
+	
 	/**
 	 * Instantiate the first step in the chain, The API class that we got from the route.
 	 * Or, an error response, if API does not exist
@@ -59,7 +68,7 @@ class Corwin{
 		if(!@include_once $this->route['route']){
 			throw new \Talis\Exception\BadUri($this->route['route']);
 		}
-		$this->Response = new $this->route['classname']($this->route['extra_params'],$this->req_body);
+		$this->Response = new $this->route['classname']($this->Request);
 	}
 	
 	/**

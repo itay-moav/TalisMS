@@ -14,7 +14,7 @@ class DoneSuccessfull extends aChainLink implements \Talis\commons\iRenderable{
 	}
 	
 	public function render():void{
-		L\dbgn('FINISHED CHAIN WITH SUCCESS');
+		L\dbgn($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
 		echo 'BIG SUCCESS IN A GENERAL WAY!';
 	}
 }

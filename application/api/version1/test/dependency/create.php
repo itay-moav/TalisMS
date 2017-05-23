@@ -22,6 +22,6 @@ class TestDependencyCreate extends \Talis\Chain\aFilteredValidatedChainLink{
 	 * @see \Talis\Chain\AFilteredValidatedChainLink::get_next_bl()
 	 */
 	protected function get_next_bl():array{
-		return [];//[[\Talis\Chain\DoneSuccessfull::class,[]]];
+		return [[\Talis\Chain\DoneSuccessfull::class,[]]];
 	}
 }
