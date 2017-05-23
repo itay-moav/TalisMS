@@ -45,7 +45,7 @@ abstract class aDependency extends \Talis\Chain\aChainLink implements \Talis\com
 			$next_link->set_chain_container($this->chain_container);
 			$response = $next_link->process();
 		} elseif($valid && $this->chain_container->isEmpty()) {//for clear sake I added the second condition...how can we have a dependency with no continue? There always must be a BL at the end.
-			$response =  new \Talis\Chain\Errors\BLLinkNotFound;
+			$response =  new \Talis\Chain\Errors\BLLinkMissingInChain(['BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO']);
 		}
 		return $response;
 	}

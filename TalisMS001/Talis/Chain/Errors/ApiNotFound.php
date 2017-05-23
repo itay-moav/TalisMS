@@ -1,22 +1,17 @@
 <?php namespace Talis\Chain\Errors;
-use \Talis\Chain as Chain;
 
-class ApiNotFound implements \Talis\Chain\aChainLink{
-	private $error = '';
+/**
+ * API class was not found for the input route
+ * 
+ * @author Itay Moav
+ * @date 2017-05-23
+ */
+class ApiNotFound extends aError{
+	protected $http_code = 404;
 	
-	public function __construct(string $error){
-		$this->error = $error;
-	}
-	
-	/**
-	 * This is an end of the line chain link, return itself.
-	 * @return Talis\Chain\iReqRes
-	 */
-	public function process():Chain\iReqRes{
-		return $this;
-	}
-	
-	public function render():void{
-		echo "{type:error,msg:API {$this->error}}";
+	protected function format_human_message():string{
+		$msg = "Api resource for [{$this->error_params[0]}] can not be found!";
+		\Talis\Logger\info($msg);
+		return $msg;
 	}
 }

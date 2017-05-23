@@ -1,5 +1,7 @@
 <?php namespace init;
-ini_set('error_reporting', E_ALL|E_STRICT);
+ini_set('error_reporting', E_ALL);
+ini_set('log_errors',1);
+ini_set('display_errors',1);
 /**
  * Common config values all subdomains and CLI will be using
  */

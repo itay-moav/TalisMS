@@ -4,6 +4,6 @@
  */
 class BadUri extends \Exception{
 	public function __construct($uri){
-		parent::__construct("[{$uri}] can not be found!");
+		parent::__construct($uri);
 	}
 }

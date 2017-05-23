@@ -26,7 +26,6 @@ class Corwin{
 	private $req_body  = null;
 	
 	/**
-	 * @var iReqRes
 	 */
 	private $Response = null;
 	
@@ -37,7 +36,7 @@ class Corwin{
 			$this->generate_query($request_parts);
 			$this->prepareResponse();
 		} catch(\Talis\Exception\BadUri $e){
-			$this->Response = new Errors\ApiNotFound($e->getMessage());
+			$this->Response = new Errors\ApiNotFound([$e->getMessage()]);
 		}
 	}
 	
@@ -57,7 +56,7 @@ class Corwin{
 	 * @throws \Talis\Exception\BadUri
 	 */
 	private function prepareResponse():void{
-		if(!include_once $this->route['route']){
+		if(!@include_once $this->route['route']){
 			throw new \Talis\Exception\BadUri($this->route['route']);
 		}
 		$this->Response = new $this->route['classname']($this->route['extra_params'],$this->req_body);

@@ -37,5 +37,5 @@ abstract class aChainLink{
 		$this->chain_container = $chain_container;
 	}
 	
-	abstract public function process():aChainLink;
+	abstract public function process():\Talis\Chain\aChainLink;
 }
