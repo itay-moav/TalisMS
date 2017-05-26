@@ -82,7 +82,7 @@ function clean_for_cl($str){
  * @return stdClass
  */
 function array_to_object(array $array) {
-    $object = new stdClass();
+    $object = new \stdClass();
     foreach ($array as $key => $value) {
         if (is_array($value)) {
             $value = array_to_object($value);

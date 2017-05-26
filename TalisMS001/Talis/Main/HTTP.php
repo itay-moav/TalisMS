@@ -28,9 +28,9 @@ class HTTP{
 
 		}catch(Exception $E){ // TODO for now, all errors are Corwin, better handling later
 			L\fatal($E);
-			//TODO $response = ErrorResponse($E);
+			$ChainConclusion = ErrorResponse($E);
 		}
-		$ChainConclusion->render();
+		$ChainConclusion->render(new \Talis\Message\Renderers\HTTP);
 	}
 	
 	/**

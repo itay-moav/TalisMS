@@ -8,8 +8,11 @@ use Talis\Logger as L;
  */
 class TestPingRead extends \Talis\Chain\aFilteredValidatedChainLink implements \Talis\commons\iRenderable{
 
-	public function render():void{
+	public function render(\Talis\commons\iEmitter $emitter):void{
 		L\dbgn('PONG');
-		echo "{type:test,msg:BOOOM}" . print_r($this->Request->getAllGetParams(),true);
+		$response = new \Talis\Message\Response;
+		$response->setBody(\Talis\commons\array_to_object(['type'=>'test','message'=>'boom','params'=>print_r($this->Request->getAllGetParams(),true)]));
+		$response->setStatus(new \Talis\Message\Status\Code200);
+		$emitter->emit($response);
 	}
 }
