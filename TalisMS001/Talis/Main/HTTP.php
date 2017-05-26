@@ -46,7 +46,7 @@ class HTTP{
 	 * Parses the http input stream to get the body and decode into stdClass
 	 * @return stdClass
 	 */
-	private function get_request_body():?stdClass{
+	private function get_request_body():?\stdClass{
 		$json_request_body = file_get_contents('php://input');
 		L\dbgn('RAW INPUT FROM CLIENT');
 		L\dbgn("==============={$json_request_body}===============");

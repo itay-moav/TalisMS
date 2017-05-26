@@ -10,6 +10,6 @@ class TestPingRead extends \Talis\Chain\aFilteredValidatedChainLink implements \
 
 	public function render():void{
 		L\dbgn('PONG');
-		echo "{type:test,msg:BOOOM}" . print_r($this->get_params,true);
+		echo "{type:test,msg:BOOOM}" . print_r($this->Request->getAllGetParams(),true);
 	}
 }

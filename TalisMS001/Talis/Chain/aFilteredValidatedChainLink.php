@@ -19,8 +19,7 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	 * @var AChainLink $Response
 	 */
 	protected $filters                  = [],
-		  	  $dependencies 			= [],
-			  $Response					= null
+		  	  $dependencies 			= []
 	;
 	
 	/**
@@ -47,7 +46,7 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	/**
 	 * Do the filter chain
 	 * Pass the filtered get params and req body and next bl to the dependency chain
-	 * Sets the result as the Response
+	 * Sets the result as the response
 	 *   
 	 * @see \Talis\Chain\AChainLink::process()
 	 */

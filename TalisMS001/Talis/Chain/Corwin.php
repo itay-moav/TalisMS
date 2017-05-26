@@ -33,7 +33,7 @@ class Corwin{
 			$Request  = Null
 	;
 	
-	public function begin(array $request_parts,?stdClass $request_body,string $full_uri){
+	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri){
 		$this->req_body = $request_body;
 		try{
 			$this->generate_route($request_parts);
