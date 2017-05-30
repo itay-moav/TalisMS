@@ -25,7 +25,7 @@ function get_client($uri,stdClass $obj,$https=false){
 	];
 	
 	$url = $urls [lifeCycle ()];
-	echo "hitting [{$url}/{$uri}]\n";
+	echo "hitting [{$url}{$uri}]\n";
 	echo "SENDING THE FOLLOWING:\n";
 	var_dump ( json_encode ( $obj ) );
 	

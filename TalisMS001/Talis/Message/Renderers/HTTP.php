@@ -1,6 +1,11 @@
 <?php namespace Talis\Message\Renderers;
-use Talis\Logger as L;
-
+/**
+ * This is what we know as VIEW, it does the actual echo.
+ * This one is for REST responses (aka headers+JSON)
+ * 
+ * @author Itay Moav
+ * @date 2017-05-30
+ */
 class HTTP implements \Talis\commons\iEmitter{
 	/**
 	 * Formats and echoes the results headers and then body

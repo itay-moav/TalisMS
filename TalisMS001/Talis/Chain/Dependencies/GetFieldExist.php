@@ -24,6 +24,6 @@ class GetFieldExist extends aDependency{
 		$response = new \Talis\Message\Response;
 		$response->setBody(array_to_object(['type'=>'dependency','message'=>"Mising {$this->params['field']}"]));
 		$response->setStatus(new \Talis\Message\Status\Code500);
-		$emitter->emit($this->Response);
+		$emitter->emit($response);
 	}		
 }

@@ -1,5 +1,6 @@
 <?php namespace Talis\Main;
 use Talis\Logger as L;
+
 /**
  * Main entry point for the request chain
  * Translate the input into the initial request object
@@ -20,17 +21,22 @@ class HTTP{
 	 * Starts the chain reaction. builds request/check dependencies/run main logic
 	 */
 	public function gogogo(){
-		$ChainConclusion = null;
 		try{
-			$TopChain = new \Talis\Chain\Corwin;
-			$TopChain->begin($this->get_uri_from_server(),$this->get_request_body(),$this->full_uri); //Corwin is the first step in the chain. It is tailored specificly for the http request.
-			$ChainConclusion = $TopChain->process();
+			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
+			(new \Talis\Chain\Corwin)->begin($this->get_uri_from_server(),
+											 $this->get_request_body(),
+											 $this->full_uri)
+			                         ->process()
+					                 ->render(new \Talis\Message\Renderers\HTTP)
+			;
 
 		}catch(Exception $E){ // TODO for now, all errors are Corwin, better handling later
 			L\fatal($E);
-			$ChainConclusion = ErrorResponse($E);
+			$response = new \Talis\Message\Response;
+			$response->setBody(\Talis\commons\array_to_object(['type'=>'error','message'=>$e.'']));
+			$response->setStatus(new \Talis\Message\Status\Code500);
+			(new \Talis\Message\Renderers\HTTP)->emit($respone);
 		}
-		$ChainConclusion->render(new \Talis\Message\Renderers\HTTP);
 	}
 	
 	/**

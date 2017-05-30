@@ -33,6 +33,14 @@ class Corwin{
 			$Request  = Null
 	;
 	
+	/**
+	 * Main entry point after the MAIN for a specific protocol finished (http/rest/stopmp/async etc)
+	 * 
+	 * @param array $request_parts
+	 * @param \stdClass $request_body
+	 * @param string $full_uri
+	 * @return \Talis\Chain\Corwin
+	 */
 	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri){
 		$this->req_body = $request_body;
 		try{
@@ -43,12 +51,13 @@ class Corwin{
 		} catch(\Talis\Exception\BadUri $e){
 			$this->Response = new Errors\ApiNotFound(null,[$e->getMessage()]);
 		}
+		return $this;
 	}
 	
 	/**
 	 * Init the API class and call it's dependency checks
 	 * 
-	 * @return iReqRes
+	 * @return aChainLink
 	 */
 	public function process():aChainLink{
 		return $this->Response->process();

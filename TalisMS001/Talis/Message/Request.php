@@ -1,7 +1,6 @@
 <?php namespace Talis\Message;
-class Request{
-	private 	$body 	    = null,
-				$full_uri   = '',
+class Request extends aMessage{
+	private 	$full_uri   = '',
 				$get_params = []
 	;
 	
@@ -12,15 +11,6 @@ class Request{
 		$this->body       = $body;
 		$this->full_uri   = $full_uri;
 		$this->get_params = $get_params;
-	}
-	
-	/**
-	 * The json decoded body or null
-	 * 
-	 * @return stdClass|NULL
-	 */
-	public function getBody():?\stdClass{
-		return $this->body;
 	}
 	
 	/**
