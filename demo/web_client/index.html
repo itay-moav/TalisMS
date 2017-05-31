@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="language" content="en" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/ico" href="favicon.ico" />
+  	
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" 
+      crossorigin="anonymous" />
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
+      integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" 
+      crossorigin="anonymous" />
+      
+<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" />
+
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+        integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc="
+        crossorigin="anonymous"></script>
+        
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+     integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" 
+     crossorigin="anonymous"></script>
+   	
+		
+<script src="https://unpkg.com/react@15/dist/react.js"></script>
+<script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+<title>REACT based Demo for TalisMS</title>
+
+<script type="text/babel">
+function PageTitle(props){
+	var style = {
+      color: 'white',
+      backgroundColor:'#202d1f'
+    };
+	return (
+		<div className="row" style={style}><h1 className="col-lg-4 col-lg-offset-4">REACT Based TalisMS demo</h1></div>
+	);
+}
+
+function Title(props){
+    return <h3 className="col-lg-4 col-lg-offset-4">{props.title}</h3>;
+}
+
+function GetParamInp(props){
+	var style={
+		color:'#111111',
+		width:'400px',
+		borderStyle: 'none'	
+	};
+
+	return (
+		<input type="text" id={props.id} placeholder={props.label} defaultValue="" style={style} />
+	);
+}
+
+class RunTestBtn extends React.Component{
+	handleClick() {
+	    alert("booo");
+	}
+
+	render() {
+		var style={
+				backgroundColor: '#f94d86',
+				color:'#111111',
+				width:'400px',
+				height: '380px',
+				borderStyle: 'none',
+				fontSize: '4em',
+				marginBottom: '20px'
+		};
+		return(
+			<input style={style} type="button" value="run test" onClick={this.handleClick}/>
+		);
+	}
+}
+
+class TestResponsePanel extends React.Component{
+	constructor(props) {
+	    super(props);
+	    this.state = {server_response: 'waiting for you to press pink button'};
+	}
+
+	render(){
+
+		var style={
+			color:'#111111',
+			backgroundColor:'white',
+			width:'400px',
+			height: '200px'	
+		};
+
+		return (
+			<div id={this.props.id} style={style}>{this.state.server_response}</div>
+		);
+	}	
+}
+
+function TestPanel(props){
+	var style = {
+      color: 'white',
+      backgroundColor: props.background
+    };
+	return (
+		<div className="row" style={style}>
+  		    <div className="row"><Title title={props.title} /></div>
+		    <div className="row">
+		    	<div className="col-lg-2 col-lg-offset-2">
+					<GetParamInp id="ping-get-params" label="Enter get params (optional) /f/v/f/v"/>
+					<RunTestBtn />
+				</div>
+				<div className="col-lg-2  col-lg-offset-1">
+					<TestResponsePanel id="ping-get-params-request" />
+					<TestResponsePanel id="ping-get-params-response" />
+				</div>
+			</div>
+		</div>
+    );
+}
+
+
+
+function init(props){
+    ReactDOM.render(<div className="container-fluid">
+                        <PageTitle />
+						<TestPanel title="Doing PING" background="black" />
+						<TestPanel title="Doing DEPENDENCIES" background="#506f4d" />
+                    </div>,
+                    document.getElementById('root'));
+}
+
+
+init({});
+</script>
+
+</head>
+<body>
+<div id="root"></div><!-- EOF root -->
+</body>
+</html>

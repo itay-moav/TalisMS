@@ -7,11 +7,13 @@
  * @Date  2017-05-19
  */
 class TestFilterRead extends \Talis\Chain\aFilteredValidatedChainLink{
-	protected $filters                  = [],
-	$dependencies 			= [
-			[\Talis\Chain\Dependencies\HasBody::class,[]],
-			[\Talis\Chain\Filters\TransformParam::class,['mumble','blabla','brumbrum']],
+	protected $filters                  = [
+			[\Talis\Chain\Filters\TransformParam::class,['mumble','blabla','brumbrum']]
+	],
+		      $dependencies 			= [
+				[\Talis\Chain\Dependencies\HasBody::class,[]]
 	]
+	
 	;
 	
 	/**
