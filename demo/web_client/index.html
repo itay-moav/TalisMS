@@ -19,6 +19,8 @@
       
 <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" />
 
+<script src="bootstrap.js.php"></script>
+
 <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
         integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc="
         crossorigin="anonymous"></script>
@@ -31,6 +33,9 @@
 <script src="https://unpkg.com/react@15/dist/react.js"></script>
 <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+<link href="local.css" rel="stylesheet" />
+
 <title>REACT based Demo for TalisMS</title>
 
 <script type="text/babel">
@@ -48,80 +53,64 @@ function Title(props){
     return <h3 className="col-lg-4 col-lg-offset-4">{props.title}</h3>;
 }
 
-function GetParamInp(props){
-	var style={
-		color:'#111111',
-		width:'400px',
-		borderStyle: 'none'	
-	};
-
+function GETParamInp (props){
 	return (
-		<input type="text" id={props.id} placeholder={props.label} defaultValue="" style={style} />
+		<input className="get-param-inp" type="text" placeholder={props.label} value={props.value} onChange={ (event)=>props.onChange(event) } />
 	);
 }
 
-class RunTestBtn extends React.Component{
-	handleClick() {
-	    alert("booo");
-	}
-
-	render() {
-		var style={
-				backgroundColor: '#f94d86',
-				color:'#111111',
-				width:'400px',
-				height: '380px',
-				borderStyle: 'none',
-				fontSize: '4em',
-				marginBottom: '20px'
-		};
-		return(
-			<input style={style} type="button" value="run test" onClick={this.handleClick}/>
-		);
-	}
+function RunTestBtn(props){
+	return(
+		<input className="run-test-btn" type="button" value="run test" onClick={()=> props.onClick() }/>
+	);
 }
 
-class TestResponsePanel extends React.Component{
+function TestResponsePanel(props){
+	return (
+		<div className="test-response-panel">{props.content}</div>
+	);
+}
+
+class TestPanel extends React.Component{
 	constructor(props) {
 	    super(props);
-	    this.state = {server_response: 'waiting for you to press pink button'};
+	    this.state = {client_request:'', server_response: 'waiting for you to press the pink button on the left',get_params:''};
+	    this.handleGetParamsChange = this.handleGetParamsChange.bind(this);
+	}
+
+	handleRunTest(){
+		//alert(this.state.toSource());
+		this.setState({client_request:  window.base_url + this.state.get_params, 
+					   server_response: 'baha nevada',
+					   get_params:      this.state.get_params});
+	}
+
+	handleGetParamsChange(event){
+		this.setState({client_request:this.state.client_request, 
+					   server_response:this.state.server_response,
+					   get_params: event.target.value});
 	}
 
 	render(){
-
-		var style={
-			color:'#111111',
-			backgroundColor:'white',
-			width:'400px',
-			height: '200px'	
-		};
-
+		const style = {
+	      backgroundColor: this.props.background
+	    };
 		return (
-			<div id={this.props.id} style={style}>{this.state.server_response}</div>
-		);
-	}	
-}
-
-function TestPanel(props){
-	var style = {
-      color: 'white',
-      backgroundColor: props.background
-    };
-	return (
-		<div className="row" style={style}>
-  		    <div className="row"><Title title={props.title} /></div>
-		    <div className="row">
-		    	<div className="col-lg-2 col-lg-offset-2">
-					<GetParamInp id="ping-get-params" label="Enter get params (optional) /f/v/f/v"/>
-					<RunTestBtn />
-				</div>
-				<div className="col-lg-2  col-lg-offset-1">
-					<TestResponsePanel id="ping-get-params-request" />
-					<TestResponsePanel id="ping-get-params-response" />
+			<div className="row" style={style}>
+	  		    <div className="row"><Title title={this.props.title} /></div>
+			    <div className="row">
+			    	<div className="col-lg-2 col-lg-offset-2">
+						<GETParamInp label="Enter get params (optional) /f/v/f/v" value={this.state.get_params} onChange={ (event)=>this.handleGetParamsChange(event) } />
+						<RunTestBtn onClick={ ()=>this.handleRunTest() }/>
+					</div>
+					<div className="col-lg-2  col-lg-offset-1">
+						<TestResponsePanel content={this.state.client_request}/>
+						<TestResponsePanel content={this.state.server_response}/>
+					</div>
 				</div>
 			</div>
-		</div>
-    );
+	    );
+    }
 }
 
 
