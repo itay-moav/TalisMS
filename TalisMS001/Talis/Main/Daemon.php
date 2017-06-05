@@ -1,14 +1,20 @@
 <?php namespace Talis\Main;
 use function \Talis\Logger\dbgn,
-             \Talis\Logger\fatal
-;
+             \Talis\Logger\fatal,
+			 \Talis\Logger\dbgr;
 
 /**
+ * SERVES ActiveMQ originating messages
+ * 
  * Main entry point for the request chain
  * Translate the input into the initial request object
  * and moves it along
  * 
- * Will assume 4 levels [version][action][subaction][type] for example 1/event/repeat/create|update|read|delete
+ * Will assume a string (base64 encoded):
+ * {"url":"[version][action][subaction][type]",      #for example 1/event/repeat/create|update|read|delete
+ *  "params": {}
+ * }     
+ * 
  * 
  * Loads the right controller and action.
  * Renders the $Result of the action
@@ -16,18 +22,22 @@ use function \Talis\Logger\dbgn,
  * Error handling
  *  
  */
-class HTTP{
-	private $full_uri = '';
+class Daemon{
 	
 	/**
 	 * Starts the chain reaction. builds request/check dependencies/run main logic
 	 */
-	public function gogogo(){
+	public function gogogo(string $raw_request){
+		
 		try{
+			//decode
+			$decoded_request = json_decode(base64_decode($raw_request));
+			dbgr('RECEIVED',$decoded_request);
+			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
-			(new \Talis\Chain\Corwin)->begin($this->get_uri_from_server(),
-											 $this->get_request_body(),
-											 $this->full_uri)
+			(new \Talis\Chain\Corwin)->begin($this->get_uri($decoded_request->url),
+											 $decoded_request->params,
+											 $decoded_request->url)
 			                         ->process()
 					                 ->render(new \Talis\Message\Renderers\HTTP)
 			;
@@ -44,23 +54,8 @@ class HTTP{
 	/**
 	 * Parses the server input to generate raw uri parts
 	 */
-	private function get_uri_from_server():array{
-		$this->full_uri   = explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1];
-		//remove ? and after if exists
-		$without_question = rtrim(explode('?',$this->full_uri)[0],'/');
-		$request_parts    = explode('/',$without_question);
-		return $request_parts;
-	}
-	
-	/**
-	 * Parses the http input stream to get the body and decode into stdClass
-	 * @return stdClass
-	 */
-	private function get_request_body():?\stdClass{
-		$json_request_body = file_get_contents('php://input');
-		dbgn('RAW INPUT FROM CLIENT');
-		dbgn("==============={$json_request_body}===============");
-		return json_decode($json_request_body);
+	private function get_uri(string $uri):array{
+		return explode('/',$uri);
 	}
 }
 

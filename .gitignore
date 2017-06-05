@@ -1,3 +1,7 @@
 .settings
 .buildpath
 .project
+__pycache__
+*.pyc
+.pydevproject
+
