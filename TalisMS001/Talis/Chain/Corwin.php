@@ -100,6 +100,7 @@ class Corwin{
 	 * @param array $request_parts
 	 */
 	private function generate_query(array $request_parts):void{
+		L\dbgr('request_parts',$request_parts);
 		$c = count($request_parts);
 		for($i=5; $i<$c;$i+=2){
 			$this->route['extra_params'][$request_parts[$i]] = $request_parts[$i+1];

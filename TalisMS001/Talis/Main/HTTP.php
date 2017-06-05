@@ -43,8 +43,10 @@ class HTTP{
 	 * Parses the server input to generate raw uri parts
 	 */
 	private function get_uri_from_server():array{
-		$this->full_uri = explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1];
-		$request_parts  = explode('/',$this->full_uri);
+		$this->full_uri   = explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1];
+		//remove ? and after if exists
+		$without_question = rtrim(explode('?',$this->full_uri)[0],'/');
+		$request_parts    = explode('/',$without_question);
 		return $request_parts;
 	}
 	

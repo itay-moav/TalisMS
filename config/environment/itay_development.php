@@ -13,7 +13,7 @@ function app_env(){
 			'paths'=> [
 				'root_path'	=> '/home/admin/dev/talisms',
 				'domain'	=> '192.168.12.148',
-			    'root_uri'  => '/api/scheduler'
+			    'root_uri'  => '/talis'
 			],
 			
 			'microservices' => [
