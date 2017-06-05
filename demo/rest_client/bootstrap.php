@@ -19,7 +19,7 @@ spl_autoload_register('autoload');
 function get_client($uri,stdClass $obj,$https=false){
 	$s = $https ? 's' : '';
 	$urls = [ 
-			'itay_development' => "http{$s}://192.168.12.148/api/scheduler",
+			'itay_development' => "http{$s}://192.168.12.148/talis",
 			'newstaging' => "http{$s}://api.newstaging.sitelms.org/scheduler",
 			'prod_web' => "http{$s}://api.web01.sitelms.org/scheduler" 
 	];
