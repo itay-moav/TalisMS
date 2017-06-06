@@ -1,4 +1,6 @@
-<?php
+<?php namespace Talis\Services\ActiveMQ;
+use function Talis\Logger\dbgn;
+use function Talis\Logger\fatal;
 /**
  * Abstracting the usage of pecl's Stomp extension to connect 
  * to ActiveMQ with our own queues and topics.
@@ -11,7 +13,7 @@
  * @author Itay Moav
  * @date APR-13-2015
  */
-abstract class Data_ActiveMQ_StompClient{
+abstract class StompClient{
     const QUEUE                 = 'queue',
           TOPIC                 = 'topic'
     ;
@@ -21,11 +23,13 @@ abstract class Data_ActiveMQ_StompClient{
      */
     protected $queue            = NULL;
     
+    protected function __construct(){}
+    
     /**
      * return an instance with an active connection
-     * @return Data_ActiveMQ_StompCLient
+     * @return StompCLient
      */
-    static public function get_client(){
+    static public function get_client():StompClient{
         return (new static)->connect();
     }
     
@@ -40,7 +44,7 @@ abstract class Data_ActiveMQ_StompClient{
      * validate the name is in the right structure.
      * @return string get_queue_topic_name
      */
-    protected function get_queue_name(){
+    protected function get_queue_name():string{
         $name = explode('_',get_class($this));
         $queue_name = strtolower($name[count($name) - 1]);
         $type = $this->type();
@@ -49,9 +53,9 @@ abstract class Data_ActiveMQ_StompClient{
     
     /**
      * Return an active connetcion
-     * @return Data_ActiveMQ_StompCLient
+     * @return StompCLient
      */
-    protected function connect($headers=[]){
+    protected function connect(array $headers=[]):StompClient{
         $env = app_env()['database']['activeMQ'];
         $url = "tcp://{$env['host']}:{$env['port']}";
         dbgn("ActiveMQ: Connecting to {$url}");

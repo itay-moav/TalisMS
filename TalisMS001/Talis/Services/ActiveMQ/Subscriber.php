@@ -1,4 +1,5 @@
 <?php
+//@DEPRECATED  - we use the python Daemon as listener.
 /**
  * abstract the reading process.
  * MAKE SURE THE queue/topic name is the last part of the class name.

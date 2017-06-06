@@ -4,7 +4,7 @@ function app_env(){
 	        'debug' =>  true,
 			'debug_verbosity' => 2, //[1] no debug trace, [2] debug trace up to 4 lines, no args, [3] debug trace up to 4 lines + args , [4] full debug trace 
 			'log' =>[
-				'name'	    => 'TALISMS_SCHEDULER_',
+				'name'	    => 'TALISMS_DEMO_',
 				'handler'	=> 'File',//'FileSessionReq',//'Redis',//ColoredFile',//'ErrorMonitorEmail',//'Stdio',//'Nan'
 				'verbosity' => 4,
 				'uri'		=> '/var/log/lms2/'

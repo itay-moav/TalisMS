@@ -1,5 +1,5 @@
-<?php
-class Logger_Streams_Stdio extends Logger_MainZim{
+<?php namespace Talis\Logger\Streams;
+class Stdio extends AbstractStream{
 	protected function log($inp,$severity,$full_stack_data = null){
 		echo $inp . "\n";
 		if($full_stack_data){

@@ -35,7 +35,8 @@ class Daemon{
 			dbgr('RECEIVED',$decoded_request);
 			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
-			(new \Talis\Chain\Corwin)->begin($this->get_uri($decoded_request->url),
+			$request_parts = $this->get_uri($decoded_request->url);
+			(new \Talis\Chain\Corwin)->begin($request_parts,
 											 $decoded_request->params,
 											 $decoded_request->url)
 			                         ->process()

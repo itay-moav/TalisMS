@@ -1,6 +1,6 @@
-<?php
-use Zend\Http\Header\From;
-use Zend\ModuleManager\Listener\OnBootstrapListener;
+<?php namespace Talis\Services\ActiveMQ;
+use function Talis\Logger\dbgn;
+
 /**
  * abstract the publishisng process.
  * MAKE SURE THE queue name is the last part of the class name.
@@ -8,14 +8,14 @@ use Zend\ModuleManager\Listener\OnBootstrapListener;
  * @author itay moav
  *
  */
-abstract class Data_ActiveMQ_Publisher extends Data_ActiveMQ_StompClient{
+abstract class Publisher extends StompClient{
     /**
      * Place holder for filtering of messages
      *
      * @param string $msg
      * @return string filtered message
      */
-    protected function filter_message($msg){
+    protected function filter_message(string $msg):string{
         return $msg.'';//cast to string
     }
     
@@ -24,7 +24,7 @@ abstract class Data_ActiveMQ_Publisher extends Data_ActiveMQ_StompClient{
      * @param string $msg
      * @return Ambigous <string, string>
      */
-    public function publish($msg){
+    public function publish(string $msg):string{
         $msg = $this->filter_message($msg);
         dbgn("ActiveMQ: Sending filtered message [{$msg}]");
         $destination = $this->get_queue_name();
