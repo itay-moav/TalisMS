@@ -64,6 +64,7 @@ class Corwin{
 	}
 	
 	private function build_request(string $full_uri):void{
+		L\dbgr('BUILDING REQUEST WITH BODY',$this->req_body);
 		$this->Request = new \Talis\Message\Request($full_uri,$this->route['extra_params'],$this->req_body);
 	}
 	
