@@ -21,30 +21,30 @@ class Factory{
 	/**
    	 * @return Talis\Services\Sql\MySqlClient
  	 */
-	static public getConnectioniMySQL(string $connection_name,array $config=[]){
+	static public function getConnectionMySQL(string $connection_name,array $config=[]){
 		if(isset(self::$registered_connections[$connection_name])) return self::$registered_connections[$connection_name];
 
-		if($config == []) throw new LogicException('You must pass a config array to get a connection');		
+		if($config == []) throw new \LogicException('You must pass a config array to get a connection');		
 
 		return self::$registered_connections[$connection_name] = new MySqlClient($connection_name,$config);
 	}
 
 	static public function unregister(string $connection_name){
-		unset(self::registered_connections[$connection_name));
+		unset(self::$registered_connections[$connection_name]);
 	}
 
         /**
          * @return Talis\Services\Sql\MySqlClient
          */
-	static public getReadConn(){
-		return self::getConnectioniMySQL(self::CONNECTION_NAME__READ,app_env()['database']['slave']);
+	static public function getReadConn(){
+		return self::getConnectionMySQL(self::CONNECTION_NAME__READ,app_env()['database']['slave']);
 	} 
 
         /**
          * @return Talis\Services\Sql\MySqlClient
          */
-        static public getWriteConn(){
-                return self::getConnectioniMySQL(self::CONNECTION_NAME__WRITE,app_env()['database']['master']);
+        static public function getWriteConn(){
+                return self::getConnectionMySQL(self::CONNECTION_NAME__WRITE,app_env()['database']['master']);
         }
 }
 	

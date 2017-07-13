@@ -1,4 +1,5 @@
 <?php namespace Talis\Services\Sql;
+use function Talis\Logger\dbg;
 use function Talis\Logger\dbgn;
 use function Talis\Logger\fatal;
 /**
@@ -121,7 +122,7 @@ class MySqlClient{
 	 * Although this is a type of sigleton, we are using a public modifier here, as we inherit the PDO class
 	 * which have a public constructor.
 	 */
-	private function __construct(string $connection_name,array $conf_data) {
+	public  function __construct(string $connection_name,array $conf_data) {
 		$this->logVerbosity = $conf_data['verbosity'];
 		$this->connection_name = $connection_name;
 		
@@ -130,9 +131,9 @@ class MySqlClient{
 		$p = ($port != null) ? (";port={$port}") : '';
 		$dns = 'mysql:dbname='.$conf_data['database'].";host=".$conf_data['host'].$p;
 
-		$this->NativeDB = new PDO($dns,$conf_data['username'],$conf_data['password'],[PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']);
-		$this->NativeDB->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$this->NativeDB->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
+		$this->NativeDB = new \PDO($dns,$conf_data['username'],$conf_data['password'],[\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']);
+		$this->NativeDB->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+		$this->NativeDB->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
 	}
 	
 	/**
@@ -167,7 +168,7 @@ class MySqlClient{
 		try{
 
 		    if($params){
-				$this->lastStatement = $DB->prepare($sql,[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true]);
+				$this->lastStatement = $DB->prepare($sql,[\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true]);
 				$this->lastStatement->execute($params);
 			}else{
 				$this->lastStatement = $DB->query($sql);
@@ -175,7 +176,7 @@ class MySqlClient{
 			$this->numFields = $this->lastStatement->columnCount();
 			$this->numRows = $this->lastStatement->rowCount();
 			
-		}catch (PDOException $e){
+		}catch (\PDOException $e){
 			//The transaction was rolled back anyway, we need to stop!
 			if($this->inTransaction){
 				throw $e;
@@ -284,7 +285,7 @@ class MySqlClient{
 	 * @param integer $fetch_type
 	 * @return array
 	 */
-	public function fetchAll(int $fetch_type = PDO::FETCH_ASSOC){
+	public function fetchAll(int $fetch_type = \PDO::FETCH_ASSOC){
 		$res=$this->lastStatement->fetchAll($fetch_type);
 		return $res?:[];
 	}
@@ -295,15 +296,15 @@ class MySqlClient{
          * @return array of stdClass
          */
 	public function fetchAllObj(){
-		return $this->lastStatement->fetchAll(PDO::FETCH_OBJ);
+		return $this->lastStatement->fetchAll(\PDO::FETCH_OBJ);
 	}
 	
 	public function fetchAllUserObj(string $class_name,array $ctor_args=[]){
-		return $this->lastStatement->fetchAll(PDO::FETCH_CLASS,$class_name,$ctor_args);
+		return $this->lastStatement->fetchAll(\PDO::FETCH_CLASS,$class_name,$ctor_args);
 	}
 	
 	public function fetchAllUserFunc($func){
-		return $this->lastStatement->fetchAll(PDO::FETCH_FUNC,$func);
+		return $this->lastStatement->fetchAll(\PDO::FETCH_FUNC,$func);
 	}
 	
 	/**
@@ -312,7 +313,7 @@ class MySqlClient{
 	 * @return array
 	 */
 	public function fetchAllIndexed($func){//THIS IS STILL THOUGHT UPON!
-	    return $this->lastStatement->fetchAll(PDO::FETCH_UNIQUE|PDO::FETCH_FUNC,$func);
+	    return $this->lastStatement->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_FUNC,$func);
 	}
 	
 	/**
@@ -330,7 +331,7 @@ class MySqlClient{
 	 * @return array
 	 */
 	public function fetchAllColumn(int $column=0){
-		return $this->lastStatement->fetchAll(PDO::FETCH_COLUMN, $column);
+		return $this->lastStatement->fetchAll(\PDO::FETCH_COLUMN, $column);
 	}
 	
 	private function fetchRow($result_type){
@@ -338,15 +339,15 @@ class MySqlClient{
 	}
 	
 	public function fetchNumericArray(){
-		return $this->fetchRow(PDO::FETCH_NUM);
+		return $this->fetchRow(\PDO::FETCH_NUM);
 	}
 
 	public function fetchArray(){
-		return $this->fetchRow(PDO::FETCH_ASSOC);
+		return $this->fetchRow(\PDO::FETCH_ASSOC);
 	}
 	
 	public function fetchObj(){
-		return $this->fetchRow(PDO::FETCH_OBJ);
+		return $this->fetchRow(\PDO::FETCH_OBJ);
 	}
 	
 	/**
@@ -402,7 +403,7 @@ class MySqlClient{
 	 * @return Talis\Services\Sql\MySqlClient
 	 */
 	public function beginTransaction(){
-		if($this->connectionType == self::READ) throw new LogicException('Cant start transaction on a read connection');
+		if($this->connectionType == self::READ) throw new \LogicException('Cant start transaction on a read connection');
 		
 		$this->lastSql = 'BEGIN TRANSACTION';
 		$this->lastBindParams = [];
@@ -433,7 +434,7 @@ class MySqlClient{
 				break;
 				
 			case 0:
-				throw new LogicException('Trying to close a closed transaction');
+				throw new \LogicException('Trying to close a closed transaction');
 				break;
 					
 			default:
@@ -458,7 +459,7 @@ class MySqlClient{
 			$this->NativeDB->rollBack();
 			self::$inTransaction = 0;
 		}else{
-			throw new LogicException('Trying to roleback a closed transaction');
+			throw new \LogicException('Trying to roleback a closed transaction');
 		}
 		return $this;
 	}
@@ -472,9 +473,9 @@ class MySqlClient{
 	}
 	
 	
-    protected function close(){
-$this->lastStatement = null;
-		$this->NativeDB = null;
+    public function close(){
+	$this->lastStatement = null;
+	$this->NativeDB = null;
 	Factory::unregister($this->connection_name);
     }
 

@@ -14,3 +14,11 @@ spl_autoload_register('autoload_tests');
 ini_set('include_path', '.' .
     PATH_SEPARATOR . '../../'
 );
+
+Talis\Logger\MainZim::factory(
+                'PHPUNIT_TALISMS_',
+                'File',
+                4,
+                '/var/log/lms2/'
+);
+
