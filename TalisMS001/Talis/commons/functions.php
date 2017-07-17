@@ -23,19 +23,13 @@ function autoload($class) {
 //DB shortcuts - since we used it the same all over.
 
 /**
- * READ
- * @return Data_MySQL_DB - READ
+ * Get a db connection shortcut with config
+ * 
+ * @return \Talis\Services\Sql\MySqlClient
  */
-function rddb(){
-	return Data_MySQL_DB::getInstance(Data_MySQL_DB::READ);
-}
-
-/**
- * WRITE
- * @return Data_MySQL_DB - WRITE
- */
-function rwdb(){
-	return Data_MySQL_DB::getInstance(Data_MySQL_DB::WRITE);
+function mysql_db(string $db_name='mysql'):\Talis\Services\Sql\MySqlClient{
+	$config = \app_env()['database'][$db_name]??current(reset(\app_env()['database']));
+	return \Talis\Services\Sql\Factory::getConnectionMySQL($db_name,$config);
 }
 
 /**
@@ -43,35 +37,6 @@ function rwdb(){
  */
 function isProduction() {
 	return strpos(lifecycle(), 'prod') !== false;
-}
-
-/**
- * Single point to start async processes from Apache/Cron
- *
- * @param string $request for example report/build will start async/report/build
- * @param array $params
- */
-function run_async_proc($request,array $params = []){
-    $param_string = '';
-    $sep = '';
-    foreach($params as $k=>$v){
-        $param_string .= $sep . base64_encode($k) . '/' . base64_encode($v);
-        $sep = '/';
-    }
-
-    $cl = "php -f " . ASYNC_PATH . "/Talis.php {$request} \"{$param_string}\" > /dev/null 2>/dev/null &";
-    dbgr('ASYNC',$cl);
-    system($cl);
-}
-
-/**
- * Cleanup for the above - TODO, r we using it?
- *
- * @param string $str
- * @return mixed
- */
-function clean_for_cl($str){
-    return str_replace(['-',';','=','`','|','&','*','(',')','^','$','#','@','!','?'],'',$str);
 }
 
 /**

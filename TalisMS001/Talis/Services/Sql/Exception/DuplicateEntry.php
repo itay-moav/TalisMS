@@ -1,2 +1,2 @@
-<?php
-class Data_MySQL_Exception_DuplicateEntry extends Exception{}
+<?php namespace Talis\Services\Sql\Exception;
+class DuplicateEntry extends \Exception{}

@@ -1,4 +1,4 @@
-<?php
+<?php namespace Talis\Services\Session;
 /**
  * @author Itay Moav <itay.malimovka@gmail.com>
  * @Reviewer
@@ -26,7 +26,7 @@
  * 
  * [Iterator]	:		this class can be iterated over (iterates on the current namespace)
  */
-class Data_Session implements Iterator{
+class Client implements \Iterator{
 	static private $startFlag=false;
 	static private $appNamespace='__LMS2';
 	

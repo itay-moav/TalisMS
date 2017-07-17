@@ -1,4 +1,4 @@
-<?php
+<?php namespace Talis\Services\Sql;
 /**
  * @author Itay Moav <2008>
  * @license MIT - Opensource (File taken from PHPancake project)
@@ -26,11 +26,11 @@
  * setCountSql			:		Sets the counting mechanizem to a user supplied SQL, to be used if none simple SQL
  * 								are used, or in some cases of optimization
  */
-class Data_MySQL_Pager extends Data_APager{
+class Pager extends \Talis\Services\aPager{
 	/**
 	 * Shuster
 	 *
-	 * @var Data_MySQL_DB
+	 * @var MySqlClient
 	 */
 	protected $DB;				//DB class.
 	protected $storageNameSpace='PaginatorNS';
@@ -38,8 +38,8 @@ class Data_MySQL_Pager extends Data_APager{
 
 	/**
 	 */
-	public function __construct($sql,array $params,$page_size=BL_Aeon::PAGE_SIZE,$db_type=Data_MySQL_DB::READ){
-		$this->DB=Data_MySQL_DB::getInstance($db_type);
+	public function __construct($sql,array $params,$page_size=BL_Aeon::PAGE_SIZE,$db_name=''){
+		$this->DB = Factory::getConnectionMySQL($db_name);
 		$this->setSession($this->storageNameSpace);
 		$this->setQuery($sql,$params)
 			 ->createKey();
@@ -50,10 +50,8 @@ class Data_MySQL_Pager extends Data_APager{
 	/**
 	 * Main method of this class. It will check if a count exists, if not it will creat one, calculate the rullers
 	 * update the query with the LIMIT clause, run the query and return a result set.
-	 *
-	 * @return lib_dbutils_RecordsetIterator
 	 */
-	public function getPage($fetch_type = PDO::FETCH_ASSOC) {
+	public function getPage($fetch_type = \PDO::FETCH_ASSOC) {
 		//check and/or generate count
 		$sql=$this->generateCountSql($this->query);
 		
@@ -76,7 +74,7 @@ class Data_MySQL_Pager extends Data_APager{
 	 * Generates the Page count. Regenerates when we hit last page or first page.
 	 * @return string SQL with or without a count
 	 */
-	protected function generateCountSql($sql) {
+	protected function generateCountSql($sql):string {
 		if(!$this->count
 		    ||
 		   $this->current_page==0 //a count might have been generated, but we are in the limits of the query
@@ -94,7 +92,7 @@ class Data_MySQL_Pager extends Data_APager{
 	 *
 	 * @return array (start,end)
 	 */
-	protected function getLimitTips() {
+	protected function getLimitTips():array {
 		$start=$this->current_page*$this->pageSize;
 		if($start>$this->count)	{
 			$start=0;
@@ -107,7 +105,7 @@ class Data_MySQL_Pager extends Data_APager{
 	 *
 	 * @return string SQL
 	 */
-	protected function getLimit() {
+	protected function getLimit():string {
 		$tips=$this->getLimitTips();
 		return " LIMIT {$tips['start']},{$tips['end']} ";
 	}//EOF getLimit

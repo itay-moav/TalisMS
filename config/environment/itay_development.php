@@ -23,15 +23,7 @@ function app_env(){
 			],
 			
 			'database'=>[
-				'unify_read_write' => true,
-                'master'=>array(
-			        'host'=> '127.0.0.1',
-			        'database'=>'lms3course',
-			        'username'=>'root',
-			        'password'=>'123456!!',
-			        'verbosity'=>2
-			    ),
-			    'slave'=>array(
+				'mysql'=>array(
 			        'host'=> '127.0.0.1',
 			        'database'=>'lms3course',
 			        'username'=>'root',
