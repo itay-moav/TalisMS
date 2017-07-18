@@ -2,22 +2,23 @@
 use function \Talis\Logger\dbgr;
 
 /**
- * Class for Looping and processing iteratable datasources (arrays,CSV files, SQL quries, SOLR datasets etc).
- * 
- * $aAeonLooper = new aAeonLooper(new aReader(what ever params it needs));
- * $aAeonLooper->run();
- * 
- * Enter processing logic under process() and/or processHeader()
+ * Abstract class to contain dataset validators, filters and hooks
+ * to be used by loopers of various types.
  * 
  * @author itay revised by holly
  * @date new versioned Jul 17 2017
  */
 abstract class aAeonLooper{
-    /**
-     * @var \Iterator
-     */
-    protected   $iterator                       = NULL,
-                $row                            = [],
+	const 		ROW_TYPE__STDCLAS	= 'stdclass',
+				ROW_TYPE__ASSOC		= 'assoc',
+				ROW_TYPE__ARRAY		= 'array'
+	;
+	
+    protected   $user_params					= [], //usually the filter params are transfered that way
+    			$original_user_params 			= [], //a copy of the initial value of the user_params before modifications
+
+    			$row                            = [],
+    			$row_type						= self::ROW_TYPE__ARRAY,
                 
                 /**
                  * Filters/validators for records (exclude headers)
@@ -27,37 +28,70 @@ abstract class aAeonLooper{
                 $record_level_validators        = [],
                 $field_level_validators         = [],
                 
-                /**
-                 * Filters/validators for headers only
-                 */
-                $record_header_level_filters    = [],
-                $field_header_level_filters     = [],
-                $record_header_level_validators = [],
-                $field_header_level_validators  = [],
-                
-                /**
-                 * Number of header rows
-                 */
-                $num_headers                    = 1,
-                
                 $last_error_message             = ''
     ;
-    
 
     /**
-     * Construct class 
-     * @param \Iterator $iterator
+     * This three methods are being set in the base constructor.
+     * Use those for setting/reading/deleting row fields
+     * Add more methods if necessary
+     * 
+     * @var callable $setRowField
+     * @var callable $getRowField
+     * @var callable $butcher
      */
-    public function __construct(\Iterator $iterator){
-        $this->iterator = $iterator;
-        $this->preInit()
-             ->load_filters()
-             ->load_validators()
-             ->load_header_filters()
-             ->load_header_validators()
-             ->init()
-        ;
-    }
+    protected $setRowField		= null,
+    		  $getRowField		= null,
+    		  $butcher			= null
+	;
+    
+	protected function __construct(array $user_params=[]){
+		$this->user_params = $this->original_user_params = $user_params;
+		$this->setGetterSetters();
+	}
+	
+	/**
+	 * Sets how to access the current $row
+	 * 
+	 * @throws \LogicException
+	 */
+	protected function setGetterSetters(){
+		switch($this->row_type){
+			case self::ROW_TYPE__ARRAY:
+			case self::ROW_TYPE__ASSOC:
+				$this->setRowField = function($index,$value){
+					$this->row[$index] = $value;
+					return $this->row[$index];
+				};
+				
+				$this->getRowField = function($index){
+					return $this->row[$index];
+				};
+				
+				$this->butcher    = function($index){
+					unset($this->row[$index]);
+				};
+				break;
+				
+			case self::ROW_TYPE__STDCLAS:
+				$this->setRowField = function($index,$value){
+					$this->row->$index = $value;
+					return $this->row->$index;
+				};
+				
+				$this->getRowField = function($index){
+					return $this->row->$index;
+				};
+				
+				$this->butcher    = function($index){
+					unset($this->row->$index);
+				};
+				break;
+				
+			default:
+				throw new \LogicException('You must set a row type in a looper');
+		}
+	}
     
     /**
      * Pre-init
@@ -68,10 +102,10 @@ abstract class aAeonLooper{
     }
     
     /**
-     * Init
+     * postInit
      * @return aAeonLooper
      */
-    protected function init(){
+    protected function postInit():aAeonLooper{
         return $this;
     }
                  
@@ -83,65 +117,9 @@ abstract class aAeonLooper{
     }
     
     /**
-     * Entry point for iteration
-     * @return aAeonLooper
-     */
-    public function run(){
-        $this->runHeaders();
-        while($this->iterator->valid()) {
-            $this->row = $this->iterator->current();
-            //skip if certain rules apply
-            if(!$this->skip()){
-            
-                if($this->validate()){ //this one calls the apply_filters to save a loop
-                    $this->process();
-                }else{
-                    $this->handle_errors();
-                }
-                
-            }
-            $this->iterator->next();
-        }
-        
-        //  Post Processing
-        $this->postProcess();
-        $this->closeResources();
-        return $this;//for chaining and PONNIES!
-    }
-   /**
-     * Run process for headers
-     */
-    protected function runHeaders() {
-        $this->iterator->rewind();
-        for ($i = 0; $i < $this->num_headers; $i++) {
-            $this->row = $this->iterator->current();
-            
-            if($this->validate_header()){ //this one calls the apply_filter_header to save a loop
-                $this->processHeader();
-            }else{
-                $this->handle_errors();
-            }
-            $this->iterator->next();
-        }
-    }
-    /**
-     * 
-     */
-    protected function skip(){
-        return FALSE;
-        
-    }
-    /**
      * Logic for post process
      */
-    protected function postProcess() { 
-        return $this;
-    }
-    
-    /**
-     * Close any resources
-     */
-    protected function closeResources() { 
+    protected function postProcess():aAeonLooper{ 
         return $this;
     }
     
@@ -242,105 +220,38 @@ abstract class aAeonLooper{
     }
 
     /**
-     * house of actual logic 
+     * This method is called for each record in the fetched dataset
+     * house of actual logic
+     * I make a concrete one as some loopers mark a record to be processed
+     * just to apply the filters and validators. 
      */
-    abstract protected function process();
-    
-    /**
-     * house of actual logic for headers
-     */
-    protected function processHeader() {  }
-    
-    /**
-     * Instantiate the filters into the record or fields (header level)
-     * Demo in comments. Do not delete!
-     * 
-     * @return aAeonLooper
-     */
-    protected function load_header_filters():aAeonLooper{
-        /* DO NOT DELETE THIS COMMENT
-        
-        $this->record_header_level_filters = [new Form_Filter_Trim];
-        $this->field_header_level_filters = [
-                                                User_Upload_GuestParser::PARSED_PLACE__FIRST_NAME  => [new Form_Filter_Name, new Some_Other_Filter implementing the Form_Filter_i interface],
-                                                User_Upload_GuestParser::PARSED_PLACE__MIDDLE_NAME => [new Form_Filter_Name],
-                                                User_Upload_GuestParser::PARSED_PLACE__LAST_NAME   => [new Form_Filter_Name]
-                                            ];
-        */
-        
-        return $this;
+    protected function process():void{
+    	
     }
     
     /**
-     * Instantiate the filters into the record or fields (header level)
-     * Demo in comments. Do not delete!
-     * 
      * @return aAeonLooper
      */
-    protected function load_header_validators():aAeonLooper{
-        /* DO NOT DELETE THIS COMMENT
-
-        $this->record_header_level_validators = [new Form_Validator_stringLength(false,['min'=>0,'max'=>255])];
-        $this->field_header_level_validators = [
-                                                    User_Upload_GuestParser::PARSED_PLACE__EMAIL       => [new Form_Validator_notEmpty,new Form_Validator_emailAddress],
-                                                    User_Upload_GuestParser::PARSED_PLACE__FIRST_NAME  => [new Form_Validator_notEmpty],
-                                                    User_Upload_GuestParser::PARSED_PLACE__LAST_NAME   => [new Form_Validator_notEmpty]
-                                               ];
-        */
-        
-        return $this;
+    protected function getParam($param_key, $default = null):aAeonLooper{
+    	if(isset($this->user_params[$param_key])){
+    		return $this->user_params[$param_key];
+    	}
+    	return $default;
     }
     
     /**
-     * Validate the header
-     * @return boolean
+     * @return aAeonLooper
      */
-    final protected function validate_header():bool {
-        //first make sure we even have a record
-        if(!isset($this->row[0])) return false;
-        
-        foreach($this->row as $place => $field) {
-            $this->apply_filter_header($place);
-            
-            // record level validation
-            foreach($this->record_header_level_validators as $RecLvlValidator){
-                if(!$RecLvlValidator->validate($field)){
-                    return false;
-                }
-            }
-            
-            // field level validation
-            if(isset($this->field_header_level_validators[$place])){
-                foreach($this->field_header_level_validators[$place] as $FLvlValidator){
-                    if(!$FLvlValidator->validate($field)){
-                        return false;
-                    }
-                }
-            }
-        }
-        
-        return true;
+    protected function setParam($param_key,$param_value):aAeonLooper{
+    	$this->user_params[$param_key] = $param_value;
+    	return $this;
     }
     
     /**
-     * Apply filters to header
-     * @param int $current_index
      * @return aAeonLooper
      */
-    final protected function apply_filter_header($current_index):aAeonLooper{
-        // record level filter
-        if($this->record_header_level_filters){
-            foreach($this->record_header_level_filters as $RecLvlFilter){
-                $this->row[$current_index] = $RecLvlFilter->filter($this->row[$current_index]);
-            }
-        }
-        
-        // field level filter
-        if(isset($this->field_header_level_filters[$current_index])){
-            foreach($this->field_header_level_filters[$current_index] as $FLvlFilter){
-                $this->row[$current_index]=$FLvlFilter->filter($this->row[$current_index]);
-            }
-        }
-        return $this;
+    protected function unsetParam($param_key):aAeonLooper{
+    	unset($this->user_params[$param_key]);
+    	return $this;
     }
 }
