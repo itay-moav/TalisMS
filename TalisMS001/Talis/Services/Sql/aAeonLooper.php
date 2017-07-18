@@ -172,9 +172,9 @@ abstract class aAeonLooper extends \Talis\Services\aAeonLooper{
 	protected $Resultset;
 	
 	/**
-	 * @var aWhereFilter $SqlWhereFilter to generate the result set upon
+	 * @var aQueryFilter $QueryFilter to generate the result set upon
 	 */
-	protected $SqlWhereFilter;
+	protected $QueryFilter;
 	
 	/**
 	 * Mode of processing
@@ -250,7 +250,7 @@ abstract class aAeonLooper extends \Talis\Services\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	public function generateFilter():aAeonLooper{
-		$this->SqlWhereFilter = aWhereFilter::factory($this, $this->user_params);
+		$this->QueryFilter = aQueryFilter::factory($this, $this->user_params);
 		return $this;
 	}
 	
@@ -260,7 +260,7 @@ abstract class aAeonLooper extends \Talis\Services\aAeonLooper{
 	 */
 	protected function set(\Talis\Message\aMessage $Resultset=null):aAeonLooper{
 		$this->Resultset = $Resultset?:new \Talis\Message\PagedMessage;
-		if($this->SqlWhereFilter) $this->Resultset->setFilter($this->SqlWhereFilter);
+		if($this->QueryFilter) $this->Resultset->setFilter($this->QueryFilter);
 		return $this;
 	}
 	
@@ -294,10 +294,10 @@ abstract class aAeonLooper extends \Talis\Services\aAeonLooper{
 	
 	/**
 	 * Holds the specific structure of the filter for each report object
-	 * @return aWhereFilter
+	 * @return aQueryFilter
 	 */
-	public function getFilter():aWhereFilter{
-		return $this->SqlWhereFilter;
+	public function getFilter():aQueryFilter{
+		return $this->QueryFilter;
 	}
 	
 	/**
@@ -347,7 +347,7 @@ abstract class aAeonLooper extends \Talis\Services\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function pagedGenerateResultset(string $sql):aAeonLooper{
-		$this->SqlWhereFilter->getWhereJoin($this->query_param_array);//TODO why is this here?! IT IS HERE PROBABLY TO GENERATE THE Pager params only, should be fixed
+		$this->QueryFilter->getWhereJoin($this->query_param_array);//TODO why is this here?! IT IS HERE PROBABLY TO GENERATE THE Pager params only, should be fixed
 		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->db_type);
 		$Pager->setCurrentPage($this->page);
 		$this->Resultset->setPager($Pager);
@@ -418,8 +418,8 @@ abstract class aAeonLooper extends \Talis\Services\aAeonLooper{
 	 */
 	protected function getWhereJoin(string $starlog_table='', $extra_params = null):array{
 		$this->query_param_array=[];//we might get usage of those params more then once in a report, so I need to clean those as not all are used on the same part
-		$where_join = $this->SqlWhereFilter ? $this->SqlWhereFilter->getWhereJoin($this->query_param_array,$starlog_table, $extra_params) : ['WHERE'=>'','JOIN'=>'','GROUPBY'=>''];
-		Filter_aField::resetAllreadyJoinedTables();
+		$where_join = $this->QueryFilter ? $this->QueryFilter->getWhereJoin($this->query_param_array,$starlog_table, $extra_params) : ['WHERE'=>'','JOIN'=>'','GROUPBY'=>''];
+		QueryFilter_aField::resetAllreadyJoinedTables();
 		return $where_join;
 	}
 	
