@@ -3,7 +3,7 @@ use PHPUnit\Framework\TestCase;
 // use PHPUnit\DbUnit;
 // use PHPUnit\DbUnit\TestCaseTrait;
 
-class Services_Sql_Factory extends TestCase {
+class Services_Sql_FactoryTest extends TestCase {
 	/**
 	 * 
 	 */

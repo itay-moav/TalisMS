@@ -230,9 +230,9 @@ abstract class aAeonLooper{
     }
     
     /**
-     * @return aAeonLooper
+     * @return mixed
      */
-    protected function getParam($param_key, $default = null):aAeonLooper{
+    protected function getParam($param_key, $default = null){
     	if(isset($this->user_params[$param_key])){
     		return $this->user_params[$param_key];
     	}
