@@ -36,13 +36,13 @@ abstract class aAeonLooper{
      * Use those for setting/reading/deleting row fields
      * Add more methods if necessary
      * 
-     * @var callable $setRowField
-     * @var callable $getRowField
-     * @var callable $butcher
+     * @var callable $_setRowField
+     * @var callable $_getRowField
+     * @var callable $_butcher
      */
-    protected $setRowField		= null,
-    		  $getRowField		= null,
-    		  $butcher			= null
+    protected $_setRowField		= null,
+    		  $_getRowField		= null,
+    		  $_butcher			= null
 	;
     
 	protected function __construct(array $user_params=[]){
@@ -59,31 +59,31 @@ abstract class aAeonLooper{
 		switch($this->row_type){
 			case self::ROW_TYPE__ARRAY:
 			case self::ROW_TYPE__ASSOC:
-				$this->setRowField = function($index,$value){
+				$this->_setRowField = function($index,$value){
 					$this->row[$index] = $value;
 					return $this->row[$index];
 				};
 				
-				$this->getRowField = function($index){
+				$this->_getRowField = function($index){
 					return $this->row[$index];
 				};
 				
-				$this->butcher    = function($index){
+				$this->_butcher    = function($index){
 					unset($this->row[$index]);
 				};
 				break;
 				
 			case self::ROW_TYPE__STDCLAS:
-				$this->setRowField = function($index,$value){
+				$this->_setRowField = function($index,$value){
 					$this->row->$index = $value;
 					return $this->row->$index;
 				};
 				
-				$this->getRowField = function($index){
+				$this->_getRowField = function($index){
 					return $this->row->$index;
 				};
 				
-				$this->butcher    = function($index){
+				$this->_butcher    = function($index){
 					unset($this->row->$index);
 				};
 				break;
@@ -93,7 +93,19 @@ abstract class aAeonLooper{
 		}
 	}
     
-    /**
+	protected function setRowField($index,$value){
+		return ($this->_setRowField)($index,$value);
+	}
+	
+	protected function getRowField($index){
+		return ($this->_getRowField)($index);
+	}
+	
+	protected function butcher($index){
+		return ($this->_butcher)($index);
+	}
+		
+	/**
      * Pre-init
      * @return aAeonLooper
      */

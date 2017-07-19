@@ -8,6 +8,10 @@ class BaseLooper extends \Talis\Services\aAeonLooper{
 		parent::__construct($user_params);
 	}
 	
+	public function tgetAllRow(){
+		return $this->row;
+	}
+	
 	public function tsetRowField($index,$value){
 		return $this->setRowField($index,$value);
 	}
@@ -107,9 +111,24 @@ class Services_aAeonLooperTest extends TestCase {
 		$L->tunsetParam('new_param');
 		$new_param2 = $L->tgetParam('new_param');
 		$this->assertNull($new_param2);
+	}
+	
+	public function testGetSetRowValuesArray(){
+		$L = $this->getClass(['a'=>'A','b'=>'B'],\Talis\Services\aAeonLooper::ROW_TYPE__ARRAY);
 		
+		//initial get
+		$a = $L->tgetRowField('a');
+		$this->assertEquals('A', $a);
 		
-
+		//set a param and then get it
+		$L->tsetRowField('c','C');
+		$new_field = $L->tgetRowField('c');
+		$this->assertEquals('C',$new_field);
+		
+		//unset the param, request it, and get NULL (no default supplied).
+		$this->assertEquals(['a'=>'A','b'=>'B','c'=>'C'],$L->tgetAllRow());
+		$L->tbuthcer('c');
+		$this->assertEquals(['a'=>'A','b'=>'B'],$L->tgetAllRow());
 		
 	}
 }
