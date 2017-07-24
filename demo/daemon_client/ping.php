@@ -1,16 +1,16 @@
 the request looks (so u can copy paste and run manually in the ActiveMQ web console)
 Anyway, to test this, u need to watch logs.
 
-{"url":"/1/test/ping/read",
+{"url":"/test/ping/read",
  "params":{}
 }
 
-{"url":"/1/test/ping/read/param/1",
+{"url":"/test/ping/read/param/1",
  "params":{}
 }
 
 
-{"url":"/1/test/ping/read/more/params/where/added",
+{"url":"/test/ping/read/more/params/where/added",
  "params":{}
 }
 
@@ -24,9 +24,9 @@ Anyway, to test this, u need to watch logs.
 require_once 'bootstrap.php';
 $p = talis::get_client();
 
-$dependency1 = "{\"url\":\"/1/test/ping/read\",\"params\":{}}";
-$dependency2ing2 = "{\"url\":\"/1/test/ping/read/param/1\",\"params\":{}}";
-$ping3 = "{\"url\":\"/1/test/ping/read/more/params/where/added\",\"params\":{}}";
+$dependency1 = "{\"url\":\"/test/ping/read\",\"params\":{}}";
+$dependency2ing2 = "{\"url\":\"/test/ping/read/param/1\",\"params\":{}}";
+$ping3 = "{\"url\":\"/test/ping/read/more/params/where/added\",\"params\":{}}";
 
 $p->publish($dependency1);
 $p->publish($dependency2ing2);

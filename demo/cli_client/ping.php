@@ -9,41 +9,41 @@
 
 
 ============================================================================== empty ping  ================================================================================
-<?=`../../doors/cli/lord_commander /1/test/ping/read {}`?>
+<?=`../../doors/cli/lord_commander /test/ping/read {}`?>
 
 
 ======================================================================= empty ping base64 encoded body ====================================================================
 
 <?
 $r = base64_encode('{}');
-$cmd = "../../doors/cli/lord_commander /1/test/ping/read {$r} yes";
+$cmd = "../../doors/cli/lord_commander /test/ping/read {$r} yes";
 echo `$cmd`;
 echo "\n";
 ?>
 
 ==============================================================================  ping  /v/1/f/2  ================================================================================
-<?=`../../doors/cli/lord_commander /1/test/ping/read/v/1/f/2 {}`?>
+<?=`../../doors/cli/lord_commander /test/ping/read/v/1/f/2 {}`?>
 
 
 ======================================================================= ping base64 encoded body  /v/1/f/2  ====================================================================
 
 <?
 $r = base64_encode('{}');
-$cmd = "../../doors/cli/lord_commander /1/test/ping/read/v/1/f/2 {$r} yes";
+$cmd = "../../doors/cli/lord_commander /test/ping/read/v/1/f/2 {$r} yes";
 echo `$cmd`;
 echo "\n";
 ?>
 
 
 ==============================================================================  ping  body{t:1,f:2}  ================================================================================
-<?=`../../doors/cli/lord_commander /1/test/ping/read {"t":1,"f":2}`?>
+<?=`../../doors/cli/lord_commander /test/ping/read {"t":1,"f":2}`?>
 
 
 ======================================================================= ping base64 encoded body  body{t:1,f:2}  ====================================================================
 
 <?
 $r = base64_encode('{"t":1,"f":2}');
-$cmd = "../../doors/cli/lord_commander /1/test/ping/read {$r} yes";
+$cmd = "../../doors/cli/lord_commander /test/ping/read {$r} yes";
 echo `$cmd`;
 echo "\n";
 ?>
@@ -51,4 +51,4 @@ echo "\n";
 
 
 ==============================================================================  ping error  ================================================================================
-<?=`../../doors/cli/lord_commander /1/testus/pingus/read {"t":1,"f":2}`?>
+<?=`../../doors/cli/lord_commander /testus/pingus/read {"t":1,"f":2}`?>

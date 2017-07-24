@@ -83,16 +83,16 @@ class Corwin{
 	
 	/**
 	 * Understands from the URL what BL object to call
-	 * ASSUMES CONVENTION OF 4 LEVELS URL [version][action][subaction][type]
+	 * ASSUMES CONVENTION OF 3 LEVELS URL [action][subaction][type]
 	 * @param array $server
 	 */
 	private function generate_route(array $request_parts):void{
-		if(count($request_parts) < 4){
+		if(count($request_parts) < 3){
 			throw new \Talis\Exception\BadUri($uri);
 		}
-		$this->route['route'] = APP_PATH . "/api/version{$request_parts[1]}/{$request_parts[2]}/{$request_parts[3]}/{$request_parts[4]}.php";
+		$this->route['route'] = APP_PATH . "/api/{$request_parts[1]}/{$request_parts[2]}/{$request_parts[3]}.php";
 		L\dbgn("Doing route [{$this->route['route']}]");
-		$r = $request_parts[2].$request_parts[3].$request_parts[4];
+		$r = $request_parts[1].$request_parts[2].$request_parts[3];
 		$this->route['classname'] = '\Api\\' . $r;
 	}
 	
@@ -103,7 +103,7 @@ class Corwin{
 	private function generate_query(array $request_parts):void{
 		L\dbgr('request_parts',$request_parts);
 		$c = count($request_parts);
-		for($i=5; $i<$c;$i+=2){
+		for($i=4; $i<$c;$i+=2){
 			$this->route['extra_params'][$request_parts[$i]] = $request_parts[$i+1];
 		}
 		L\dbgr('GET PARAMS',$this->route['extra_params']);
