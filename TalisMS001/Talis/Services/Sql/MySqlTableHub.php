@@ -275,7 +275,7 @@ abstract class MySqlTableHub{
 	protected function insertMultipleDataRaw(array $data,$on_duplicate_update=false){
 		$data = $this->cleanData($data);
 		$this->preInsertEvent($data);
-		$fields=array_keys(Data_MySQL_Shortcuts::cleanControlFields($data[0]));//get the field names for the insert
+		$fields=array_keys(Shortcuts::cleanControlFields($data[0]));//get the field names for the insert
 		$fields_str=join('`,`',$fields);
 		$modified_by = User_Current::pupetMasterId();
 		$sql="INSERT INTO {$this->database_name}.{$this->table_name} (`{$fields_str}`,date_created,created_by,modified_by)\nVALUES\n";
@@ -283,7 +283,7 @@ abstract class MySqlTableHub{
 		
 		foreach($data as $k=>$cell){
 			
-			$data[$k] = $this->cleanData(Data_MySQL_Shortcuts::cleanControlFields($cell));
+			$data[$k] = $this->cleanData(Shortcuts::cleanControlFields($cell));
 			$sql .= '(:' . join("{$k},:",$fields) . "{$k},NOW(),{$modified_by},{$modified_by}),\n";
 			foreach($fields as $field){
 				$current_param_index = ':'.$field.$k;
@@ -353,9 +353,9 @@ abstract class MySqlTableHub{
 		$params=[];
 		$this->records_ids?$where['id']=$this->records_ids:'';
 		$values = $this->cleanData($values);
-		$set=Data_MySQL_Shortcuts::generateSetData($values,$params,$clean_values);
+		$set=Shortcuts::generateSetData($values,$params,$clean_values);
 		//Clean the where array and add to the $params array and rebuild the $where array
-		$where_sql = Data_MySQL_Shortcuts::generateWhereData($where,$params,$clean_where);
+		$where_sql = Shortcuts::generateWhereData($where,$params,$clean_where);
 		//sql
 		if($this->getDelta()){
 			$this->createHistoryRecord($where,self::DELTA_TYPE__EDIT);
@@ -394,7 +394,7 @@ abstract class MySqlTableHub{
 	 */
 	public function deleteData(array $where,$clean_where=true){
 		$params=[];
-		$sql_where=Data_MySQL_Shortcuts::generateWhereData($where,$params,$clean_where);
+		$sql_where=Shortcuts::generateWhereData($where,$params,$clean_where);
 		if($sql_where) $sql="DELETE FROM {$this->database_name}.{$this->table_name} WHERE {$sql_where}";
 		else throw new \Exception('NO TRUNCATE IS ALLOWED - use where'); //$sql="TRUNCATE `{$this->tableName}`";
 		
@@ -585,7 +585,7 @@ abstract class MySqlTableHub{
 	{
 		$fields=join(',',$fields);
 		$params=[];
-		$where= Data_MySQL_Shortcuts::generateWhereData($where,$params,$clean_where);
+		$where= Shortcuts::generateWhereData($where,$params,$clean_where);
 		$params=array_merge($params,$concat_params);
 		$where = $where ? ' WHERE ' . $where : '';
 		$sql="SELECT {$fields} FROM {$this->database_name}.{$this->table_name} {$join_stmt} {$where} {$concat_sql}";
@@ -602,7 +602,7 @@ abstract class MySqlTableHub{
 	protected function selectCount(array $whereData,$field='*',$distinct=false):int {
 		$distinct=$distinct?' DISTINCT ':'';
 		$params=array();
-		$where = Data_MySQL_Shortcuts::generateWhereData($whereData,$params,true);
+		$where = Shortcuts::generateWhereData($whereData,$params,true);
 		if($where)$where=' WHERE '.$where;
 		else $where='';
 		$sql = "
@@ -685,7 +685,7 @@ abstract class MySqlTableHub{
 			
 			foreach($data as $k	=> $cell){
 				
-				$data[$k]	= $this->cleanData(Data_MySQL_Shortcuts::cleanControlFields($cell));
+				$data[$k]	= $this->cleanData(Shortcuts::cleanControlFields($cell));
 				$sql		.= '(:' . join("{$k},:",$fields) . "{$k}),\n";
 				foreach($fields as $field){
 					$current_param_index = ':'.$field.$k;
