@@ -1,5 +1,5 @@
 <?php namespace Talis\Services\Sql;
-//use function Talis\Logger\dbgn;
+use function Talis\Logger\dbgr;
 //use function Talis\Logger\fatal;
 
 /**
@@ -8,7 +8,9 @@
  * @author Itay Moav
  */
 class Factory {
-	const CONNECTION_NAME__READ = 'read', CONNECTION_NAME__WRITE = 'write';
+	const CONNECTION_NAME__READ = 'mysql_read', 
+		  CONNECTION_NAME__WRITE = 'mysql_write'
+	;
 	
 	/**
 	 *
@@ -30,6 +32,14 @@ class Factory {
 		return self::$registered_connections [$connection_name] = new MySqlClient ( $connection_name, $config );
 	}
 	
+	static public function getDefaultConnectionMySql():MySqlClient{
+		if(!self::$registered_connections){
+			throw new \LogicException ('You must initilize oneconnection to use this method');
+		}
+		dbgr('connections',self::$registered_connections);
+		return reset(self::$registered_connections);
+	}
+	
 	/**
 	 *
 	 * @param string $connection_name        	
@@ -43,7 +53,7 @@ class Factory {
 	 * @return Talis\Services\Sql\MySqlClient
 	 */
 	static public function getReadConn() {
-		return self::getConnectionMySQL ( self::CONNECTION_NAME__READ, app_env () ['database'] ['slave'] );
+		return self::getConnectionMySQL ( self::CONNECTION_NAME__READ, app_env () ['database'] ['mysql_slave'] );
 	}
 	
 	/**
@@ -51,7 +61,7 @@ class Factory {
 	 * @return Talis\Services\Sql\MySqlClient
 	 */
 	static public function getWriteConn() {
-		return self::getConnectionMySQL ( self::CONNECTION_NAME__WRITE, app_env () ['database'] ['master'] );
+		return self::getConnectionMySQL ( self::CONNECTION_NAME__WRITE, app_env () ['database'] ['mysql_master'] );
 	}
 }
 	

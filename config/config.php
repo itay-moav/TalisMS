@@ -18,7 +18,9 @@ ini_set('display_errors',1);
 
 \ini_set('include_path', '.' .
 	PATH_SEPARATOR . '/usr/share/php/TalisMS001'.
-    PATH_SEPARATOR . APP_PATH   . '/model' . 
-    PATH_SEPARATOR . '/usr/share/php/ZendFW2411'
+	PATH_SEPARATOR . APP_PATH   . '/lib' .
+	PATH_SEPARATOR . APP_PATH   . '/aux' .
+	PATH_SEPARATOR . APP_PATH   . '/model' .
+	PATH_SEPARATOR . '/usr/share/php/ZendFW2411'
 );
 

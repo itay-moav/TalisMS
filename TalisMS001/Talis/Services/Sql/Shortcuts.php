@@ -1,12 +1,9 @@
-<?php
+<?php namespace Talis\Services\Sql;
 /**
- * TODO, make sure in the future the DL uses it too
- * 
  * Purpose: a helper class to generate SQL statments from arrays of data.
  * This can be a factory dependng on the DB type (maybe I should use this too to add ORDER/LIMIT/CALC ROWS thingies
- * old class = SiTEL_DataStorage_Dbutils__SqlShortcuts
  */
-class Data_MySQL_Shortcuts{
+class Shortcuts{
 
 	const EMPTY_IN_VALUE = -12837;
 	static private $param_count = array();
