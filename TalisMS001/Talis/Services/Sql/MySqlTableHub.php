@@ -590,7 +590,7 @@ abstract class MySqlTableHub{
 	 *  @param $concat_sql		String to be appended to the end of the query (Grouping and Limits)
 	 *  @param $concat_params	Array of params that require concatination
 	 */
-	protected function selectFields( array $fields,array $where=array(), $clean_where=true, $concat_sql='',array $concat_params=array(),$join_stmt=''):array
+	protected function selectFields( array $fields,array $where=array(), $clean_where=true, $concat_sql='',array $concat_params=array(),$join_stmt=''):MySqlClient
 	{
 		$fields=join(',',$fields);
 		$params=[];
