@@ -41,7 +41,7 @@ abstract class AbstractStream{
 			$full_stack_data['session'] = isset($_SESSION)?$_SESSION:[];
 			$full_stack_data['request'] = isset($_REQUEST)?$_REQUEST:[];
 			$full_stack_data['server']  = isset($_SERVER)?$_SERVER:[];
-			$full_stack_data['database'] = Data_MySQL_DB::getDebugData();
+			//TODO Implement this in factory $full_stack_data['database'] = Data_MySQL_DB::getDebugData();
 		}
 		$this->log($inp,$severity,$full_stack_data);
 	}
