@@ -43,13 +43,18 @@ abstract class MySqlTableHub{
 	protected $data_clean_rules = [];
 	
 	/**
+	 * @var MySqlClient
+	 */
+	protected $db_client = null;
+	
+	/**
 	 * Caches the last Instance created of this class
 	 *
 	 * @param mixed $id
 	 * @return BL_Hub_Abstract
 	 */
-	static public function getInstance():Talis\Services\Sql\MySqlTableHub{
-		return new static;
+	static public function getInstance($db_name=''):Talis\Services\Sql\MySqlTableHub{
+		return new static($db_name);
 	}
 	
 	/**
@@ -211,6 +216,10 @@ abstract class MySqlTableHub{
 		return self::getInstance()->deleteData($where)->numRows;
 	}
 	
+	public function __construct($db_name=''){
+		$this->db_client = $db_name?Factory::getConnectionMySQL($db_name) :
+		                            Factory::getDefaultConnectionMySql();
+	}
 	/**
 	 * @return MySqlClient
 	 */
