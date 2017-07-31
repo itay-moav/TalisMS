@@ -270,9 +270,9 @@ abstract class MySqlTableHub{
 	 * @param string $table_name
 	 * @param integer $db_type [optional] defaults to WRITE db connection
 	 *
-	 * @return Data_MySQL_DB
+	 * @return int
 	 */
-	public function insertMultipleData(array $data,$on_duplicate_update=false){
+	public function insertMultipleData(array $data,$on_duplicate_update=false):int{
 		$datas = array_chunk($data, 50);
 		$id = 0;
 		foreach ($datas as $d) {
@@ -317,11 +317,8 @@ abstract class MySqlTableHub{
 		$sql=$this->onDuplicateSql($sql,$on_duplicate_update,$fields,$modified_by);
 		$ret = $this->insert($sql,$params);
 		$id = $ret->lastInsertID;
-		if($this->getDelta()){
-			if(count($data)===1){
-				$data[0]['id'] = $id;
-				$this->createHistoryRecord(reset($data),self::DELTA_TYPE__CREATE);
-			}
+		if($this->has_delta){
+			$this->createInsertDeltaRecord(count($data));
 		}
 		$this->postInsertEvent($data, $id);
 		return $id;
@@ -339,6 +336,24 @@ abstract class MySqlTableHub{
 			$sql.="modified_by={$modified_by}";
 		}
 		return $sql;
+	}
+	
+	protected function createInsertDeltaRecord(int $n_of_records_just_created){
+		$type        = self::DELTA_TYPE__CREATE;
+		$explanation = Action_LogMsgs::getActionLogMsg()?:
+		                 "History record created without reason or type for table {$this->databaseName}.{$this->tableName}. U need to setup message for this action.";
+		$user        = User_Current::pupetMasterId();
+		$sql = "
+			INSERT INTO {this.database_name}_delta.{$this->table_name}
+			SELECT *, CURRENT_TIMESTAMP,'{$type}','{$explanation}',{$user}
+			FROM {this.database_name}.{$this->table_name}
+			ORDER BY date_created DESC
+			LIMIT {$n_of_records_just_created}";//TODO make the order by the key, which means I should define it in the hub too.
+		try{
+			$this->insert($sql);
+		} catch(Exception $e){
+			throw(new FailedDeltaRecordCreation("Failed creating INSERT delta records for {$this->databaseName}.{$this->tableName}");
+		}
 	}
 	
 	/**
@@ -765,3 +780,5 @@ class InconsistentDataException extends \Exception{
 class NoDataException extends \Exception{
 	
 }
+
+class FailedDeltaRecordCreation extends \Exception {}
