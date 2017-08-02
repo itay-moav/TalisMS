@@ -1,4 +1,5 @@
 <?php namespace Talis\Services\Session;
+use function Talis\Logger\dbgn;
 /**
  * @author Itay Moav <itay.malimovka@gmail.com>
  * @Reviewer

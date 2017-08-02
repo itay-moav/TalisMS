@@ -36,7 +36,7 @@ class Factory {
 		if(!self::$registered_connections){
 			throw new \LogicException ('You must initilize oneconnection to use this method');
 		}
-		dbgr('connections',self::$registered_connections);
+		//dbgr('connections',self::$registered_connections);
 		return reset(self::$registered_connections);
 	}
 	

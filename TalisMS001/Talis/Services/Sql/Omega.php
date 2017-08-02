@@ -1,4 +1,5 @@
 <?php namespace Talis\Services\Sql;
+use function Talis\Logger\dbgr;
 /**
  * Wrapper for easy access to stored procedures in Omega Supreme.
  * This depends adding the auto completion file to the Eclipse language directory for core php
@@ -29,7 +30,7 @@ class Omega{
     	if($db_name){
     		$this->DB = \Talis\Services\Sql\Factory::getConnectionMySQL($db_name);
     	}
-    	$this->DB = \Talis\Services\Sql\Factory::getDefaultConnectionMySql(); 
+    	$this->DB = \Talis\Services\Sql\Factory::getDefaultConnectionMySql();
     }
     
     /**

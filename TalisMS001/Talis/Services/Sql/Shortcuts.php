@@ -185,7 +185,7 @@ class Shortcuts{
 		}
 
 		//Add modified by and modify date MW 4/12/10 now uses loggedIn
-		$set[]='modified_by=' . User_Current::pupetMasterId();
+		$set[]='modified_by=' . \User_Current::pupetMasterId();
 		$set[]='date_modified=NOW()';
 		$set=join(',',$set);
 		return $set;	

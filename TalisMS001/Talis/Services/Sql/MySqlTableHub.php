@@ -51,9 +51,9 @@ abstract class MySqlTableHub{
 	 * Caches the last Instance created of this class
 	 *
 	 * @param mixed $id
-	 * @return BL_Hub_Abstract
+	 * @return MySqlTableHub
 	 */
-	static public function getInstance($db_name=''):Talis\Services\Sql\MySqlTableHub{
+	static public function getInstance($db_name=''){
 		return new static($db_name);
 	}
 	
@@ -194,7 +194,7 @@ abstract class MySqlTableHub{
 	 * @param array $records
 	 * @return integer last inserted array
 	 */
-	static public function updateRecord($id,array $data,array $where=array()){
+	static public function updateRecord(array $data,array $where){
 		return self::getInstance()->iUpdateRecord($data,$where)->numRows;
 	}
 	
@@ -286,7 +286,7 @@ abstract class MySqlTableHub{
 		$this->preInsertEvent($data);
 		$fields=array_keys(Shortcuts::cleanControlFields($data[0]));//get the field names for the insert
 		$fields_str=join('`,`',$fields);
-		$modified_by = User_Current::pupetMasterId();
+		$modified_by = \User_Current::pupetMasterId();
 		$sql="INSERT INTO {$this->database_name}.{$this->table_name} (`{$fields_str}`,date_created,created_by,modified_by)\nVALUES\n";
 		$params=array();
 		
@@ -342,7 +342,7 @@ abstract class MySqlTableHub{
 		$type        = self::DELTA_TYPE__CREATE;
 		$explanation = Action_LogMsgs::getActionLogMsg()?:
 		                 "History record created without reason or type for table {$this->databaseName}.{$this->tableName}. U need to setup message for this action.";
-		$user        = User_Current::pupetMasterId();
+		$user        = \User_Current::pupetMasterId();
 		$sql = "
 			INSERT INTO {this.database_name}_delta.{$this->table_name}
 			SELECT *, CURRENT_TIMESTAMP,'{$type}','{$explanation}',{$user}
@@ -352,7 +352,27 @@ abstract class MySqlTableHub{
 		try{
 			$this->insert($sql);
 		} catch(Exception $e){
-			throw(new FailedDeltaRecordCreation("Failed creating INSERT delta records for {$this->databaseName}.{$this->tableName}");
+			throw new FailedDeltaRecordCreation("Failed creating INSERT delta records for {$this->databaseName}.{$this->tableName}");
+		}
+	}
+	
+	protected function createUpdateDeltaRecord(array $where){
+		$type        = self::DELTA_TYPE__EDIT;
+		$explanation = Action_LogMsgs::getActionLogMsg()?:
+		"History record created without reason or type for table {$this->databaseName}.{$this->tableName}. U need to setup message for this action.";
+		$user        = \User_Current::pupetMasterId();
+		$params      = [];
+		$where_sql   = Shortcuts::generateWhereData($where,$params,true);
+		$sql = "
+		INSERT INTO {this.database_name}_delta.{$this->table_name}
+		SELECT *, CURRENT_TIMESTAMP,'{$type}','{$explanation}',{$user}
+		FROM {this.database_name}.{$this->table_name}
+		WHERE {$where_sql}
+		";
+		try{
+			$this->insert($sql,$params);
+		} catch(Exception $e){
+			throw new FailedDeltaRecordCreation("Failed creating UPDATE delta records for {$this->databaseName}.{$this->tableName}");
 		}
 	}
 	
@@ -375,14 +395,13 @@ abstract class MySqlTableHub{
 	public function iUpdateRecord(array $values,array $where=[],$clean_values=true,$clean_where=true){
 		//get SET fields
 		$params=[];
-		$this->records_ids?$where['id']=$this->records_ids:'';
 		$values = $this->cleanData($values);
 		$set=Shortcuts::generateSetData($values,$params,$clean_values);
 		//Clean the where array and add to the $params array and rebuild the $where array
 		$where_sql = Shortcuts::generateWhereData($where,$params,$clean_where);
 		//sql
-		if($this->getDelta()){
-			$this->createHistoryRecord($where,self::DELTA_TYPE__EDIT);
+		if($this->has_delta){
+			$this->createUpdateDeltaRecord($where);
 		}
 		$this->preUpdateEvent([$values,$where]);
 		$sql="UPDATE
@@ -680,7 +699,7 @@ abstract class MySqlTableHub{
 		
 		
 		$fields_str		= join('`,`',$fields);
-		$modified_by	= User_Current::pupetMasterId();
+		$modified_by	= \User_Current::pupetMasterId();
 		
 		$update_fields	= $fields;
 		unset($update_fields[array_search($primary_key,$update_fields)]);

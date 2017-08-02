@@ -13,7 +13,7 @@ trait tHelper{
 	/**
 	 * @return tHelper
 	 */
-	protected function setSession(string $namespace):tHelper{
+	protected function setSession(string $namespace){
 		$this->SessionCaching=new Client($namespace);
 		return $this;
 	}
@@ -23,7 +23,7 @@ trait tHelper{
 	 *
 	 * @return tHelper
 	 */
-	protected function destroySession():tHelper{
+	protected function destroySession(){
 		$this->SessionCaching->destroy();
 		return $this;
 	}
@@ -33,7 +33,7 @@ trait tHelper{
 	 *
 	 * @return tHelper
 	 */
-	protected function setSessionAllValue(array $value):tHelper{
+	protected function setSessionAllValue(array $value){
 		return $this->SessionCaching->setAll($value);
 	}
 	
@@ -42,7 +42,7 @@ trait tHelper{
 	 *
 	 * @return tHelper
 	 */
-	protected function setSessionValue(string $key, $value):tHelper{
+	protected function setSessionValue(string $key, $value){
 		$this->SessionCaching->set($key, $value);
 		return $this;
 	}

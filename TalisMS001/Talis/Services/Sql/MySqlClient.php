@@ -146,7 +146,7 @@ class MySqlClient {
 	 * @return Talis\Services\Sql\MySqlClient
 	 */
 	public function closeCursor() {
-		$this->lastStatement->closeCursor ();
+		$this->lastStatement->closeCursor();
 		return $this;
 	}
 	
