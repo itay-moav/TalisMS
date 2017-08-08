@@ -17,8 +17,8 @@ abstract class aChainLink{
 	 * @var \Ds\Queue $chain_container
 	 */
 	protected $Request 					= null,
-			  $chain_container          = null
-			  
+			  $chain_container          = null,
+			  $valid					= true
 	;
 	
 	public function __construct(?\Talis\Message\Request $Request){
@@ -34,5 +34,31 @@ abstract class aChainLink{
 		$this->chain_container = $chain_container;
 	}
 	
-	abstract public function process():\Talis\Chain\aChainLink;
+	/**
+	 * Actual logic should happen here.
+	 * 99.999999999% it should return itself!
+	 * 
+	 * @return aChainLink
+	 */
+	abstract public function process():aChainLink;
+	
+	/**
+	 * Do the filter chain
+	 * Pass the filtered get params and req body and next bl to the dependency chain
+	 * Sets the result as the response
+	 *
+	 * @see \Talis\Chain\AChainLink::nextLinkInchain()
+	 */
+	final public function nextLinkInchain():\Talis\Chain\AChainLink{
+		$response = $this->process();
+		if($this->chain_container && !$this->chain_container->isEmpty()){
+			$next_link_class = $this->chain_container->pop();
+			$name   = $next_link_class[0];
+			$params = $next_link_class[1];
+			$next_link = new $name($this->Request,$params);
+			$next_link->set_chain_container($this->chain_container);
+			$response = $next_link->nextLinkInchain();
+		}
+		return $response;
+	}
 }

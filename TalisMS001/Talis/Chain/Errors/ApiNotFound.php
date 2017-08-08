@@ -10,8 +10,6 @@ class ApiNotFound extends aError{
 	protected $http_code = 404;
 	
 	protected function format_human_message():string{
-		$msg = "Api resource for [{$this->error_params[0]}] can not be found!";
-		\Talis\Logger\info($msg);
-		return $msg;
+		return "Api resource for [{$this->error_params[0]}] can not be found!";
 	}
 }

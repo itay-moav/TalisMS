@@ -1,8 +1,8 @@
-<?php
+<?php namespace Talis\Services\Redis;
 /**
  * @author itaymoav
  */
-interface Data_Redis_iKeyBoss{
+interface iKeyBoss{
 	public function __toString();
 	public function getEntityName();
 }

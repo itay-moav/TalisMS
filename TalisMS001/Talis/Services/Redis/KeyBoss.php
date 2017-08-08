@@ -1,11 +1,11 @@
-<?php
+<?php namespace Talis\Services\Redis;
 /**
  * This class is where u manage the key values for each
  * entity we create 
  * 
  * @author itaymoav
  */
-class Data_Redis_KeyBoss implements Data_Redis_iKeyBoss{
+class KeyBoss implements iKeyBoss{
 	/**
 	 * @var char key field separator
 	 */
@@ -22,11 +22,11 @@ class Data_Redis_KeyBoss implements Data_Redis_iKeyBoss{
 	/**
 	 * 
 	 * @param unknown $main_id
-	 * @throws Data_Redis_Exception_NoId
+	 * @throws Exception_NoId
 	 */
 	public function __construct($main_id){
 		if(!$main_id){
-			throw new Data_Redis_Exception_NoId(get_class($this));
+			throw new Exception_NoId(get_class($this));
 		}
 		$this->main_id = $main_id;
 	}

@@ -59,8 +59,8 @@ class Corwin{
 	 * 
 	 * @return aChainLink
 	 */
-	public function process():aChainLink{
-		return $this->Response->process();
+	public function nextLinkInchain():aChainLink{
+		return $this->Response->nextLinkInchain();
 	}
 	
 	private function build_request(string $full_uri):void{
@@ -75,7 +75,7 @@ class Corwin{
 	 * @throws \Talis\Exception\BadUri
 	 */
 	private function prepareResponse():void{
-		if(!@include_once $this->route['route']){
+		if(!include_once $this->route['route']){
 			throw new \Talis\Exception\BadUri($this->route['route']);
 		}
 		$this->Response = new $this->route['classname']($this->Request);

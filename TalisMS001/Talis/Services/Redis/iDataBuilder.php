@@ -1,7 +1,7 @@
-<?php
+<?php namespace Talis\Services\Redis;
 /**
  * @author itaymoav
  */
-interface Data_Redis_iDataBuilder{
+interface iDataBuilder{
 	public function build();
 }

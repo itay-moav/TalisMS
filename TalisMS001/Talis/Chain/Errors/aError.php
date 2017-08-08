@@ -1,6 +1,7 @@
 <?php namespace Talis\Chain\Errors;
-
+use \Talis\Logger as L;
 use Talis\Chain\aChainLink;
+use function Talis\commons\array_to_object;
 
 /**
  * basic error/problem class
@@ -32,7 +33,15 @@ abstract class aError extends \Talis\Chain\aChainLink{
 	/**
 	 *  
 	 */
-	public function render():void{
-		echo $this->format_human_message();
+	public function render(\Talis\commons\iEmitter $emitter):void{
+		L\error('Following two entries are error prms and human message of the error');
+		L\error(print_r($this->error_params,true));
+		L\error($this->format_human_message());
+		
+		$response = new \Talis\Message\Response;
+		$response->setBody(array_to_object(['type'=>'error','message'=>$this->format_human_message()]));
+		$status_class = "\Talis\Message\Status\Code{$this->http_code}";
+		$response->setStatus(new $status_class);
+		$emitter->emit($response);
 	}
 }

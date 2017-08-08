@@ -12,4 +12,8 @@ abstract class aStatus{
 	public function getMsg():string{
 		return $this->msg;
 	}
+	
+	public function dynamic_message($msg){
+		$this->dyn_error_msg = $msg;
+	}
 }

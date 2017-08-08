@@ -42,24 +42,4 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 		parent::__construct($Request);
 		$this->load_chain_container();
 	}
-	
-	/**
-	 * Do the filter chain
-	 * Pass the filtered get params and req body and next bl to the dependency chain
-	 * Sets the result as the response
-	 *   
-	 * @see \Talis\Chain\AChainLink::process()
-	 */
-	final public function process():\Talis\Chain\AChainLink{
-		$response = $this;
-		if(!$this->chain_container->isEmpty()){
-			$next_link_class = $this->chain_container->pop();
-			$name   = $next_link_class[0];
-			$params = $next_link_class[1];
-			$next_link = new $name($this->Request,$params);
-			$next_link->set_chain_container($this->chain_container);
-			$response = $next_link->process();
-		}
-		return $response;
-	}
 }

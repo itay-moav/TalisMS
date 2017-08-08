@@ -8,7 +8,7 @@ use function \Talis\Logger\dbgn,
  * Translate the input into the initial request object
  * and moves it along
  * 
- * Will assume 4 levels [version][action][subaction][type] for example 1/event/repeat/create|update|read|delete
+ * Will assume 3 levels [action][subaction][type] for example event/repeat/create|update|read|delete
  * 
  * Loads the right controller and action.
  * Renders the $Result of the action
@@ -28,7 +28,7 @@ class HTTP{
 			(new \Talis\Chain\Corwin)->begin($this->get_uri_from_server(),
 											 $this->get_request_body(),
 											 $this->full_uri)
-			                         ->process()
+									 ->nextLinkInchain()
 					                 ->render(new \Talis\Message\Renderers\HTTP)
 			;
 

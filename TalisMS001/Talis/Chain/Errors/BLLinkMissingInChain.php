@@ -11,7 +11,6 @@ class BLLinkMissingInChain extends aError{
 	
 	protected function format_human_message():string{
 		$api_uri = $this->Request->getUri();
-		\Talis\Logger\fatal("Missing BL link for URI {$api_uri}");
-		return "This request chain was not properly configured. The BL Link is missing, probably in the API class.";
+		return "Missing BL link for URI {$api_uri}. This request chain was not properly configured. The BL Link is missing, probably in the API class.";
 	}
 }
