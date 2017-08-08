@@ -14,13 +14,29 @@ abstract class aChainLink{
 	
 	/**
 	 * @var \Talis\Message\Request $Request
+	 */
+	protected $Request 					= null;
+	
+	/**
+	 * @var \Talis\Message\Response $Response
+	 */
+	protected $Response					= null;
+
+	/**
 	 * @var \Ds\Queue $chain_container
 	 */
-	protected $Request 					= null,
-			  $chain_container          = null,
-			  $valid					= true
-	;
+	protected $chain_container          = null;
 	
+	/**
+	 * @var boolean
+	 */
+	protected $valid					= true;
+	
+	
+	/**
+	 * 
+	 * @param \Talis\Message\Request $Request
+	 */
 	public function __construct(?\Talis\Message\Request $Request){
 		$this->Request = $Request;
 	}
