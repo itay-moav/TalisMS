@@ -36,4 +36,11 @@ class Request extends aMessage{
 	public function get_param(string $key):string{
 		return $this->get_params[$key];
 	}
+	
+	/**
+	 * @return \stdClass
+	 */
+	public function getBodyParams(){
+		return $this->getBody()->params;
+	}
 }

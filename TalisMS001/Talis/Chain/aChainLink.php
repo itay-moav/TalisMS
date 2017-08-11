@@ -21,6 +21,12 @@ abstract class aChainLink{
 	 * @var \Talis\Message\Response $Response
 	 */
 	protected $Response					= null;
+	
+	/**
+	 * Extra params some classes need
+	 * @var array
+	 */
+	protected $params					= [];
 
 	/**
 	 * @var \Ds\Queue $chain_container
@@ -37,8 +43,10 @@ abstract class aChainLink{
 	 * 
 	 * @param \Talis\Message\Request $Request
 	 */
-	public function __construct(?\Talis\Message\Request $Request){
-		$this->Request = $Request;
+	public function __construct(?\Talis\Message\Request $Request,?\Talis\Message\Response $Response,array $params=[]){
+		$this->Request  = $Request;
+		$this->Response = $Response;
+		$this->params   = $params;
 	}
 	
 	/**
@@ -65,16 +73,16 @@ abstract class aChainLink{
 	 *
 	 * @see \Talis\Chain\AChainLink::nextLinkInchain()
 	 */
-	final public function nextLinkInchain():\Talis\Chain\AChainLink{
-		$response = $this->process();
-		if($this->chain_container && !$this->chain_container->isEmpty()){
+	final public function nextLinkInchain():\Talis\Chain\aChainLink{
+		$FinalLink = $this->process();
+		if($this->chain_container != null && !$this->chain_container->isEmpty()){
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
-			$next_link = new $name($this->Request,$params);
+			$next_link = new $name($this->Request,$this->Response,$params);//TODO maybe array merge with current class params?
 			$next_link->set_chain_container($this->chain_container);
-			$response = $next_link->nextLinkInchain();
+			$FinalLink = $next_link->nextLinkInchain();
 		}
-		return $response;
+		return $FinalLink;
 	}
 }

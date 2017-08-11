@@ -30,16 +30,28 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	}
 	
 	/**
-	 * Return the first BL class in the actual 
-	 * process.
-	 * @return array with single or more BL objects
+	 * I am blocking any processing power, the job of this class is ONLY 
+	 * to host the filters and dependencies!
+	 * 
+	 * {@inheritDoc}
+	 * @see \Talis\Chain\aChainLink::process()
 	 */
-	protected function get_next_bl():array{
-		return [];
+	final public function process():aChainLink{
+		return $this;	
 	}
+	
+	/**
+	 * Return the first BL aChainLink class in the actual 
+	 * process.
+	 * [   class name,[params]  ],
+	 * [   class name,[params]  ]
+	 * 
+	 * @return array with single or more BL aChainLink objects
+	 */
+	abstract protected function get_next_bl():array;
 		
-	public function __construct(\Talis\Message\Request $Request){
-		parent::__construct($Request);
+	public function __construct(\Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params=[]){
+		parent::__construct($Request,$Response,$params);
 		$this->load_chain_container();
 	}
 }

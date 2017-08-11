@@ -26,12 +26,19 @@ class Corwin{
 	private $req_body  = null;
 	
 	/**
-	 * @var \Talis\Chain\aChainLink $Response
+	 * The head of the BL process chain, usually that would be the API head class built from the route,
+	 * but on occassions that would be the error class, in case there where issues
+	 * 
+	 * @var \Talis\Chain\aChainLink $RequestChainHead
+	 */
+	private $RequestChainHead = null;
+
+	/**
+	 * Holds the request parameters (GET/POST etc)
+	 * 
 	 * @var \Talis\Message\Request $Request
 	 */
-	private $Response = null,
-			$Request  = Null
-	;
+	private $Request  = Null;
 	
 	/**
 	 * Main entry point after the MAIN for a specific protocol finished (http/rest/stopmp/async etc)
@@ -49,7 +56,7 @@ class Corwin{
 			$this->build_request($full_uri);
 			$this->prepareResponse();
 		} catch(\Talis\Exception\BadUri $e){
-			$this->Response = new Errors\ApiNotFound(null,[$e->getMessage()]);
+			$this->RequestChainHead = new Errors\ApiNotFound(null,[$e->getMessage()]);
 		}
 		return $this;
 	}
@@ -60,7 +67,7 @@ class Corwin{
 	 * @return aChainLink
 	 */
 	public function nextLinkInchain():aChainLink{
-		return $this->Response->nextLinkInchain();
+		return $this->RequestChainHead->nextLinkInchain();
 	}
 	
 	private function build_request(string $full_uri):void{
@@ -75,10 +82,11 @@ class Corwin{
 	 * @throws \Talis\Exception\BadUri
 	 */
 	private function prepareResponse():void{
+		L\dbgn("TRYING TO INCLUDE: {$this->route['route']}");
 		if(!include_once $this->route['route']){
 			throw new \Talis\Exception\BadUri($this->route['route']);
 		}
-		$this->Response = new $this->route['classname']($this->Request);
+		$this->RequestChainHead = new $this->route['classname']($this->Request,new \Talis\Message\Response);
 	}
 	
 	/**

@@ -11,16 +11,10 @@ use function Talis\commons\array_to_object;
  *
  */
 abstract class aError extends \Talis\Chain\aChainLink{
-	protected $error_params	 = [],
-			  $http_code	 = 0
+	protected $http_code	 = 0
 	;
 	
 	abstract protected function format_human_message():string;
-	
-	public function __construct(?\Talis\Message\Request $Request,array $error_params=[]){
-		parent::__construct($Request);
-		$this->error_params = $error_params;
-	}
 	
 	/**
 	 * This is an end of the line chain link, return itself.
@@ -35,7 +29,7 @@ abstract class aError extends \Talis\Chain\aChainLink{
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
 		L\error('Following two entries are error prms and human message of the error');
-		L\error(print_r($this->error_params,true));
+		L\error(print_r($this->params,true));
 		L\error($this->format_human_message());
 		
 		$response = new \Talis\Message\Response;
