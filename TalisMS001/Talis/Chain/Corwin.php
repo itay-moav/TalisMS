@@ -9,6 +9,13 @@ use Talis\Logger as L;
  * @Date  2017-05-19
  */
 class Corwin{
+	/**
+	 * I am setting this up in the specific apps using Talis. 
+	 * I usually would like to use  it to login someone or check generic roles etc
+	 * 
+	 * @var callable a function to run on init.
+	 */
+	static public $registered_init_func = null;
 	
 	/**
 	 * @var array
@@ -55,6 +62,12 @@ class Corwin{
 			$this->generate_query($request_parts);
 			$this->build_request($full_uri);
 			$this->prepareResponse();
+			//the dynamic init
+			if(self::$registered_init_func){
+				$func = self::$registered_init_func;
+				$func($this->Request);
+			}
+			
 		} catch(\Talis\Exception\BadUri $e){
 			$this->RequestChainHead = new Errors\ApiNotFound(null,[$e->getMessage()]);
 		}
