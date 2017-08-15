@@ -32,7 +32,7 @@ class Cli{
 	/**
 	 * Starts the chain reaction. builds request/check dependencies/run main logic
 	 */
-	public function gogogo(string $url,string $raw_request_body,$is_base64_encoded){
+	public function gogogo(string $url,?string $raw_request_body,$is_base64_encoded){
 		try{
 			//decode
 			if($is_base64_encoded){
@@ -40,13 +40,13 @@ class Cli{
 			}
 			dbgr('json',$raw_request_body);
 			$decoded_request_body = json_decode($raw_request_body);
-			dbgr('stdclass',$decoded_request_body);			
+			dbgr('$decoded_request_body',$decoded_request_body);			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($url);
 			(new \Talis\Chain\Corwin)->begin($request_parts,
 											 $decoded_request_body,
 											 $url)
-			                         ->process()
+									 ->nextLinkInchain()
 					                 ->render(new \Talis\Message\Renderers\Cli)
 			;
 

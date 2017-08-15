@@ -69,7 +69,7 @@ class Corwin{
 			}
 			
 		} catch(\Talis\Exception\BadUri $e){
-			$this->RequestChainHead = new Errors\ApiNotFound(null,[$e->getMessage()]);
+			$this->RequestChainHead = new Errors\ApiNotFound(null,null,[$e->getMessage()]);
 		}
 		return $this;
 	}
