@@ -354,7 +354,7 @@ class MySqlClient {
 	public function fetchArray():array {
 		return $this->fetchRow ( \PDO::FETCH_ASSOC );
 	}
-	public function fetchObj():\stdClass {
+	public function fetchObj(){
 		return $this->fetchRow ( \PDO::FETCH_OBJ );
 	}
 	

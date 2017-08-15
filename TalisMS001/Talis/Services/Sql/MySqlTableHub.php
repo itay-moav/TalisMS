@@ -61,9 +61,9 @@ abstract class MySqlTableHub{
 	 * @param array $where
 	 * @param array $fields
 	 *
-	 * @return stdClass by default
+	 * @return stdClass or false if nothing found 
 	 */
-	static public function quickSelect(array $where=[],array $fields=['*']):\stdClass{
+	static public function quickSelect(array $where=[],array $fields=['*']){
 		return self::getInstance()->iQuickSelect($where,$fields);
 	}
 	
@@ -155,7 +155,7 @@ abstract class MySqlTableHub{
 	 * @return integer last inserted array
 	 */
 	static public function createRecord(array $records):int{
-		return self::getInstance()->insert($records);
+		return self::getInstance()->insertData($records);
 	}
 	
 	/**
@@ -164,8 +164,8 @@ abstract class MySqlTableHub{
 	 * @param array $records
 	 * @return boolean
 	 */
-	static public function createMultipleRecords(array $records):int{
-		return self::getInstance()->insertMultipleData($records);
+	static public function createMultipleRecords(array $records,$ignore=false):int{
+		return self::getInstance()->insertMultipleData($records,false,$ignore);
 	}
 	
 	/**
@@ -272,22 +272,23 @@ abstract class MySqlTableHub{
 	 *
 	 * @return int
 	 */
-	public function insertMultipleData(array $data,$on_duplicate_update=false):int{
+	public function insertMultipleData(array $data,$on_duplicate_update=false,$ignore=false):int{
 		$datas = array_chunk($data, 50);
 		$id = 0;
 		foreach ($datas as $d) {
-			$id = $this->insertMultipleDataRaw($d, $on_duplicate_update);
+			$id = $this->insertMultipleDataRaw($d, $on_duplicate_update,$ignore);
 		}
 		return $id;
 	}
 	
-	protected function insertMultipleDataRaw(array $data,$on_duplicate_update=false){
+	protected function insertMultipleDataRaw(array $data,$on_duplicate_update=false,$ignore=false){
+		$put_ignore = $ignore?' IGNORE ':'';
 		$data = $this->cleanData($data);
 		$this->preInsertEvent($data);
 		$fields=array_keys(Shortcuts::cleanControlFields($data[0]));//get the field names for the insert
 		$fields_str=join('`,`',$fields);
 		$modified_by = \User_Current::pupetMasterId();
-		$sql="INSERT INTO {$this->database_name}.{$this->table_name} (`{$fields_str}`,date_created,created_by,modified_by)\nVALUES\n";
+		$sql="INSERT {$put_ignore} INTO {$this->database_name}.{$this->table_name} (`{$fields_str}`,date_created,created_by,modified_by)\nVALUES\n";
 		$params=array();
 		
 		foreach($data as $k=>$cell){
@@ -539,9 +540,9 @@ abstract class MySqlTableHub{
 	 * @var array $where not mandatory
 	 * @var array $fields not mandatory 9will fetch all fields
 	 *
-	 * @return \stdObj
+	 * @return \stdObj|false
 	 */
-	public function iQuickSelect(array $where=[],array $fields=['*']):\stdClass{
+	public function iQuickSelect(array $where=[],array $fields=['*']){
 		return $this->selectFields($fields,$where,true,'LIMIT 1')->fetchObj();
 	}
 	

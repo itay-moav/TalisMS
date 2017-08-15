@@ -58,7 +58,13 @@ class Response extends aMessage{
 		return $this->type;
 	}
 	
-	public function getBody():?\stdClass{
+	/**
+	 * Carefull, it rebuilds the body each time from it's parts
+	 * 
+	 * {@inheritDoc}
+	 * @see \Talis\Message\aMessage::getBody()
+	 */
+	public function getBody():\stdClass{
 		$body = \Talis\commons\array_to_object([
 				'type'	   => $this->type,
 				'message'  => $this->message,

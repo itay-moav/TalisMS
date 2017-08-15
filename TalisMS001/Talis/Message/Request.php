@@ -8,7 +8,7 @@ class Request extends aMessage{
 	 * 
 	 */
 	public function __construct(string $full_uri,array $get_params,?\stdClass $body){
-		$this->body       = $body;
+		$this->body       = $body?:new \stdClass;
 		$this->full_uri   = $full_uri;
 		$this->get_params = $get_params;
 	}
@@ -41,6 +41,28 @@ class Request extends aMessage{
 	 * @return \stdClass
 	 */
 	public function getBodyParams(){
-		return $this->getBody()->params;
+		if(isset($this->getBody()->params)){
+			return $this->getBody()->params;
+		} else {
+			$this->body->params = new \stdClass;
+		}
 	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getBodyParam($k,$default=null){
+		return $this->getBody()->params->$k ?? $default;
+	}
+	
+	/**
+	 * Add values/keys to the parameter section of the body->params
+	 * @param string $k
+	 * @param mixed $v
+	 */
+	public function addToBodyParams(string $k,$v){
+		return $this->getBodyParams()->$k = $v;		
+	}
+	
+	
 }
