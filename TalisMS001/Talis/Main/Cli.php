@@ -17,9 +17,9 @@ use function \Talis\Logger\dbgn,
  * 
  * examples:
  * 
- * path/to/lord_commander /1/test/ping/read "{n:1,l:2}";
+ * path/to/lord_commander /test/ping/read "{n:1,l:2}";
  * OR
- * path/to/lord_commander /1/test/ping/read "{n:1,l:2} yes";
+ * path/to/lord_commander /test/ping/read "{n:1,l:2} yes";
  * 
  * Loads the right controller and action.
  * Renders the $Result of the action
