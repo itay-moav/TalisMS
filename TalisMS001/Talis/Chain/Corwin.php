@@ -79,7 +79,7 @@ class Corwin{
 	 * 
 	 * @return aChainLink
 	 */
-	public function nextLinkInchain():aChainLink{
+	public function nextLinkInchain():\Talis\commons\iRenderable{
 		return $this->RequestChainHead->nextLinkInchain();
 	}
 	

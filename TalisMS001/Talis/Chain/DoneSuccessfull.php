@@ -12,6 +12,9 @@ use function \Talis\commons\array_to_object;
  */
 class DoneSuccessfull extends aChainLink implements \Talis\commons\iRenderable{
 	public function process():aChainLink{
+		$this->Response->setMessage('BIG SUCCESS!');
+		$this->Response->setStatus(new \Talis\Message\Status\Code200);
+		$this->Response->markResponse();
 		return $this;
 	}
 	
@@ -22,19 +25,6 @@ class DoneSuccessfull extends aChainLink implements \Talis\commons\iRenderable{
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
 		L\dbgn($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
-		$response_body = array_to_object([	'type'   => 'response',
-											'message'=> 'BIG SUCCESS!',
-											'params' => '']
-		);
-		$response_body->params = array_to_object(
-				[ 'get' 	=> print_r($this->Request->getAllGetParams(),true),
-				  'body'	=> print_r($this->Request->getBody(),true)
-				]
-		);
-				
-		$response = new \Talis\Message\Response;
-		$response->setBody($response_body);
-		$response->setStatus(new \Talis\Message\Status\Code200);
-		$emitter->emit($response);
+		$emitter->emit($this->Response);
 	}
 }

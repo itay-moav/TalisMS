@@ -18,6 +18,5 @@ class Log implements \Talis\commons\iEmitter{
 			exit(1);
 		}
 		\Talis\Logger\dbgr('END OF PROCESS',$body);
-		exit($stat);
 	}
 }
