@@ -1,4 +1,4 @@
-<?php namespace Talis\Services;
+<?php namespace Talis\Data;
 /**
  * Looper for iterators.
  * 
@@ -29,7 +29,7 @@ abstract class aAeonIteratorLooper extends aAeonLooper{
 	
 	/**
 	 * Entry point for iteration
-	 * @return \Talis\Services\aAeonIteratorLooper
+	 * @return \Talis\Data\aAeonIteratorLooper
 	 */
 	public function run():aAeonIteratorLooper{
 		$this->runHeaders();

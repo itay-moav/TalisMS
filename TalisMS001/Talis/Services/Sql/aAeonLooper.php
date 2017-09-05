@@ -8,7 +8,7 @@ use Talis\Services\aAeonLooper;
  *
  * Define common API and functionality for SQL originated datasets functionality
  */
-abstract class aAeonLooper extends \Talis\Services\aAeonLooper{
+abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	
 	const	PROCESS_TYPE_NONE		= 2,
 			PROCESS_TYPE_PROCESS	= 3,
