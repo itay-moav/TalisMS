@@ -1,10 +1,10 @@
-<?php
+<?php namespace Talis\Services\CSV;
 /**
  * Iterates and reads a CSV file
  * @author itay modified by holly
  */
-class Data_CSV_Reader implements Iterator {
-    use BL_tIteratorHelper;
+class FileReader implements Iterator {
+	use \Talis\Services\tIterator;
 
     protected   $csv_file_name          = '',
                 $csv_handle             = null,
@@ -19,7 +19,7 @@ class Data_CSV_Reader implements Iterator {
         $this->delimiter      = $delimiter;
         $this->csv_file_name  = $csv_file_name;
         if(($this->csv_handle = @fopen($this->csv_file_name, "r")) === FALSE){
-            throw new Exception_FileNotFound($this->csv_file_name);
+            throw new \Talis\Exception\FileNotFound($this->csv_file_name);
         }
     }
     

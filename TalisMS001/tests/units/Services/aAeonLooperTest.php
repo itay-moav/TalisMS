@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-class BaseLooper extends \Talis\Services\aAeonLooper{
+class BaseLooper extends \Talis\Data\aAeonLooper{
 	public function __construct($row,$row_type,array $user_params){
 		$this->row = $row;
 		$this->row_type = $row_type;
@@ -24,11 +24,11 @@ class BaseLooper extends \Talis\Services\aAeonLooper{
 		return $this->butcher($index);
 	}
 	
-	public function tpreInit():\Talis\Services\aAeonLooper{
+	public function tpreInit():\Talis\Data\aAeonLooper{
 		return $this->preInit();
 	}
 	
-	public function tpostInit():\Talis\Services\aAeonLooper{
+	public function tpostInit():\Talis\Data\aAeonLooper{
 		return $this->postInit();
 	}
 	
@@ -36,11 +36,11 @@ class BaseLooper extends \Talis\Services\aAeonLooper{
 		return true;
 	}
 	
-	public function tpostProcess():\Talis\Services\aAeonLooper{
+	public function tpostProcess():\Talis\Data\aAeonLooper{
 		return $this->postProcess();
 	}
 	
-	public function tapply_filters():\Talis\Services\aAeonLooper{
+	public function tapply_filters():\Talis\Data\aAeonLooper{
 		return $this->apply_filters(0);
 	}
 	
@@ -48,11 +48,11 @@ class BaseLooper extends \Talis\Services\aAeonLooper{
 		return $this->validate();
 	}
 	
-	public function tload_filters():\Talis\Services\aAeonLooper{
+	public function tload_filters():\Talis\Data\aAeonLooper{
 		return $this->load_filters();
 	}
 	
-	public function tload_validators():\Talis\Services\aAeonLooper{
+	public function tload_validators():\Talis\Data\aAeonLooper{
 		return $this->load_validators();
 	}
 	
@@ -64,11 +64,11 @@ class BaseLooper extends \Talis\Services\aAeonLooper{
 		return $this->getParam($param_key,$default);
 	}
 	
-	public function tsetParam($param_key,$param_value):\Talis\Services\aAeonLooper{
+	public function tsetParam($param_key,$param_value):\Talis\Data\aAeonLooper{
 		return $this->setParam($param_key, $param_value);
 	}
 	
-	public function tunsetParam($param_key):\Talis\Services\aAeonLooper{
+	public function tunsetParam($param_key):\Talis\Data\aAeonLooper{
 		return $this->unsetParam($param_key);
 	}
 }
@@ -92,7 +92,7 @@ class Services_aAeonLooperTest extends TestCase {
 	 * Tests the get/set params
 	 */
 	public function testGetSetParams(){
-		$L = $this->getClass(['a'=>'A','b'=>'B'],\Talis\Services\aAeonLooper::ROW_TYPE__ARRAY,['ra'=>'rA','rb'=>'rB']);
+		$L = $this->getClass(['a'=>'A','b'=>'B'],\Talis\Data\aAeonLooper::ROW_TYPE__ARRAY,['ra'=>'rA','rb'=>'rB']);
 		
 		//initial get
 		$ra = $L->tgetParam('ra', 'rC');
@@ -114,7 +114,7 @@ class Services_aAeonLooperTest extends TestCase {
 	}
 	
 	public function testGetSetRowValuesArray(){
-		$L = $this->getClass(['a'=>'A','b'=>'B'],\Talis\Services\aAeonLooper::ROW_TYPE__ARRAY);
+		$L = $this->getClass(['a'=>'A','b'=>'B'],\Talis\Data\aAeonLooper::ROW_TYPE__ARRAY);
 		
 		//initial get
 		$a = $L->tgetRowField('a');
