@@ -1,9 +1,9 @@
-<?php namespace Talis\Data;
+<?php namespace Talis\Data\Filter;
 /**
  * Implement this, and u can be a filter
  *
  * @author Itay
  */
-interface iFilter{
+interface i{
 	public function filter($data);
 }

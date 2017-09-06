@@ -15,16 +15,15 @@ abstract class aAeonIteratorLooper extends aAeonLooper{
 	 * @param Iterator $iterator
 	 * @param array $user_params
 	 */
-	public function __construct(Iterator $iterator,array $user_params=[]){
+	public function __construct(\Iterator $iterator,array $user_params=[]){
 		$this->iterator = $iterator;
 		parent::__construct($user_params);
-		$this->preInit()
-			 ->load_filters()
-			 ->load_validators()
-			 ->load_header_filters()
-			 ->load_header_validators()
-			 ->postIinit()
-		;
+		$this->preInit();
+		$this->load_filters();
+		$this->load_validators();
+		$this->load_header_filters();
+		$this->load_header_validators();
+		$this->postInit();
 	}
 	
 	/**
@@ -94,7 +93,7 @@ abstract class aAeonIteratorLooper extends aAeonLooper{
 	protected function load_header_filters():aAeonIteratorLooper{
 		/* DO NOT DELETE THIS COMMENT
 		
-		$this->record_header_level_filters = [new Form_Filter_Trim];
+		$this->record_header_level_filters = [new \Talis\Data\Filter\Trim];
 		$this->field_header_level_filters = [
 		User_Upload_GuestParser::PARSED_PLACE__FIRST_NAME  => [new Form_Filter_Name, new Some_Other_Filter implementing the Form_Filter_i interface],
 		User_Upload_GuestParser::PARSED_PLACE__MIDDLE_NAME => [new Form_Filter_Name],

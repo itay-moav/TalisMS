@@ -109,7 +109,7 @@ abstract class aAeonLooper{
      * Pre-init
      * @return aAeonLooper
      */
-    protected function preInit() {
+	protected function preInit():aAeonLooper{
         return $this;
     }
     
@@ -201,7 +201,7 @@ abstract class aAeonLooper{
      */
     protected function load_filters():aAeonLooper{
         /* DO NOT DELETE COMMENT
-        $this->record_level_filters = [new Form_Filter_Trim];
+        $this->record_level_filters = [new \Talis\Data\Filter\Trim];
         $this->field_level_filters  = [User_Upload_GuestParser::PARSED_PLACE__FIRST_NAME  => [new Form_Filter_Name, new Some_Other_Filter implementing the Form_Filter_i interface],
                                        User_Upload_GuestParser::PARSED_PLACE__MIDDLE_NAME => [new Form_Filter_Name],
                                        User_Upload_GuestParser::PARSED_PLACE__LAST_NAME   => [new Form_Filter_Name]
