@@ -33,7 +33,7 @@ abstract class AbstractStream{
 			//do nothing
 			
 		}elseif(!is_string($inp)){
-			$inp = 'BAD DATA IN OBJECT OF TYPE: [' . get_class($inp) . ']';
+			$inp = print_r($inp,true);
 		}
 		
 		$full_stack_data = null;
