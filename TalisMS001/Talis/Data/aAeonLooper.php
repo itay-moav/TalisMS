@@ -180,7 +180,7 @@ abstract class aAeonLooper{
             if(isset($this->field_level_validators[$place])){
                 foreach($this->field_level_validators[$place] as $FLvlValidator){
                     if(!$FLvlValidator->validate($field)){
-                        $this->last_error_message= $FLvlValidator->message()." -> Value: ".$field;
+                        $this->last_error_message= $FLvlValidator->message()." -> Value: {$field}";
                         return false;
                     }
                 }

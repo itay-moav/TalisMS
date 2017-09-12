@@ -1,10 +1,10 @@
-<?php namespace Talis\Data;
+<?php namespace Talis\Data\Validator;
 /**
  * I could not find an easy way to separate view (language) from server functionality = Sorry
  *
  * @author itaymoav
  */
-abstract class aValidator{
+abstract class a{
 	protected	$message = '',
 				$params	 = []
 	;
@@ -14,7 +14,7 @@ abstract class aValidator{
 	 *
 	 * @param string $overwrite_message
 	 */
-	public function __construct(bool $overwrite_message=false,array $elm_specific_params = []){
+	public function __construct(string $overwrite_message='',array $elm_specific_params = []){
 		$this->message = $overwrite_message?:$this->message;
 		$this->params  = $elm_specific_params;
 	}
