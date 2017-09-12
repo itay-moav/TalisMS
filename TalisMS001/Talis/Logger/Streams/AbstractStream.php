@@ -29,11 +29,11 @@ abstract class AbstractStream{
 		if ($inp === null){
 			$inp = 'NULL';
 			
-		}elseif($inp instanceof Exception){
+		}elseif($inp instanceof \Throwable){
 			//do nothing
 			
 		}elseif(!is_string($inp)){
-			$inp = print_r($inp,true);
+			$inp = 'BAD DATA IN OBJECT OF TYPE: [' . get_class($inp) . ']';
 		}
 		
 		$full_stack_data = null;

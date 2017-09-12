@@ -20,11 +20,10 @@ class Client {
 	 *     
 	 * @return Data_Redis_Client with a specific key
 	 */
-	static public function getInstance(iKeyBoss $key, iDataBuilder $DataBuilder = null) { // was create
+	static public function getInstance(array $config,iKeyBoss $key, iDataBuilder $DataBuilder = null) { // was create
 		if (! self::$MyRedis) {
 			
-			$config = \app_env ();
-			$host = $config ['database'] ['redis'] ['host'];
+			$host = $config['host'];
 			dbgn ( "connecting to redis: [{$host}]" );
 			
 			try {
@@ -37,7 +36,7 @@ class Client {
 				self::$MyRedis = new NoRedis ();
 			}
 		}
-		return new Client ( $key, $DataBuilder );
+		return new Client ( $key, $DataBuilder,$config['verbosity']);
 	}
 	
 	/**
@@ -50,9 +49,10 @@ class Client {
 			self::$MyRedis = null;
 		}
 	}
-	private function __construct(iKeyBoss $key, iDataBuilder $DataBuilder = null) {
+	private function __construct(iKeyBoss $key, iDataBuilder $DataBuilder = null, $error_verbosity = 0) {
 		$this->key = $key . ''; // activate to string
 		$this->DataBuilder = $DataBuilder;
+		$this->error_verbosity = $error_verbosity;
 	}
 	
 	/**
@@ -65,7 +65,12 @@ class Client {
 	 *
 	 * @var iDataBuilder
 	 */
-	$DataBuilder = NULL;
+	$DataBuilder = NULL,
+	
+	/**
+	 * What to output in logs
+	 */
+	$error_verbosity = 0;
 	
 	/**
 	 * 
@@ -84,13 +89,10 @@ class Client {
 	 * @param array $arguments        	
 	 */
 	public function __call($method_name, array $arguments = []) {
-		$verbosity = \app_env () ['database'] ['redis'] ['verbosity'];
-		if ($verbosity)
-			dbgn ( "Redis SUNSET" );
-		$arguments = array_merge ( array (
-				$this->key 
-		), $arguments );
-		if ($verbosity)
+		if ($this->error_verbosity) dbgn ( "Redis SUNSET" );
+		
+		$arguments = array_merge ([$this->key], $arguments );
+		if ($this->error_verbosity)
 			dbgr ( $method_name, $arguments );
 		$r = false;
 		try {
@@ -104,13 +106,12 @@ class Client {
 			dbgn ( 'Redis call failed' );
 			return false;
 		}
-		if ($verbosity > 1)
-			dbgr ( 'RESULTS FROM MY REDIS', $r );
+		if ($this->error_verbosity > 1) dbgr ( 'RESULTS FROM MY REDIS', $r );
 		
 		if (! $r && in_array ( $method_name, [ 
 				'get' 
 		] ) && $this->DataBuilder) {
-			if ($verbosity)
+			if ($this->error_verbosity)
 				dbgn ( 'building data' );
 			$r = $this->DataBuilder->build ();
 			if ($r)

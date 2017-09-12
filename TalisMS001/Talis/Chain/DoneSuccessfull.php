@@ -12,7 +12,7 @@ use function \Talis\commons\array_to_object;
  */
 class DoneSuccessfull extends aChainLink implements \Talis\commons\iRenderable{
 	public function process():aChainLink{
-		$this->Response->setMessage('BIG SUCCESS!');
+		$this->Response->setMessage('GREAT SUCCESS!');
 		$this->Response->setStatus(new \Talis\Message\Status\Code200);
 		$this->Response->markResponse();
 		return $this;
