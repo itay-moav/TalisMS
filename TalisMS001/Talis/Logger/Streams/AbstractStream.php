@@ -32,8 +32,23 @@ abstract class AbstractStream{
 		}elseif($inp instanceof \Throwable){
 			//do nothing
 			
-		}elseif(!is_string($inp)){
+		}elseif(!is_string($inp) && !is_numeric($inp)){
 			$inp = print_r($inp,true);
+			/*Do not delete, used for debug purposes
+			switch (gettype($inp)){
+				case 'array':
+					$inp = print_r($inp,true);
+					break;
+					
+				case 'object':
+					$inp = get_class($inp);
+					break;
+					
+				default:
+					$inp = ' GOT TYPE OF VAR ' . gettype($inp);
+					break;
+			}*/
+			
 		}
 		
 		$full_stack_data = null;
