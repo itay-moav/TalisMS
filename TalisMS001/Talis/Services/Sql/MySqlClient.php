@@ -135,10 +135,10 @@ class MySqlClient {
 		$dns = 'mysql:dbname=' . $conf_data ['database'] . ";host=" . $conf_data ['host'] . $p;
 		
 		$this->NativeDB = new \PDO ( $dns, $conf_data ['username'], $conf_data ['password'], [ 
-				\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8' 
+				\PDO::MYSQL_ATTR_INIT_COMMAND 		=> 'SET NAMES utf8',
+				\PDO::ATTR_ERRMODE			  		=> \PDO::ERRMODE_EXCEPTION,
+				\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
 		] );
-		$this->NativeDB->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-		$this->NativeDB->setAttribute ( \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true );
 	}
 	
 	/**
