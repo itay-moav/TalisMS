@@ -1,6 +1,6 @@
 <?php namespace Talis\Logger\Streams;
 abstract class AbstractStream{
-	protected const	VERBOSITY_LVL_DEBUG		= 4,
+	public const	VERBOSITY_LVL_DEBUG		= 4,
 					VERBOSITY_LVL_INFO		= 3,
 					VERBOSITY_LVL_WARNING	= 2,
 					VERBOSITY_LVL_ERROR		= 1,

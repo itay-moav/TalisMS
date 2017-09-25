@@ -1,10 +1,10 @@
-<?php
+<?php namespace Talis\Logger\Streams;
 /**
  * Not a real logger -> this is a sink
  * 
  * @author itaymoav
  */
-class Logger_Streams_Nan extends Logger_MainZim{
+class Nan extends AbstractStream{
     	
 	protected function log($inp,$severity,$full_stack_data = null){
         //abba nagila
