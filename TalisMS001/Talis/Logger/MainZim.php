@@ -87,13 +87,22 @@ abstract class MainZim{
 	 *								that wraps a resource (like a socket/DB connection etc.), File path if writes to file or nothing, is simply Echo's  
 	 *             To change current Logger, simply use the factory again (or just instantiate 
 	 *             the logger you want.
+	 * @param bool $use_low_memory_footprint This flag will prevent from a full dump of an object, as there might be huge objects which can cause out of memory errors.
+	 *                                       Flag can also be used differently in each concrete logger 
 	 *
 	 * @return Logger_MainZim
 	 */
-	static public function factory($log_name,$logger_type,$verbosity_level,$target_stream=null){
-		$class_name = '\Talis\Logger\Streams\\' . ucfirst($logger_type);
-		//echo $class_name;die;
-		self::$CurrentLogger = new $class_name($log_name,$verbosity_level,$target_stream);
+	static public function factory($log_name,$logger_type,$verbosity_level,$target_stream=null,bool $use_low_memory_footprint=false){
+		$class_name = strpos($logger_type, '_')? ('\\' . $logger_type) : ('\Talis\Logger\Streams\\' . ucfirst($logger_type));
+		self::$CurrentLogger = new $class_name($log_name,$verbosity_level,$target_stream,$use_low_memory_footprint);
 		return self::$CurrentLogger;
+	}
+	
+	/**
+	 * Switches the current logger to use a low memory foot print.
+	 * until this becomes an issue, this value will not pass on if current logger is switched inside the same session.
+	 */
+	static public function currentLoggerUseLowMemoryFootprint(){
+		self::$CurrentLogger->setUseLowMemoryFootprint(true);
 	}
 }

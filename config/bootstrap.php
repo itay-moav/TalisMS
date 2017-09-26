@@ -9,6 +9,7 @@ Talis\Logger\MainZim::factory(
 		app_env()['log']['name'],
 		app_env()['log']['handler'],
 		app_env()['log']['verbosity'],
-		app_env()['log']['uri']
+		app_env()['log']['uri'],
+		app_env()['log']['low_memory_footprint']
 );
 

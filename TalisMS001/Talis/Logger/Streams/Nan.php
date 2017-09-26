@@ -4,7 +4,7 @@
  * 
  * @author itaymoav
  */
-class Nan extends AbstractStream{
+class Nan extends aLogStream{
     	
 	protected function log($inp,$severity,$full_stack_data = null){
         //abba nagila

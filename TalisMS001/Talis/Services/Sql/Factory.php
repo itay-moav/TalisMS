@@ -63,5 +63,12 @@ class Factory {
 	static public function getWriteConn() {
 		return self::getConnectionMySQL ( self::CONNECTION_NAME__WRITE, app_env () ['database'] ['mysql_master'] );
 	}
+	
+	static public function getDebugInfo(){
+		$ret = [];
+		foreach(self::$registered_connections as $name=>$connection){
+			$ret[$name] = $connection->getDebugInfo();
+		}
+	}
 }
 	

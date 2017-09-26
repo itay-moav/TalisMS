@@ -554,4 +554,13 @@ class MySqlClient {
 		$msg .= "\n\n";
 		dbg ( $msg );
 	}
+
+	/**
+	 * Debug info for who ever wants it
+	 * 
+	 * @return string
+	 */
+	public function getDebugInfo():string{
+		return $this->lastSql . ' ' . print_r ( $this->lastBindParams, true );
+	}
 }
