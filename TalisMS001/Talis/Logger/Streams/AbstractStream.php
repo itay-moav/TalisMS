@@ -33,28 +33,30 @@ abstract class AbstractStream{
 			//do nothing
 			
 		}elseif(!is_string($inp) && !is_numeric($inp)){
-			$inp = print_r($inp,true);
-			/*Do not delete, used for debug purposes
-			switch (gettype($inp)){
-				case 'array':
-					$inp = print_r($inp,true);
-					break;
-					
-				case 'object':
-					$inp = get_class($inp);
-					break;
-					
-				default:
-					$inp = ' GOT TYPE OF VAR ' . gettype($inp);
-					break;
-			}*/
-			
+			if(app_env()['log']['low_memory_footprint']){
+				switch (gettype($inp)){
+					case 'array':
+						$inp = print_r($inp,true);
+						break;
+						
+					case 'object':
+						$inp = get_class($inp);
+						break;
+						
+					default:
+						$inp = ' GOT TYPE OF VAR ' . gettype($inp);
+						break;
+				}
+			} else {
+				$inp = print_r($inp,true);
+			}
 		}
 		
 		$full_stack_data = null;
 		if($full_stack){
 			$full_stack_data['session'] = isset($_SESSION)?$_SESSION:[];
-			$full_stack_data['request'] = isset($_REQUEST)?$_REQUEST:[];
+			$full_stack_data['request'] = (isset($_REQUEST)?$_REQUEST:[]);
+			$full_stack_data['request'][]= ' ANDTHERAWBODYIS ' . file_get_contents('php://input');
 			$full_stack_data['server']  = isset($_SERVER)?$_SERVER:[];
 			//TODO Implement this in factory $full_stack_data['database'] = Data_MySQL_DB::getDebugData();
 		}
