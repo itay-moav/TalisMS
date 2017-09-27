@@ -10,7 +10,7 @@ use function Talis\commons\array_to_object;
  * @date 2017-05-23
  *
  */
-abstract class aError extends \Talis\Chain\aChainLink{
+abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\iRenderable{
 	protected $http_code	 = 0
 	;
 	
