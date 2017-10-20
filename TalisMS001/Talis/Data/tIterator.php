@@ -1,4 +1,4 @@
-<?php namespace Talis\Services;
+<?php namespace Talis\Data;
 
 /**
  * Helper trait for iteratoring through files that need iteration

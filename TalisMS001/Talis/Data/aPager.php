@@ -1,5 +1,4 @@
-<?php namespace Talis\Services;
-
+<?php namespace Talis\Data;
 /**
  * @author Itay Moav <2008>
  * @license MIT - Opensource (File taken from PHPancake project)
@@ -36,7 +35,7 @@ abstract class aPager{
 				$currentPageTotal,			//Total entries in this page.
 				$query,						//The query I need to page.
 				$key,						//The key in the cache for the sql.
-				$params
+				$params						//Params the query uses, we can have several similar base queries which differ only by the params (WHERE/filters etc)
 				
 	;
 				

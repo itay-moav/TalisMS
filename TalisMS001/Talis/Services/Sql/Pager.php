@@ -26,7 +26,7 @@
  * setCountSql			:		Sets the counting mechanizem to a user supplied SQL, to be used if none simple SQL
  * 								are used, or in some cases of optimization
  */
-class Pager extends \Talis\Services\aPager{
+class Pager extends \Talis\Data\aPager{
 	/**
 	 * Shuster
 	 *
@@ -38,8 +38,8 @@ class Pager extends \Talis\Services\aPager{
 
 	/**
 	 */
-	public function __construct($sql,array $params,$page_size=BL_Aeon::PAGE_SIZE,$db_name=''){
-		$this->DB = Factory::getConnectionMySQL($db_name);
+	public function __construct($sql,array $params,$page_size=BL_Aeon::PAGE_SIZE,MySqlClient $DBClient){
+		$this->DB = $DBClient;
 		$this->setSession($this->storageNameSpace);
 		$this->setQuery($sql,$params)
 			 ->createKey();
@@ -62,7 +62,9 @@ class Pager extends \Talis\Services\aPager{
 		
 		//run and return;
 		$ret=$this->DB->select($sql,$this->params)
-					  ->fetchAll($fetch_type);
+					  ->fetchAll($fetch_type)
+		;
+		
 		$this->currentPageTotal=$this->DB->numRows;
 		if($this->newCount){
 			$this->setCount($this->DB->select("SELECT FOUND_ROWS() AS total")->fetchObj()->total);

@@ -34,7 +34,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @param unknown $page_size
 	 * @return \Talis\Message\aMessage
 	 */
-	static public function resultSet($process_type,array $params=[],\Talis\Message\aMessage $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):\Talis\Message\aMessage{
+	static public function resultSet($process_type,array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):\Talis\Data\ResultSet\i{
 		return self::create($process_type,$params,$Resultset,$page,$page_size)->run()->getResultset();
 	}
 	
@@ -48,7 +48,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @param integer $page_size
 	 * @return aAeonLooper
 	 */
-	static public function create($process_type,array $params=[],\Talis\Message\aMessage $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):aAeonLooper{
+	static public function create($process_type,array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):aAeonLooper{
 		return new static($process_type,$params,$Resultset,$page,$page_size);
 	}
 	
@@ -58,8 +58,8 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 */
 	static protected function preAutoPaging(array $params = []) {	}
 	
-	static public function autoPagingData(array $params=[],\Talis\Message\aMessage $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING){
-		if(!$Resultset) $Resultset = new BL_Set_LokiFake;
+	static public function autoPagingData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING){
+		if(!$Resultset) $Resultset = new \Talis\Data\ResultSet\Loki;
 		
 		static::preAutoPaging($params);
 		
@@ -81,8 +81,8 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @param unknown_type $params
 	 * @param integer $page_size
 	 */
-	static public function autoPagingManipulatedData(array $params=[],\Talis\Message\aMessage $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING):aAeonLooper{
-		if(!$Resultset) $Resultset = new BL_Set_LokiFake;
+	static public function autoPagingManipulatedData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING):aAeonLooper{
+		if(!$Resultset) $Resultset = new \Talis\Data\ResultSet\Loki;
 		
 		static::preAutoPaging($params);
 		
@@ -140,7 +140,10 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	protected $DB;
 	
 	/**
-	 * @var string ('READ','WRITE','REPORT')
+	 * The name of the connection to use. This is the array index from the config file (usualy).
+	 * For example the values can be: 'READ','WRITE','REPORT','BABA_GANUSH'
+	 * 
+	 * @var string 
 	 */
 	protected $db_connection_name = '';
 	
@@ -167,7 +170,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	/**
 	 * just for auto completion sake
 	 *
-	 * @var \Talis\Message\aMessage
+	 * @var \Talis\Data\ResultSet\i
 	 */
 	protected $Resultset;
 	
@@ -186,7 +189,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 */
 	protected $process_mode = self::PROCESS_TYPE_NONE;
 	
-	public function __construct($process_type,array $user_params=[],\Talis\Message\aMessage $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE){
+	public function __construct($process_type,array $user_params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE){
 		parent::__construct($user_params);
 		$this->process_mode = $process_type;
 		$this->setPaging($page, $page_size);
@@ -218,18 +221,6 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return mixed resource/query to loop around.
 	 */
 	abstract protected function query();
-	
-	/**
-	 * @return BL_Header_Abstract
-	 */
-	protected function getHeader(){
-		$class_name = static::class . 'Header';
-		if(!$this->Header && class_exists($class_name,false)){
-			$this->Header = new $class_name;
-			$this->Resultset->setHeader($this->Header);
-		}
-		return $this->Header;
-	}
 	
 	/**
 	 * The main entry point to the report generating algorithem
@@ -347,8 +338,8 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function pagedGenerateResultset(string $sql):aAeonLooper{
-		$this->QueryFilter->getWhereJoin($this->query_param_array);//TODO why is this here?! IT IS HERE PROBABLY TO GENERATE THE Pager params only, should be fixed
-		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->db_type);
+		$this->QueryFilter->getWhereJoin($this->query_param_array);// Why is this here?! IT IS HERE PROBABLY TO GENERATE THE Pager params only, should be fixed
+		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->DB);
 		$Pager->setCurrentPage($this->page);
 		$this->Resultset->setPager($Pager);
 		$this->Resultset->setData($Pager->getPage($this->row_type));
@@ -378,7 +369,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function pagedprocessedGenerateResultset(string $sql):aAeonLooper{
-		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->db_type);
+		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->DB);
 		$Pager->setCurrentPage($this->page);
 		$this->Resultset->setPager($Pager);
 		$Result = $Pager->getPage($this->row_type);
@@ -399,18 +390,6 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 			return " ORDER BY {$this->orderBy} {$this->orderByDirection}";
 		}
 		return '';
-	}
-	
-	/**
-	 * self explanatory, if u have simple fields in the select, u can use that
-	 * to manage the field list in select with the headers
-	 */
-	protected function extractFieldsFromDS(){
-		$fields = [];
-		foreach($this->Resultset->getHeaders() as $Header){
-			$fields[]=is_string($Header)?$Header:$Header->getOrderBy();
-		}
-		return join(',',$fields);
 	}
 	
 	/**
