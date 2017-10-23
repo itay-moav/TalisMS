@@ -1,5 +1,5 @@
 <?php namespace Talis\Services\Sql;
-use Talis\Services\aAeonLooper;
+use function \Talis\Logger\dbgn;
 
 /**
  * @author 	Itay Moav
@@ -85,11 +85,13 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 		if(!$Resultset) $Resultset = new \Talis\Data\ResultSet\Loki;
 		
 		static::preAutoPaging($params);
-		
+		$count = 1;
 		$Reader = new static(self::PROCESS_TYPE_PAGED*self::PROCESS_TYPE_PROCESS,$params,$Resultset,1,$page_size);
+		dbgn('ITERATION:0');
 		$Resultset = $Reader->run()->getResultset();
 		$num_of_pages = ($Resultset->getPager()->getTotalPages() -1);//The first page is allready taken care of, and won't be found again.
 		for($page=1; $page<=$num_of_pages;$page++){
+			dbgn("ITERATION:{$page} out of {$num_of_pages}");
 			$Reader = new static(self::PROCESS_TYPE_PAGED*self::PROCESS_TYPE_PROCESS,$params,$Resultset,1,$page_size);
 			$Reader->run();
 		}
@@ -189,11 +191,23 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 */
 	protected $process_mode = self::PROCESS_TYPE_NONE;
 	
+	/**
+	 * While row type is the general value for all
+	 * loopers, this is the value coming from PDO and whould be used 
+	 * in the sql looper.
+	 * If needs to be changed, all u need is changing
+	 * the method setSqlRowType()
+	 * 
+	 * @var integer
+	 */
+	protected $sql_row_type;
+	
 	public function __construct($process_type,array $user_params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE){
 		parent::__construct($user_params);
+		$this->setSqlRowType();
 		$this->process_mode = $process_type;
 		$this->setPaging($page, $page_size);
-		$this->DB = Factory::getConnectionMySQL($this->db_connection_name);//maybe I should inject this...
+		$this->DB = Factory::getConnectionOrDefaultMySQL($this->db_connection_name);//maybe I should inject this...
 		
 		$this->preInit()
 			 ->generateFilter()
@@ -201,6 +215,27 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 			 ->setOrderBy()
 			 ->postInit()
 		;
+	}
+	
+	/**
+	 * Sets the sql queries return types
+	 * 
+	 * @return int
+	 */
+	protected function setSqlRowType():int{
+		switch ($this->row_type){
+			case self::ROW_TYPE__ARRAY:
+				return $this->sql_row_type = \PDO::FETCH_BOTH;
+				
+			case self::ROW_TYPE__ASSOC:
+				return $this->sql_row_type = \PDO::FETCH_ASSOC;
+				
+			case self::ROW_TYPE__STDCLAS:
+				return $this->sql_row_type = \PDO::FETCH_CLASS;
+				
+			default:
+				return $this->sql_row_type = \PDO::FETCH_BOTH;
+		}
 	}
 	
 	/**
@@ -249,16 +284,16 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * Sets this class data set, this is the default
 	 * @return aAeonLooper
 	 */
-	protected function set(\Talis\Message\aMessage $Resultset=null):aAeonLooper{
-		$this->Resultset = $Resultset?:new \Talis\Message\PagedMessage;
+	protected function set(\Talis\Data\ResultSet\i $Resultset=null):aAeonLooper{
+		$this->Resultset = $Resultset?:new \Talis\Data\ResultSet\Loki;
 		if($this->QueryFilter) $this->Resultset->setFilter($this->QueryFilter);
 		return $this;
 	}
 	
 	/**
-	 * @return \Talis\Message\aMessage
+	 * @return \Talis\Data\ResultSet\i
 	 */
-	public function getResultset():\Talis\Message\aMessage{
+	public function getResultset():\Talis\Data\ResultSet\i{
 		return $this->Resultset;
 	}
 	
@@ -269,6 +304,10 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	public function setOrderBy():aAeonLooper{
+		/* TODO DONOTDELETE!!! 
+		 * for now shut down, this is a way to override default order by and get order by from UI.
+		 * Will restore it when the need returns
+		 *
 		$order_by = $this->getParam(self::ORDER_BY);
 		if($this->getHeader() && $order_by){
 			$this->orderBy=$this->getHeader()->get_value($order_by);
@@ -279,7 +318,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 			}
 			
 			$this->getHeader()->setOrderBy($order_by,$this->orderByDirection);
-		}
+		}*/
 		return $this;
 	}
 	
@@ -327,7 +366,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function generateResultset(string $sql):aAeonLooper{
-		$this->Resultset->setData($this->DB->select($sql,$this->query_param_array)->fetchAllObj());
+		$this->Resultset->setData($this->DB->select($sql,$this->query_param_array)->fetchAll($this->sql_row_type));
 		return $this;
 	}
 	
@@ -342,7 +381,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->DB);
 		$Pager->setCurrentPage($this->page);
 		$this->Resultset->setPager($Pager);
-		$this->Resultset->setData($Pager->getPage($this->row_type));
+		$this->Resultset->setData($Pager->getPage($this->sql_row_type));
 		return $this;
 	}
 	
@@ -354,7 +393,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function processedGenerateResultset(string $sql):aAeonLooper{
-		$Result = $this->DB->select($sql,$this->query_param_array)->fetchAllObj();
+		$Result = $this->DB->select($sql,$this->query_param_array)->fetchAll($this->sql_row_type);
 		foreach($Result as $row){
 			$this->row=&$row;
 			$this->process();
@@ -372,7 +411,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->DB);
 		$Pager->setCurrentPage($this->page);
 		$this->Resultset->setPager($Pager);
-		$Result = $Pager->getPage($this->row_type);
+		$Result = $Pager->getPage($this->sql_row_type);
 		foreach($Result as $row){
 			$this->row=&$row;
 			$this->process();

@@ -43,7 +43,7 @@ class Pager extends \Talis\Data\aPager{
 		$this->setSession($this->storageNameSpace);
 		$this->setQuery($sql,$params)
 			 ->createKey();
-		$this->setCount($this->getSessionValue($this->key));
+		$this->setCount($this->getSessionValue($this->key,0));
 		$this->pageSize=$page_size;
 	}//EOF CONSTRUCTOR
 	

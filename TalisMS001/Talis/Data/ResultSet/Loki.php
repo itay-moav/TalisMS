@@ -47,4 +47,30 @@ class Loki implements i{
 	public function getPager():?\Talis\Data\aPager{
 		return $this->pager;
 	}
+	
+	//--------------- ITERATOR INTERFACE -----------------------------------
+	public function rewind()
+	{
+		
+	}
+	
+	public function current()
+	{
+		return [];
+	}
+	
+	public function key()
+	{
+		return null;
+	}
+	
+	public function next()
+	{
+		return null;
+	}
+	
+	public function valid()
+	{
+		return false;
+	}
 }
