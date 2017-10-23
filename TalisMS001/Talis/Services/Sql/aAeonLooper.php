@@ -1,5 +1,5 @@
 <?php namespace Talis\Services\Sql;
-use Talis\Services\aAeonLooper;
+use function \Talis\Logger\dbgn;
 
 /**
  * @author 	Itay Moav
@@ -34,7 +34,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @param unknown $page_size
 	 * @return \Talis\Message\aMessage
 	 */
-	static public function resultSet($process_type,array $params=[],\Talis\Message\aMessage $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):\Talis\Message\aMessage{
+	static public function resultSet($process_type,array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):\Talis\Data\ResultSet\i{
 		return self::create($process_type,$params,$Resultset,$page,$page_size)->run()->getResultset();
 	}
 	
@@ -48,7 +48,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @param integer $page_size
 	 * @return aAeonLooper
 	 */
-	static public function create($process_type,array $params=[],\Talis\Message\aMessage $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):aAeonLooper{
+	static public function create($process_type,array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):aAeonLooper{
 		return new static($process_type,$params,$Resultset,$page,$page_size);
 	}
 	
@@ -58,8 +58,8 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 */
 	static protected function preAutoPaging(array $params = []) {	}
 	
-	static public function autoPagingData(array $params=[],\Talis\Message\aMessage $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING){
-		if(!$Resultset) $Resultset = new BL_Set_LokiFake;
+	static public function autoPagingData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING){
+		if(!$Resultset) $Resultset = new \Talis\Data\ResultSet\Loki;
 		
 		static::preAutoPaging($params);
 		
@@ -81,15 +81,17 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @param unknown_type $params
 	 * @param integer $page_size
 	 */
-	static public function autoPagingManipulatedData(array $params=[],\Talis\Message\aMessage $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING):aAeonLooper{
-		if(!$Resultset) $Resultset = new BL_Set_LokiFake;
+	static public function autoPagingManipulatedData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING):aAeonLooper{
+		if(!$Resultset) $Resultset = new \Talis\Data\ResultSet\Loki;
 		
 		static::preAutoPaging($params);
-		
+		$count = 1;
 		$Reader = new static(self::PROCESS_TYPE_PAGED*self::PROCESS_TYPE_PROCESS,$params,$Resultset,1,$page_size);
+		dbgn('ITERATION:0');
 		$Resultset = $Reader->run()->getResultset();
 		$num_of_pages = ($Resultset->getPager()->getTotalPages() -1);//The first page is allready taken care of, and won't be found again.
 		for($page=1; $page<=$num_of_pages;$page++){
+			dbgn("ITERATION:{$page} out of {$num_of_pages}");
 			$Reader = new static(self::PROCESS_TYPE_PAGED*self::PROCESS_TYPE_PROCESS,$params,$Resultset,1,$page_size);
 			$Reader->run();
 		}
@@ -140,7 +142,10 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	protected $DB;
 	
 	/**
-	 * @var string ('READ','WRITE','REPORT')
+	 * The name of the connection to use. This is the array index from the config file (usualy).
+	 * For example the values can be: 'READ','WRITE','REPORT','BABA_GANUSH'
+	 * 
+	 * @var string 
 	 */
 	protected $db_connection_name = '';
 	
@@ -167,7 +172,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	/**
 	 * just for auto completion sake
 	 *
-	 * @var \Talis\Message\aMessage
+	 * @var \Talis\Data\ResultSet\i
 	 */
 	protected $Resultset;
 	
@@ -186,11 +191,23 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 */
 	protected $process_mode = self::PROCESS_TYPE_NONE;
 	
-	public function __construct($process_type,array $user_params=[],\Talis\Message\aMessage $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE){
+	/**
+	 * While row type is the general value for all
+	 * loopers, this is the value coming from PDO and whould be used 
+	 * in the sql looper.
+	 * If needs to be changed, all u need is changing
+	 * the method setSqlRowType()
+	 * 
+	 * @var integer
+	 */
+	protected $sql_row_type;
+	
+	public function __construct($process_type,array $user_params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE){
 		parent::__construct($user_params);
+		$this->setSqlRowType();
 		$this->process_mode = $process_type;
 		$this->setPaging($page, $page_size);
-		$this->DB = Factory::getConnectionMySQL($this->db_connection_name);//maybe I should inject this...
+		$this->DB = Factory::getConnectionOrDefaultMySQL($this->db_connection_name);//maybe I should inject this...
 		
 		$this->preInit()
 			 ->generateFilter()
@@ -198,6 +215,27 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 			 ->setOrderBy()
 			 ->postInit()
 		;
+	}
+	
+	/**
+	 * Sets the sql queries return types
+	 * 
+	 * @return int
+	 */
+	protected function setSqlRowType():int{
+		switch ($this->row_type){
+			case self::ROW_TYPE__ARRAY:
+				return $this->sql_row_type = \PDO::FETCH_BOTH;
+				
+			case self::ROW_TYPE__ASSOC:
+				return $this->sql_row_type = \PDO::FETCH_ASSOC;
+				
+			case self::ROW_TYPE__STDCLAS:
+				return $this->sql_row_type = \PDO::FETCH_CLASS;
+				
+			default:
+				return $this->sql_row_type = \PDO::FETCH_BOTH;
+		}
 	}
 	
 	/**
@@ -218,18 +256,6 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return mixed resource/query to loop around.
 	 */
 	abstract protected function query();
-	
-	/**
-	 * @return BL_Header_Abstract
-	 */
-	protected function getHeader(){
-		$class_name = static::class . 'Header';
-		if(!$this->Header && class_exists($class_name,false)){
-			$this->Header = new $class_name;
-			$this->Resultset->setHeader($this->Header);
-		}
-		return $this->Header;
-	}
 	
 	/**
 	 * The main entry point to the report generating algorithem
@@ -258,16 +284,16 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * Sets this class data set, this is the default
 	 * @return aAeonLooper
 	 */
-	protected function set(\Talis\Message\aMessage $Resultset=null):aAeonLooper{
-		$this->Resultset = $Resultset?:new \Talis\Message\PagedMessage;
+	protected function set(\Talis\Data\ResultSet\i $Resultset=null):aAeonLooper{
+		$this->Resultset = $Resultset?:new \Talis\Data\ResultSet\Loki;
 		if($this->QueryFilter) $this->Resultset->setFilter($this->QueryFilter);
 		return $this;
 	}
 	
 	/**
-	 * @return \Talis\Message\aMessage
+	 * @return \Talis\Data\ResultSet\i
 	 */
-	public function getResultset():\Talis\Message\aMessage{
+	public function getResultset():\Talis\Data\ResultSet\i{
 		return $this->Resultset;
 	}
 	
@@ -278,6 +304,10 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	public function setOrderBy():aAeonLooper{
+		/* TODO DONOTDELETE!!! 
+		 * for now shut down, this is a way to override default order by and get order by from UI.
+		 * Will restore it when the need returns
+		 *
 		$order_by = $this->getParam(self::ORDER_BY);
 		if($this->getHeader() && $order_by){
 			$this->orderBy=$this->getHeader()->get_value($order_by);
@@ -288,7 +318,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 			}
 			
 			$this->getHeader()->setOrderBy($order_by,$this->orderByDirection);
-		}
+		}*/
 		return $this;
 	}
 	
@@ -336,7 +366,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function generateResultset(string $sql):aAeonLooper{
-		$this->Resultset->setData($this->DB->select($sql,$this->query_param_array)->fetchAllObj());
+		$this->Resultset->setData($this->DB->select($sql,$this->query_param_array)->fetchAll($this->sql_row_type));
 		return $this;
 	}
 	
@@ -347,11 +377,11 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function pagedGenerateResultset(string $sql):aAeonLooper{
-		$this->QueryFilter->getWhereJoin($this->query_param_array);//TODO why is this here?! IT IS HERE PROBABLY TO GENERATE THE Pager params only, should be fixed
-		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->db_type);
+		$this->QueryFilter->getWhereJoin($this->query_param_array);// Why is this here?! IT IS HERE PROBABLY TO GENERATE THE Pager params only, should be fixed
+		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->DB);
 		$Pager->setCurrentPage($this->page);
 		$this->Resultset->setPager($Pager);
-		$this->Resultset->setData($Pager->getPage($this->row_type));
+		$this->Resultset->setData($Pager->getPage($this->sql_row_type));
 		return $this;
 	}
 	
@@ -363,7 +393,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function processedGenerateResultset(string $sql):aAeonLooper{
-		$Result = $this->DB->select($sql,$this->query_param_array)->fetchAllObj();
+		$Result = $this->DB->select($sql,$this->query_param_array)->fetchAll($this->sql_row_type);
 		foreach($Result as $row){
 			$this->row=&$row;
 			$this->process();
@@ -378,10 +408,10 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @return aAeonLooper
 	 */
 	protected function pagedprocessedGenerateResultset(string $sql):aAeonLooper{
-		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->db_type);
+		$Pager = new Pager($sql,$this->query_param_array,$this->pageSize,$this->DB);
 		$Pager->setCurrentPage($this->page);
 		$this->Resultset->setPager($Pager);
-		$Result = $Pager->getPage($this->row_type);
+		$Result = $Pager->getPage($this->sql_row_type);
 		foreach($Result as $row){
 			$this->row=&$row;
 			$this->process();
@@ -399,18 +429,6 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 			return " ORDER BY {$this->orderBy} {$this->orderByDirection}";
 		}
 		return '';
-	}
-	
-	/**
-	 * self explanatory, if u have simple fields in the select, u can use that
-	 * to manage the field list in select with the headers
-	 */
-	protected function extractFieldsFromDS(){
-		$fields = [];
-		foreach($this->Resultset->getHeaders() as $Header){
-			$fields[]=is_string($Header)?$Header:$Header->getOrderBy();
-		}
-		return join(',',$fields);
 	}
 	
 	/**

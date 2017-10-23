@@ -30,9 +30,9 @@ abstract class aQueryFilter{
 	 * Get back to you with the correct filter for your Looper class.
 	 * If no specific filter exists it will return NULL
 	 *
-	 * @param object $owner, class owning the filter.
+	 * @param aAeonLooper $owner, class owning the filter.
 	 * @param array $request_params
-	 * @return BL_Filter_Abstract|NULL
+	 * @return ?aQueryFilter
 	 */
 	public static function factory(aAeonLooper $owner,array $request_params=[]):?aQueryFilter{
 		$father_name = get_class($owner);

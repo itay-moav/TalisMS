@@ -4,7 +4,7 @@
  * @author itay modified by holly
  */
 class FileReader implements Iterator {
-	use \Talis\Services\tIterator;
+	use \Talis\Data\tIterator;
 
     protected   $csv_file_name          = '',
                 $csv_handle             = null,

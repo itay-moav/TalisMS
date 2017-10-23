@@ -1,5 +1,5 @@
 <?php namespace Talis\Services\Sql;
-use function Talis\Logger\dbgr;
+//use function Talis\Logger\dbgr;
 //use function Talis\Logger\fatal;
 
 /**
@@ -34,10 +34,24 @@ class Factory {
 	
 	static public function getDefaultConnectionMySql():MySqlClient{
 		if(!self::$registered_connections){
-			throw new \LogicException ('You must initilize oneconnection to use this method');
+			throw new \LogicException ('You must initilize one connection to use this method');
 		}
 		//dbgr('connections',self::$registered_connections);
 		return reset(self::$registered_connections);
+	}
+
+	/**
+	 * Check if a valid name was passed, if not will return the default connection
+	 * 
+	 * @param string $connection_name
+	 * @param array $config
+	 * @return \Talis\Services\Sql\MySqlClient
+	 */
+	static public function getConnectionOrDefaultMySQL(string $connection_name='', array $config = []):MySqlClient{
+		if($connection_name){
+			return self::getConnectionMySQL($connection_name,$config);
+		}
+		return self::getDefaultConnectionMySql();
 	}
 	
 	/**
