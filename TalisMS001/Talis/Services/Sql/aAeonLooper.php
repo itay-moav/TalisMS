@@ -58,7 +58,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 */
 	static protected function preAutoPaging(array $params = []) {	}
 	
-	static public function autoPagingData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING){
+	static public function autoPagingData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING):void{
 		if(!$Resultset) $Resultset = new \Talis\Data\ResultSet\Loki;
 		
 		static::preAutoPaging($params);
@@ -81,7 +81,7 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * @param unknown_type $params
 	 * @param integer $page_size
 	 */
-	static public function autoPagingManipulatedData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING):aAeonLooper{
+	static public function autoPagingManipulatedData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING):void{
 		if(!$Resultset) $Resultset = new \Talis\Data\ResultSet\Loki;
 		
 		static::preAutoPaging($params);
