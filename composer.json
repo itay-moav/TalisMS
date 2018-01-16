@@ -1,0 +1,13 @@
+{
+    "name": "TalisMS",
+    "description": "TalisMS",
+    "type": "git",
+    "keywords": ["TalisMS"],
+    
+    
+    "autoload": {
+        "psr-4": {
+            "TalisMS\\": ""
+        }
+    }
+}
