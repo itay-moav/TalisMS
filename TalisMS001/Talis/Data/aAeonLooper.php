@@ -137,10 +137,10 @@ abstract class aAeonLooper{
     
     /**
      * Apply filter to each record
-     * @param int $current_index
+     * @param mixed $current_index
      * @return aAeonLooper
      */
-    final protected function apply_filters(int $current_index):aAeonLooper{
+    final protected function apply_filters($current_index):aAeonLooper{
         if($this->record_level_filters){
             foreach($this->record_level_filters as $RecLvlFilter){
                 $this->row[$current_index] = $RecLvlFilter->filter($this->row[$current_index]);
