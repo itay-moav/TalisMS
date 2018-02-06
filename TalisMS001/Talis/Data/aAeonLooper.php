@@ -137,7 +137,7 @@ abstract class aAeonLooper{
     
     /**
      * Apply filter to each record
-     * @param $current_index
+     * @param mixed $current_index
      * @return aAeonLooper
      */
     final protected function apply_filters($current_index):aAeonLooper{
