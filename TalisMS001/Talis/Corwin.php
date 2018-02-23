@@ -1,7 +1,8 @@
-<?php namespace Talis\Chain;
+<?php namespace Talis;
 use Talis\Logger as L;
-
 /**
+ * MAIN APP ENTRY POINT!
+ * 
  * Responsebility: Parses the user input to identify the API class to instantiate
  * This is the ROUTER
  * 
@@ -18,6 +19,12 @@ class Corwin{
 	static public $registered_init_func = null;
 	
 	/**
+	 * Context for this process, which is not part of the Response Request
+	 * @var \Talis\Data\Context
+	 */
+	static public $Context = null;
+	
+	/**
 	 * @var array
 	 */
 	private $route = [
@@ -28,7 +35,7 @@ class Corwin{
 	
 	/**
 	 * Body of the request, json decoded string
-	 * @var stdClass
+	 * @var \stdClass
 	 */
 	private $req_body  = null;
 	
@@ -48,15 +55,17 @@ class Corwin{
 	private $Request  = Null;
 	
 	/**
-	 * Main entry point after the MAIN for a specific protocol finished (http/rest/stopmp/async etc)
+	 * Main entry point after the Door for a specific protocol is finished (http/rest/stopmp/async etc)
 	 * 
 	 * @param array $request_parts
 	 * @param \stdClass $request_body
 	 * @param string $full_uri
-	 * @return \Talis\Chain\Corwin
+	 * @return \Talis\Corwin
 	 */
 	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri){
 		$this->req_body = $request_body;
+		self::$Context = new \Talis\Data\Context;
+		
 		try{
 			$this->generate_route($request_parts);
 			$this->generate_query($request_parts);
@@ -69,7 +78,7 @@ class Corwin{
 			}
 			
 		} catch(\Talis\Exception\BadUri $e){
-			$this->RequestChainHead = new Errors\ApiNotFound(null,null,[$e->getMessage()]);
+			$this->RequestChainHead = new Chain\Errors\ApiNotFound(null,null,[$e->getMessage()]);
 		}
 		return $this;
 	}
@@ -77,7 +86,7 @@ class Corwin{
 	/**
 	 * Init the API class and call it's dependency checks
 	 * 
-	 * @return aChainLink
+	 * @return Chain\aChainLink
 	 */
 	public function nextLinkInchain():\Talis\commons\iRenderable{
 		return $this->RequestChainHead->nextLinkInchain();

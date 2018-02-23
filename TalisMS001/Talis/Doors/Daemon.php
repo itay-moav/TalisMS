@@ -1,4 +1,4 @@
-<?php namespace Talis\Main;
+<?php namespace Talis\Doors;
 use function \Talis\Logger\dbgn,
              \Talis\Logger\fatal,
 			 \Talis\Logger\dbgr;
@@ -36,14 +36,14 @@ class Daemon{
 			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($decoded_request->url);
-			(new \Talis\Chain\Corwin)->begin($request_parts,
+			(new \Talis\Corwin)->begin($request_parts,
 											 $decoded_request->params,
 											 $decoded_request->url)
 			                         ->process()
 					                 ->render(new \Talis\Message\Renderers\HTTP)
 			;
 
-		}catch(Exception $E){ // TODO for now, all errors are Corwin, better handling later
+		}catch(\Exception $E){ // TODO for now, all errors are Corwin, better handling later
 			fatal($E);
 			$response = new \Talis\Message\Response;
 			$response->setBody(\Talis\commons\array_to_object(['type'=>'error','message'=>$e.'']));
