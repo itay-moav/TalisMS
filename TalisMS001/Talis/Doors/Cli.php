@@ -50,8 +50,8 @@ class Cli{
 					                 ->render(new \Talis\Message\Renderers\Cli)
 			;
 
-		}catch(\Exception $E){ // TODO for now, all errors are Corwin, better handling later
-			fatal($E);
+		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
+			fatal($e);
 			$response = new \Talis\Message\Response;
 			$response->setBody(\Talis\commons\array_to_object(['type'=>'error','message'=>$e.'']));
 			$response->setStatus(new \Talis\Message\Status\Code500);

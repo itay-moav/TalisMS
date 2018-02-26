@@ -40,12 +40,11 @@ class Request extends aMessage{
 	/**
 	 * @return \stdClass
 	 */
-	public function getBodyParams(){
-		if(isset($this->getBody()->params)){
-			return $this->getBody()->params;
-		} else {
-			$this->body->params = new \stdClass;
+	public function getBodyParams():\stdClass{
+		if(!isset($this->getBody()->params)){
+		    $this->body->params = new \stdClass;
 		}
+		return $this->getBody()->params;
 	}
 	
 	/**
