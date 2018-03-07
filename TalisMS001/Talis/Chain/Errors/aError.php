@@ -1,6 +1,5 @@
 <?php namespace Talis\Chain\Errors;
 use \Talis\Logger as L;
-use Talis\Chain\aChainLink;
 use function Talis\commons\array_to_object;
 
 /**
@@ -18,7 +17,7 @@ abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\
 	
 	/**
 	 * This is an end of the line chain link, return itself.
-	 * @return Talis\Chain\iReqRes
+	 * @return \Talis\Chain\aChainLink
 	 */
 	public function process():\Talis\Chain\aChainLink{
 		return $this;
