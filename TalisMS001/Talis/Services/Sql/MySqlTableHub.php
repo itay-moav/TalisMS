@@ -61,7 +61,7 @@ abstract class MySqlTableHub{
 	 * @param array $where
 	 * @param array $fields
 	 *
-	 * @return stdClass or false if nothing found 
+	 * @return \stdClass or false if nothing found 
 	 */
 	static public function quickSelect(array $where=[],array $fields=['*']){
 		return self::getInstance()->iQuickSelect($where,$fields);
@@ -104,7 +104,7 @@ abstract class MySqlTableHub{
 	/**
 	 * Shortcut to get key/pair result
 	 *
-	 * @param unknown $where
+	 * @param array $where
 	 * @param array $fields
 	 * @param string $append_sql
 	 * @return array
@@ -115,8 +115,8 @@ abstract class MySqlTableHub{
 	
 	/**
 	 * Shortcut to get key value pair result
-	 * @param unknown $table
-	 * @param unknown $where
+	 * @param string $table
+	 * @param mixed $where
 	 * @param array $fields
 	 * @param string $append_sql
 	 */
@@ -223,7 +223,7 @@ abstract class MySqlTableHub{
 	/**
 	 * @return MySqlClient
 	 */
-	protected function db(){
+	protected function db():MySqlClient{
 		return $this->db_client;
 	}
 	
@@ -232,16 +232,16 @@ abstract class MySqlTableHub{
 	 *  @param 	array $data
 	 *  @return array
 	 */
-	protected function cleanData($data) {
+	protected function cleanData(array $data):array{
 		return $data;
 	}
 	
 	/**
 	 * Wrapper for INSERT queries. Default sets the DB obj to a WRITE one.
 	 *
-	 * @return Data_MySQL_DB
+	 * @return MySqlClient
 	 */
-	protected function insert($sql,array $params=array()){
+	protected function insert($sql,array $params=[]){
 		return $this->db()->insert($sql,$params);
 	}//EOF insert
 	
@@ -252,9 +252,9 @@ abstract class MySqlTableHub{
 	 * and the values are the values to insert.
 	 * ! DO NOT INCLUDE THE CONTROL FIELDS!
 	 *
-	 * @return Data_MySQL_DB
+	 * @return int last id
 	 */
-	public function insertData(array $data, $on_duplicate_update=false){
+	public function insertData(array $data, bool $on_duplicate_update=false):int{
 		$data=[$data];
 		return $this->insertMultipleData($data,$on_duplicate_update);
 	}
@@ -273,7 +273,7 @@ abstract class MySqlTableHub{
 	 * @return int
 	 */
 	public function insertMultipleData(array $data,$on_duplicate_update=false,$ignore=false):int{
-		$datas = array_chunk($data, 50);
+		$datas = array_chunk($data, 4);
 		$id = 0;
 		foreach ($datas as $d) {
 			$id = $this->insertMultipleDataRaw($d, $on_duplicate_update,$ignore);
@@ -372,7 +372,7 @@ abstract class MySqlTableHub{
 		";
 		try{
 			$this->insert($sql,$params);
-		} catch(Exception $e){
+		} catch(\Exception $e){
 			throw new FailedDeltaRecordCreation("Failed creating UPDATE delta records for {$this->databaseName}.{$this->tableName}");
 		}
 	}
@@ -380,9 +380,9 @@ abstract class MySqlTableHub{
 	/**
 	 * Wrapper for UPDATE queries. Default sets the DB obj to a WRITE one.
 	 *
-	 * @return Data_MySQL_DB
+	 * @return MySqlClient
 	 */
-	public function update($sql,array $params=array()){
+	public function update($sql,array $params=[]):MySqlClient{
 		return $this->db()->update($sql,$params);
 	}//EOF update
 	
@@ -391,9 +391,9 @@ abstract class MySqlTableHub{
 	 * It will explode each cell ofthe array into an AND condition. For more complex conditions,
 	 * Write your own SQL.
 	 *
-	 * @return Data_MySQL_DB
+	 * @return MySqlClient
 	 */
-	public function iUpdateRecord(array $values,array $where=[],$clean_values=true,$clean_where=true){
+	public function iUpdateRecord(array $values,array $where=[],bool $clean_values=true,bool $clean_where=true):MySqlClient{
 		//get SET fields
 		$params=[];
 		$values = $this->cleanData($values);
@@ -422,9 +422,9 @@ abstract class MySqlTableHub{
 	/**
 	 * Wrapper for DELETE queries. Default sets the DB obj to a WRITE one.
 	 *
-	 * @return Data_MySQL_DB
+	 * @return MySqlClient
 	 */
-	public function delete($sql,array $params=array()){
+	public function delete(string $sql,array $params=[]):MySqlClient{
 		return $this->db()->delete($sql,$params);
 	}//EOF delete
 	
@@ -434,9 +434,9 @@ abstract class MySqlTableHub{
 	 * @param array @where array of where clauses, ONLY ANDs
 	 * @param boolean $clean_where wether to clean the where params or not.
 	 *
-	 * @return Data_MySQL_DB
+	 * @return MySqlClient
 	 */
-	public function deleteData(array $where,$clean_where=true){
+	public function deleteData(array $where,bool $clean_where=true):MySqlClient{
 		$params=[];
 		$sql_where=Shortcuts::generateWhereData($where,$params,$clean_where);
 		if($sql_where) $sql="DELETE FROM {$this->database_name}.{$this->table_name} WHERE {$sql_where}";
@@ -464,7 +464,7 @@ abstract class MySqlTableHub{
 	/**
 	 * Event called before insert
 	 *  @param array $params
-	 * @return BL_Hub_Abstract
+	 * @return MySqlTableHub
 	 */
 	protected function preInsertEvent(array $param){
 		return $this;
@@ -473,7 +473,7 @@ abstract class MySqlTableHub{
 	/**
 	 * Event called before deletion.
 	 *  @param array $params
-	 * @return BL_Hub_Abstract
+	 * @return MySqlTableHub
 	 */
 	protected function preDeleteEvent(array $param){
 		return $this;
@@ -482,7 +482,7 @@ abstract class MySqlTableHub{
 	/**
 	 *  Event called before update
 	 *  @param array $params
-	 *  @return BL_Hub_Abstract
+	 *  @return MySqlTableHub
 	 */
 	protected function preUpdateEvent(array $param=[]){
 		return $this;
@@ -491,7 +491,7 @@ abstract class MySqlTableHub{
 	/**
 	 *  Event called before a mass update
 	 *  @param array $params
-	 *  @return BL_Hub_Abstract
+	 *  @return MySqlTableHub
 	 */
 	protected function preMultipleUpdateEvent(array $param=[]){
 		return $this;
@@ -501,7 +501,7 @@ abstract class MySqlTableHub{
 	 * Event called after insert
 	 * @param array $params
 	 * @param unknown $last_insert_id
-	 * @return BL_Hub_Abstract
+	 * @return MySqlTableHub
 	 */
 	protected function postInsertEvent(array $params, $last_insert_id){
 		return $this;
@@ -510,7 +510,7 @@ abstract class MySqlTableHub{
 	/**
 	 *  Event called after delete
 	 *  @param array $params
-	 *  @return BL_Hub_Abstract
+	 *  @return MySqlTableHub
 	 */
 	protected function postDeleteEvent(array $params){
 		return $this;
@@ -519,7 +519,7 @@ abstract class MySqlTableHub{
 	/**
 	 *  Event called after update
 	 *  @param array $params
-	 *  @return BL_Hub_Abstract
+	 *  @return MySqlTableHub
 	 */
 	protected function postUpdateEvent(array $params){
 		return $this;
@@ -528,7 +528,7 @@ abstract class MySqlTableHub{
 	/**
 	 *  Event called after mass update
 	 *  @param array $params
-	 *  @return BL_Hub_Abstract
+	 *  @return MySqlTableHub
 	 */
 	protected function postMultipleUpdateEvent(array $params){
 		return $this;
@@ -540,7 +540,7 @@ abstract class MySqlTableHub{
 	 * @var array $where not mandatory
 	 * @var array $fields not mandatory 9will fetch all fields
 	 *
-	 * @return \stdObj|false
+	 * @return mixed
 	 */
 	public function iQuickSelect(array $where=[],array $fields=['*']){
 		return $this->selectFields($fields,$where,true,'LIMIT 1')->fetchObj();
@@ -553,7 +553,7 @@ abstract class MySqlTableHub{
 	 * @param array $fields
 	 * @return ?\stdClass
 	 */
-	public function iQuickSelectJoin($table,array $where=[],array $fields=['*']):?\stdClass{
+	public function iQuickSelectJoin(string $table,array $where=[],array $fields=['*']):?\stdClass{
 		$join = "JOIN {$table} ON {$this->table_name}.id = {$table}.{$this->table_name}_id";
 		return $this->selectFields($fields,$where,true,'LIMIT 1',[],$join)->fetchObj();
 	}
@@ -564,7 +564,7 @@ abstract class MySqlTableHub{
 	 * @var array $where not mandatory
 	 * @var array $fields not mandatory will fetch all fields
 	 *
-	 * @return stdObj
+	 * @return array
 	 */
 	public function iSelect(array $where=[],array $fields=['*'],$append_sql='',$mode = \PDO::FETCH_OBJ):array{
 		$res = $this->selectFields($fields,$where,true,$append_sql);
@@ -581,9 +581,9 @@ abstract class MySqlTableHub{
 	 * @var array $where not mandatory
 	 * @var array $fields not mandatory 9will fetch all fields
 	 *
-	 * @return stdObj
+	 * @return array
 	 */
-	public function iSelectJoin($table,array $where=[],array $fields=['*'],$append_sql='',$mode = \PDO::FETCH_OBJ,$left_join = false):array{
+	public function iSelectJoin($table,array $where=[],array $fields=['*'],string $append_sql='',$mode = \PDO::FETCH_OBJ,bool $left_join = false):array{
 		$join = ($left_join?'LEFT ':'') . "JOIN {$table} ON {$this->table_name}.id = {$table}.{$this->table_name}_id";
 		$res = $this->selectFields($fields,$where,true, $append_sql,[],$join);
 		
@@ -619,13 +619,13 @@ abstract class MySqlTableHub{
 	/**
 	 *  Functions moved from old DL to remove the need for DL
 	 *  Selects a set of fields based on where array
-	 *  @param $fields			Fields to be selected from query
-	 *  @param $where			Where portion of select query
-	 *  @param $clean_where		Boolean determining if where cleaning is needed
-	 *  @param $concat_sql		String to be appended to the end of the query (Grouping and Limits)
-	 *  @param $concat_params	Array of params that require concatination
+	 *  @param array  $fields			Fields to be selected from query
+	 *  @param array  $where		    Where portion of select query
+	 *  @param bool   $clean_where		Boolean determining if where cleaning is needed
+	 *  @param string $concat_sql		String to be appended to the end of the query (Grouping and Limits)
+	 *  @param string $concat_params	Array of params that require concatination
 	 */
-	protected function selectFields( array $fields,array $where=array(), $clean_where=true, $concat_sql='',array $concat_params=array(),$join_stmt=''):MySqlClient
+	protected function selectFields( array $fields,array $where=[], bool $clean_where=true, string $concat_sql='',array $concat_params=[],string $join_stmt=''):MySqlClient
 	{
 		$fields=join(',',$fields);
 		$params=[];
@@ -641,9 +641,9 @@ abstract class MySqlTableHub{
 	 *  Performs a count.  Originally contained $table param.  Not need in Hub though.
 	 *  @param array	$whereData
 	 *  @param string	$field
-	 *  @param string	$distinct
+	 *  @param bool 	$distinct
 	 */
-	protected function selectCount(array $whereData,$field='*',$distinct=false):int {
+	protected function selectCount(array $whereData,$field='*',bool $distinct=false):int {
 		$distinct=$distinct?' DISTINCT ':'';
 		$params=array();
 		$where = Shortcuts::generateWhereData($whereData,$params,true);
