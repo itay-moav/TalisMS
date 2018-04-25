@@ -53,8 +53,9 @@ class Cli{
 		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
 			fatal($e);
 			$response = new \Talis\Message\Response;
-			$response->setBody(\Talis\commons\array_to_object(['type'=>'error','message'=>$e.'']));
+			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);
+			$response->setMessage($e.'');
 			(new \Talis\Message\Renderers\Cli)->emit($respone);
 		}
 	}
