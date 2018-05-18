@@ -36,12 +36,9 @@ class Daemon{
 			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($decoded_request->url);
-			(new \Talis\Corwin)->begin($request_parts,
-											 $decoded_request->params,
-											 $decoded_request->url)
-			                         ->process()
-					                 ->render(new \Talis\Message\Renderers\HTTP)
-			;
+		    (new \Talis\Corwin)->begin($request_parts,$decoded_request->params,$decoded_request->url)
+    		    ->nextLinkInchain()
+    		    ->render(new \Talis\Message\Renderers\HTTP);
 
 		}catch(\Exception $E){ // TODO for now, all errors are Corwin, better handling later
 			fatal($E);
