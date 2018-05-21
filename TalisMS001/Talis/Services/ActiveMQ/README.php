@@ -1,6 +1,6 @@
 <?php
 define('LOGFILE','ACTIVEMQ_DEMO_QUEUES_');
-include '/lms2/production/anahita/bin/init/bootstrap.php';
+include 'the bootstrap for this demo to work';
 
 /*
  * demo how to use the classes.
@@ -15,14 +15,12 @@ class PublisherActiveMQDemo_Kuku extends \Talis\Services\ActiveMQ\Publisher{
 	use \Talis\Services\ActiveMQ\tQueue;
 }
 
-
 // Run first the publisher, then run the subscriber.
 $p = new PublisherActiveMQDemo_Kuku;
 foreach(range(1,100) as $rbac_user_id){
     $p->get_client()->publish($rbac_user_id);
 }
 die;
-
 
 $r = new SubscriberActiveMQDemo_Kuku;
 $r->get_client()->listen(function($bob){echo $bob . "\n";});
