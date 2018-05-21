@@ -18,11 +18,12 @@ abstract class Publisher extends StompClient{
     protected function filter_message(string $msg):string{
         return $msg.'';//cast to string
     }
-    
+
     /**
-     * PUBLISH!
+     * 
      * @param string $msg
-     * @return Ambigous <string, string>
+     * @throws \Exception
+     * @return string
      */
     public function publish(string $msg):string{
         $msg = $this->filter_message($msg);
@@ -32,7 +33,7 @@ abstract class Publisher extends StompClient{
         try{
             
             $this->queue->send($msg);
-        } catch (Exception $e){
+        } catch (\Exception $e){
             fatal("ActiveMQ: Failure posting to {$destination}");
             throw $e;
         }
