@@ -11,15 +11,7 @@ use function Talis\Logger\fatal;
  * @author itay moav
  *
  */
-abstract class Subscriber extends StompClient{
-    
-    /**
-     * Override this to get more than one message per read
-     * 
-     * @var integer
-     */
-    protected $max_messages = 1;
-    
+abstract class Subscriber extends Queue{
     /**
      * Listen to the queue, until no more frames.
      * Will let PHP release this resource, for now
@@ -35,7 +27,7 @@ abstract class Subscriber extends StompClient{
     public function listen(\closure $do_the_baba_dance,array $subscribe_headers=[]):int{
         $msg_count = 0;
         try{
-            $msg_count = count($this->queue->receive($do_the_baba_dance,50,50*30*4,$subscribe_headers));
+            $msg_count = count($this->receive($do_the_baba_dance,50,50*30*4,$subscribe_headers));
 
         }
         catch (\ZendQueue\Exception\UnexpectedValueException $e){
@@ -45,12 +37,5 @@ abstract class Subscriber extends StompClient{
         }
         
         return $msg_count;
-    }
-    
-    /**
-     * 
-     */
-    protected function process_message($msg){
-        return $msg;
     }
 }

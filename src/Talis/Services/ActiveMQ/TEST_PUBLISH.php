@@ -15,26 +15,10 @@ class PublisherActiveMQDemo_Kuku extends \Talis\Services\ActiveMQ\Publisher{
 	use \Talis\Services\ActiveMQ\tQueue;
 }
 
-
-$r = SubscriberActiveMQDemo_Kuku::get_client(['host'=>'localhost','port'=>'61613']);
-$r->listen(function($bob){echo $bob . "\n";});
-die;
-
-
 // Run first the publisher, then run the subscriber.
 $p = PublisherActiveMQDemo_Kuku::get_client(['host'=>'localhost','port'=>'61613']);
 foreach(range(1,100) as $rbac_user_id){
     $p->publish($rbac_user_id);
 }
-die;
-
-
-
-
-
-
-
-
-
 
 

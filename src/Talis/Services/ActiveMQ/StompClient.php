@@ -13,7 +13,7 @@ use function Talis\Logger\fatal;
  * @author Itay Moav
  * @date APR-13-2015
  */
-abstract class StompClient{
+abstract class StompClientTOBEDELTEDONCE{
     const QUEUE                 = 'queue',
           TOPIC                 = 'topic'
     ;

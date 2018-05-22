@@ -1,0 +1,132 @@
+<?php namespace Talis\Services\ActiveMQ;
+//Inspired by ZendQueue;
+use function Talis\Logger\dbgn;
+use function Talis\Logger\dbgr;
+
+/**
+ * The Stomp client interacts with a Stomp server.
+ */
+class Client
+{
+    /**
+     * @var \ZendQueue\Stomp\Connection
+     */
+    protected $_connection;
+    
+    /**
+     * Add a server to connections
+     *
+     * @param string scheme
+     * @param string host
+     * @param integer port
+     */
+    public function __construct(string $scheme, string $host, int $port){
+        $this->addConnection($scheme, $host, $port);
+        $this->getConnection()->setFrameClass('\ZendQueue\Stomp\Frame');
+    }
+    
+    /**
+     * Shutdown
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        if ($this->getConnection()) {
+            $this->getConnection()->close(true);
+        }
+    }
+    
+    /**
+     * Add a connection to this client.
+     *
+     * Attempts to add this class to the client.  Returns a boolean value
+     * indicating success of operation.
+     *
+     * You cannot add more than 1 connection to the client at this time.
+     *
+     * @param string  $scheme ['tcp', 'udp']
+     * @param string  host
+     * @param integer port
+     * @param string  class - create a connection with this class; class must support \ZendQueue\Stomp\StompConnection
+     * @return boolean
+     */
+    public function addConnection(string $scheme, string $host, int $port):bool{
+        $connection = new \ZendQueue\Stomp\Connection();
+        
+        if ($connection->open($scheme, $host, $port)) {
+            $this->setConnection($connection);
+            return true;
+        }
+        
+        $connection->close();
+        return false;
+    }
+    
+    /**
+     * Set client connection
+     *
+     * @param \ZendQueue\Stomp\StompConnection
+     * @return void
+     */
+    public function setConnection(\ZendQueue\Stomp\Connection $connection):Client{
+        $this->_connection = $connection;
+        return $this;
+    }
+    
+    /**
+     * Get client connection
+     *
+     * @return \ZendQueue\Stomp\Connection|null
+     */
+    public function getConnection()
+    {
+        return $this->_connection;
+    }
+    
+    /**
+     * Send a stomp frame
+     *
+     * Returns true if the frame was successfully sent.
+     *
+     * @param \ZendQueue\Stomp\StompFrame $frame
+     * @return Client
+     */
+    public function send(\ZendQueue\Stomp\Frame $frame):Client
+    {
+        $this->getConnection()->write($frame);
+        return $this;
+    }
+    
+    /**
+     * Receive a frame
+     *
+     * Returns a frame or false if none were to be read.
+     *
+     * @return \ZendQueue\Stomp\StompFrame|boolean
+     */
+    public function receive()
+    {
+        return $this->getConnection()->read();
+    }
+    
+    /**
+     * canRead()
+     *
+     * @return boolean
+     */
+    public function canRead()
+    {
+        return $this->getConnection()->canRead();
+    }
+    
+    /**
+     * creates a frame class
+     *
+     * @return \ZendQueue\Stomp\StompFrame
+     */
+    public function createFrame()
+    {
+        return $this->getConnection()->createFrame();
+    }
+}

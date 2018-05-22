@@ -1,13 +1,32 @@
 <?php namespace Talis\Services\ActiveMQ;
 //Inspired by ZendQueue;
+use function Talis\Logger\dbgn;
+use function Talis\Logger\dbgr;
 
 use \Countable;
 
 /**
  * Class for connecting to queues performing common operations.
+ * MAKE SURE THE queue name is the last part of the class name.
  */
-class Queue implements \Countable
+abstract class Queue implements \Countable
 {
+    /**
+     * return an instance with an active connection
+     * @return Queue
+     */
+    static public function get_client(array $config):Queue{
+        $options = ['driverOptions' => ['host' => $config['host'],
+                                        'port' => $config['port']]
+        ];
+        return (new static($options));
+    }
+    
+    
+    const QUEUE                 = 'queue',
+          TOPIC                 = 'topic'
+    ;
+    
     /**
      * Use the TIMEOUT constant in the config of a \ZendQueue\Queue
      */
@@ -17,11 +36,6 @@ class Queue implements \Countable
      * Default visibility passed to count
      */
     const VISIBILITY_TIMEOUT = 30;
-    
-    /**
-     * Use the NAME constant in the config of \ZendQueue\Queue
-     */
-    const NAME = 'name';
     
     /**
      * connection default
@@ -35,18 +49,23 @@ class Queue implements \Countable
     //protected $_adapter = null;
     
     /**
+     * @var string
+     */
+    private $queue_name = '';
+    
+    /**
      * User-provided configuration
      *
      * @var array
      */
-    protected $_options = array();
+    private $_options = array();
     
     /**
      * Zend_Queue message class
      *
      * @var string
      */
-    protected $_messageClass = '\ZendQueue\Message';
+    private $_messageClass = '\ZendQueue\Message';
     
     /**
      * @var \ZendQueue\Stomp\Client
@@ -64,7 +83,14 @@ class Queue implements \Countable
      *
      * @var string
      */
-    protected $_messageSetClass = '\ZendQueue\Message\MessageIterator';
+    private $_messageSetClass = '\ZendQueue\Message\MessageIterator';
+    
+    /**
+     * Make sure you use one of the two traits,
+     * tQueue or tTopic, which will satisfy this
+     * contract
+     */
+    abstract protected function type();
     
     /**
      * Constructor
@@ -82,10 +108,11 @@ class Queue implements \Countable
             $options['driverOptions']['scheme'] = self::DEFAULT_SCHEME;
         }
         $this->setOptions($options);
+        $this->set_queue_name();
         
         $driverOptions = $options['driverOptions'];
         
-        $this->_client = new \ZendQueue\Stomp\Client($driverOptions['scheme'], $driverOptions['host'], $driverOptions['port']);
+        $this->_client = new Client($driverOptions['scheme'], $driverOptions['host'], $driverOptions['port']);
         $connect = $this->_client->createFrame();
         
         // Username and password are optional on some messaging servers
@@ -113,8 +140,8 @@ class Queue implements \Countable
      * @param  array $options
      * @return Queue
      */
-    public function setOptions(array $options):Queue
-    {
+    public function setOptions(array $options):Queue{
+        dbgr('SET OPTIONS FOR QUEUE',$options);
         $this->_options = array_merge($this->_options, $options);
         return $this;
     }
@@ -215,36 +242,42 @@ class Queue implements \Countable
      * @param  string $className
      * @return \ZendQueue\Queue Provides a fluent interface
      */
+    
+    /*
     public function setMessageClass($className)
     {
         $this->_messageClass = (string) $className;
         return $this;
     }
-
+*/
     /**
      * @return string
      */
+/*
     public function getMessageClass()
     {
         return $this->_messageClass;
     }
+  */
     
     /**
      * @param  string $className
      * @return Queue Provides a fluent interface
      */
+    /*
     public function setMessageSetClass($className):Queue{
         $this->_messageSetClass = (string) $className;
         return $this;
-    }
+    }*/
     
     /**
      * @return string
      */
+    /*
     public function getMessageSetClass()
     {
         return $this->_messageSetClass;
-    }
+    }*/
     
     /**
      * Get the name of the queue
@@ -254,9 +287,19 @@ class Queue implements \Countable
      *
      * @return string
      */
-    public function getName()
-    {
-        return $this->getOption(self::NAME);
+    public function get_queue_name(){
+        return $this->queue_name;
+    }
+    
+    /**
+     * validate the name is in the right structure.
+     * @return string get_queue_topic_name
+     */
+    protected function set_queue_name():string{
+        $name = explode('_',get_class($this));
+        $queue_name = strtolower($name[count($name) - 1]);
+        $type = $this->type();
+        return $this->queue_name = "/{$type}/{$queue_name}";
     }
     
     /**
@@ -310,15 +353,14 @@ class Queue implements \Countable
      * Send a message to the queue
      *
      * @param  mixed $message message
-     * @return \ZendQueue\Message
+     * @return array
      * @throws \Exception
      */
-    public function send($message)
-    {
+    public function send($message):array{
         //return $this->getAdapter()->send($message);
         $frame = $this->_client->createFrame();
         $frame->setCommand('SEND');
-        $frame->setHeader('destination', $this->getName());
+        $frame->setHeader('destination', $this->get_queue_name());
         $frame->setHeader('content-length', strlen($message));
         $frame->setBody((string) $message);
         $this->_client->send($frame);
@@ -329,13 +371,13 @@ class Queue implements \Countable
             'md5'        => md5($message),
             'handle'     => null
         );
-        
+        /*TOBEDELETED
         $options = array(
             'queue' => $this,
             'data'  => $data
-        );
-        $classname = $this->getMessageClass();
-        return new $classname($options);
+            );*/
+        //TOBEDELTED $classname = $this->getMessageClass();
+        return $data;//TOBEDELTED new $classname($options);
     }
     
     /**
@@ -371,7 +413,7 @@ class Queue implements \Countable
     {
         $frame = $this->_client->createFrame();
         $frame->setCommand('SUBSCRIBE');
-        $subscribe_headers['destination'] = $this->getName();
+        $subscribe_headers['destination'] = $this->get_queue_name();
         $subscribe_headers['ack']         = 'client';
         $frame->setHeaders($subscribe_headers);
         $this->_client->send($frame);
@@ -417,16 +459,16 @@ class Queue implements \Countable
                                 'handle'     => $response->getHeader('message-id'),
                                 'body'       => $response->getBody()
                                 );
-                                if(function_exists('dbgr')) dbgr('FRAME RECEIVED',$datum);
+                                dbgr('FRAME RECEIVED',$datum);
                                 $data[] = $datum;
                                 $frame_handler($response->getBody());
                                 $this->deleteThyMessage($datum['handle']);
                                 break;
                             default:
                                 $block = print_r($response, true);
-                                throw new \ZendQueue\Exception\UnexpectedValueException('Invalid response received: ' . $block,$i);
+                                throw new Exception_UnexpectedValue('Invalid response received: ' . $block,$i);
                         }
-                    }catch(\ZendQueue\Exception\ConnectionException $e){
+                    }catch(\ZendQueue\Exception\ConnectionException $e){//TOBEDELETED after I finish migrate
                         //nothing new comes into the socket. Obviously, this does not behave like a daemon
                         break;
                     }//eof catch
@@ -548,8 +590,8 @@ class Queue implements \Countable
         }*/
         $info['options']                  = $this->getOptions();
         //$info['options']['driverOptions'] = '[hidden]';
-        $info['currentQueue']             = $this->getName();
-        $info['messageClass']             = $this->getMessageClass();
+        $info['currentQueue']             = $this->get_queue_name();
+        //$info['messageClass']             = $this->getMessageClass();
         $info['messageSetClass']          = $this->getMessageSetClass();
         
         return $info;

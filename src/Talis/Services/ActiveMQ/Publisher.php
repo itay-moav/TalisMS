@@ -8,7 +8,7 @@ use function Talis\Logger\dbgn;
  * @author itay moav
  *
  */
-abstract class Publisher extends StompClient{
+abstract class Publisher extends Queue{
     /**
      * Place holder for filtering of messages
      *
@@ -32,7 +32,7 @@ abstract class Publisher extends StompClient{
         dbgn("ActiveMQ: posting to {$destination}");
         try{
             
-            $this->queue->send($msg);
+            $this->send($msg);
         } catch (\Exception $e){
             fatal("ActiveMQ: Failure posting to {$destination}");
             throw $e;
