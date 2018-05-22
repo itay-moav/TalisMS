@@ -19,7 +19,7 @@ abstract class StompClient{
     ;
     
     /**
-     * @var \ZendQueue\Queue The resource
+     * @var Queue The resource
      */
     protected $queue            = NULL;
     
@@ -63,17 +63,17 @@ abstract class StompClient{
      * Return an active connetcion
      * @return StompCLient
      */
-    protected function connect(array $headers=[]):StompClient{
+    protected function connect():StompClient{
         $url = "tcp://{$this->config['host']}:{$this->config['port']}";
         dbgn("ActiveMQ: Connecting to {$url}");
         try{
-            $this->queue = new \ZendQueue\Queue([
+            $this->queue = new Queue([
                 'name'          => $this->get_queue_name(),
                 'driverOptions' => ['host' => $this->config['host'],
                                     'port' => $this->config['port'],
                                    ]
             ]);
-            $this->queue->setAdapter('Activemq');
+            //$this->queue->setAdapter('Activemq');
         } catch (\Exception $e){
             fatal("Faild connection to Active MQ at {$url}");
             throw $e;

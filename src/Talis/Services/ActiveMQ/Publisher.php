@@ -15,7 +15,7 @@ abstract class Publisher extends StompClient{
      * @param string $msg
      * @return string filtered message
      */
-    protected function filter_message(string $msg):string{
+    protected function filter_message($msg):string{
         return $msg.'';//cast to string
     }
 
@@ -25,7 +25,7 @@ abstract class Publisher extends StompClient{
      * @throws \Exception
      * @return string
      */
-    public function publish(string $msg):string{
+    public function publish($msg):string{
         $msg = $this->filter_message($msg);
         dbgn("ActiveMQ: Sending filtered message [{$msg}]");
         $destination = $this->get_queue_name();

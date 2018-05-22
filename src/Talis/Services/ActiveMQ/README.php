@@ -1,6 +1,6 @@
 <?php
 define('LOGFILE','ACTIVEMQ_DEMO_QUEUES_');
-include 'the bootstrap for this demo to work';
+include '/home/itay/dev/emerald/config/bootstrap.php';
 
 /*
  * demo how to use the classes.
@@ -15,16 +15,19 @@ class PublisherActiveMQDemo_Kuku extends \Talis\Services\ActiveMQ\Publisher{
 	use \Talis\Services\ActiveMQ\tQueue;
 }
 
+
+$r = SubscriberActiveMQDemo_Kuku::get_client(['host'=>'localhost','port'=>'61613']);
+$r->listen(function($bob){echo $bob . "\n";});
+die;
+
+
 // Run first the publisher, then run the subscriber.
-$p = new PublisherActiveMQDemo_Kuku;
+$p = PublisherActiveMQDemo_Kuku::get_client(['host'=>'localhost','port'=>'61613']);
 foreach(range(1,100) as $rbac_user_id){
-    $p->get_client()->publish($rbac_user_id);
+    $p->publish($rbac_user_id);
 }
 die;
 
-$r = new SubscriberActiveMQDemo_Kuku;
-$r->get_client()->listen(function($bob){echo $bob . "\n";});
-die;
 
 
 
@@ -34,26 +37,4 @@ die;
 
 
 
-# OLD CLASSES BELOW!
 
-
-
-
-
-
-
-//a publisher for queue names shinto, and send a message '11232323232'
-class t_shinto extends \Talis\Services\ActiveMQ\Publisher{
-	use \Talis\Services\ActiveMQ\tQueue;
-}
-$TT = t_shinto::get_client();
-$TT->publish('11232323232');
-
-
-
-//a publisher for topic names koko, and send a message 'kiki'
-class something_koko extends \Talis\Services\ActiveMQ\Publisher{
-	use \Talis\Services\ActiveMQ\tTopic;
-}
-$TT = something_koko::get_client();
-$TT->publish('11232323232');
