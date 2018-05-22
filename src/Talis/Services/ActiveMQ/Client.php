@@ -52,7 +52,7 @@ class Client
      * @return boolean
      */
     public function addConnection(string $scheme, string $host, int $port):bool{
-        $connection = new \ZendQueue\Stomp\Connection();
+        $connection = new Connection();
         
         if ($connection->open($scheme, $host, $port)) {
             $this->setConnection($connection);
@@ -66,10 +66,10 @@ class Client
     /**
      * Set client connection
      *
-     * @param \ZendQueue\Stomp\StompConnection
-     * @return void
+     * @param Connection
+     * @return Client
      */
-    public function setConnection(\ZendQueue\Stomp\Connection $connection):Client{
+    public function setConnection(Connection $connection):Client{
         $this->_connection = $connection;
         return $this;
     }
@@ -77,10 +77,9 @@ class Client
     /**
      * Get client connection
      *
-     * @return \ZendQueue\Stomp\Connection|null
+     * @return Connection|null
      */
-    public function getConnection()
-    {
+    public function getConnection():?Connection{
         return $this->_connection;
     }
     

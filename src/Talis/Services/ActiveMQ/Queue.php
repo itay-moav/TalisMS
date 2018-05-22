@@ -68,7 +68,7 @@ abstract class Queue implements \Countable
     private $_messageClass = '\ZendQueue\Message';
     
     /**
-     * @var \ZendQueue\Stomp\Client
+     * @var Client
      */
     private $_client = null;
     
@@ -468,10 +468,7 @@ abstract class Queue implements \Countable
                                 $block = print_r($response, true);
                                 throw new Exception_UnexpectedValue('Invalid response received: ' . $block,$i);
                         }
-                    }catch(\ZendQueue\Exception\ConnectionException $e){//TOBEDELETED after I finish migrate
-                        //nothing new comes into the socket. Obviously, this does not behave like a daemon
-                        break;
-                    }//eof catch
+                    }
                     
                     catch(Exception_Connection $e){
                         //nothing new comes into the socket. Obviously, this does not behave like a daemon
@@ -604,10 +601,12 @@ abstract class Queue implements \Countable
      */
     public function __destruct()
     {
+        
         // Gracefully disconnect
-        $frame = $this->_client->createFrame();
+        $this->_client->getConnection()->close(true);
+        /*
         $frame->setCommand('DISCONNECT');
-        $this->_client->send($frame);
+        $this->_client->send($frame);*/
         unset($this->_client);
     }
 }

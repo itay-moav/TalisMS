@@ -32,7 +32,7 @@ class Connection
      * @return true;
      * @throws \Exception
      */
-    public function open($scheme, $host, $port, array $options = array())
+    public function open($scheme, $host, $port, array $options = [])
     {
         $str = $scheme . '://' . $host;
         $this->_socket = fsockopen($str, $port, $errno, $errstr);
@@ -40,7 +40,7 @@ class Connection
         if ($this->_socket === false) {
             // aparently there is some reason that fsockopen will return false
             // but it normally throws an error.
-            throw new Exception\ConnectionException("Unable to connect to $str; error = $errstr ( errno = $errno )");
+            throw new Exception_Connection("Unable to connect to $str; error = $errstr ( errno = $errno )");
         }
         
         if (!isset($options['timeout_sec'])) {
@@ -51,9 +51,7 @@ class Connection
         }
         
         stream_set_timeout($this->_socket, $options['timeout_sec'], $options['timeout_usec']);
-        
         $this->_options = $options;
-        
         return true;
     }
     
@@ -88,10 +86,10 @@ class Connection
         // Danlo: I suspect this is because this has already been claimed by the interpeter
         // thus trying to shutdown this resources, which is already shutdown is a problem.
         if (is_resource($this->_socket)) {
-            // fclose($this->_socket);
+            fclose($this->_socket);/////////
         }
         
-        // $this->_socket = null;
+        $this->_socket = null;//////////////
     }
     
     /**
@@ -103,7 +101,7 @@ class Connection
     public function ping()
     {
         if (!is_resource($this->_socket)) {
-            throw new Exception\ConnectionException('Not connected to Stomp server');
+            throw new Exception_Connection('Not connected to Stomp server');
         }
         return true;
     }
@@ -116,14 +114,14 @@ class Connection
      * @param \ZendQueue\Stomp\Frame $frame
      * @return \ZendQueue\Stomp\Connection
      */
-    public function write(Frame $frame)
+    public function write(\ZendQueue\Stomp\Frame $frame)
     {
         $this->ping();
         $output = $frame->toFrame();
         
         $bytes = fwrite($this->_socket, $output, strlen($output));
         if ($bytes === false || $bytes == 0) {
-            throw new Exception\RangeException('No bytes written');
+            throw new Exception_Range('No bytes written');
         }
         
         return $this;
@@ -174,8 +172,8 @@ class Connection
         
         // to differenciate between a byte message and
         // non-byte message, check content-length header
-        $headers = Frame::extractHeaders($response);
-        if (!isset($headers[Frame::CONTENT_LENGTH])) {
+        $headers = \ZendQueue\Stomp\Frame::extractHeaders($response);
+        if (!isset($headers[\ZendQueue\Stomp\Frame::CONTENT_LENGTH])) {
             // read till we hit the end of frame marker
             do {
                 $chunk = @fgets($this->_socket);
@@ -183,7 +181,7 @@ class Connection
                     $this->_checkSocketReadTimeout();
                     break;
                 }
-                if (substr($chunk, -2) === Frame::END_OF_FRAME) {
+                if (substr($chunk, -2) === \ZendQueue\Stomp\Frame::END_OF_FRAME) {
                     // add the chunk above to the result before returning
                     $response .= $chunk;
                     break;
@@ -192,7 +190,7 @@ class Connection
             } while (feof($this->_socket) === false);
         } else {
             // we have a content-length header set
-            $contentLength = $headers[Frame::CONTENT_LENGTH] + 2;
+            $contentLength = $headers[\ZendQueue\Stomp\Frame::CONTENT_LENGTH] + 2;
             $current_pos = ftell($this->_socket);
             $chunk = '';
             
@@ -219,9 +217,9 @@ class Connection
         
         // we already have headers, prevent extracting the headers again
         $frame = $this->createFrame();
-        $frame->setCommand(Frame::extractCommand($response))
-        ->setHeaders($headers)
-        ->setBody(Frame::extractBody($response));
+        $frame->setCommand(\ZendQueue\Stomp\Frame::extractCommand($response))
+              ->setHeaders($headers)
+              ->setBody(\ZendQueue\Stomp\Frame::extractBody($response));
         return $frame;
     }
     
@@ -259,20 +257,14 @@ class Connection
     public function createFrame()
     {
         $class = $this->getFrameClass();
-        
         $frame = new $class();
-        
-        if (!$frame instanceof StompFrame) {
-            throw new Exception\LogicException('Invalid Frame class provided; must implement \ZendQueue\Stomp\StompFrame');
-        }
-        
         return $frame;
     }
     
     /**
      * Check if the connection has timed out
      *
-     * @throws ZendQueue\Exception if the connection has timed out
+     * @throws Exception_Connection if the connection has timed out
      */
     protected function _checkSocketReadTimeout()
     {
@@ -283,7 +275,7 @@ class Connection
         $timedout = $info['timed_out'];
         if ($timedout) {
             $this->close();
-            throw new Exception\ConnectionException(
+            throw new Exception_Connection(
                 "Read timed out after {$this->_options['timeout_sec']} seconds"
             );
         }
