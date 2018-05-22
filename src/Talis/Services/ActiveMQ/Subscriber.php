@@ -28,18 +28,22 @@ abstract class Subscriber extends StompClient{
      *                                   frame and does some magic on it. Use the 'use' to 
      *                                   bind this closure to something
      *                                   
+     * @param array $subscribe_headers  array of headers to be used in the subscribe call buried deep in the recieve() method.
+     *                                   
      * @return integer num of frames read.
      */
-    public function listen(\closure $do_the_baba_dance):int{
+    public function listen(\closure $do_the_baba_dance,array $subscribe_headers=[]):int{
         $msg_count = 0;
         try{
-            $processed_messages = $this->queue->receive($do_the_baba_dance,50,50*30*4);
+            $msg_count = count($this->queue->receive($do_the_baba_dance,50,50*30*4,$subscribe_headers));
 
-        } catch (\Exception $e){
+        }
+        catch (\ZendQueue\Exception\UnexpectedValueException $e){
             $msg_count = $e->getCode();
             fatal("somthing bad happened while reading frame no {$msg_count}");
             throw $e;
         }
+        
         return $msg_count;
     }
     
