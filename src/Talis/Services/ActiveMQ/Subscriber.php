@@ -30,7 +30,7 @@ abstract class Subscriber extends Queue{
             $msg_count = count($this->receive($do_the_baba_dance,50,50*30*4,$subscribe_headers));
 
         }
-        catch (\ZendQueue\Exception\UnexpectedValueException $e){
+        catch (Exception_UnexpectedValue $e){
             $msg_count = $e->getCode();
             fatal("somthing bad happened while reading frame no {$msg_count}");
             throw $e;

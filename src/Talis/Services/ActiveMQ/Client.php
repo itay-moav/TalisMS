@@ -9,7 +9,7 @@ use function Talis\Logger\dbgr;
 class Client
 {
     /**
-     * @var \ZendQueue\Stomp\Connection
+     * @var Connection
      */
     protected $_connection;
     
@@ -22,7 +22,7 @@ class Client
      */
     public function __construct(string $scheme, string $host, int $port){
         $this->addConnection($scheme, $host, $port);
-        $this->getConnection()->setFrameClass('\ZendQueue\Stomp\Frame');
+        //$this->getConnection()->setFrameClass('\ZendQueue\Stomp\Frame');
     }
     
     /**
@@ -48,7 +48,6 @@ class Client
      * @param string  $scheme ['tcp', 'udp']
      * @param string  host
      * @param integer port
-     * @param string  class - create a connection with this class; class must support \ZendQueue\Stomp\StompConnection
      * @return boolean
      */
     public function addConnection(string $scheme, string $host, int $port):bool{
@@ -88,11 +87,10 @@ class Client
      *
      * Returns true if the frame was successfully sent.
      *
-     * @param \ZendQueue\Stomp\StompFrame $frame
+     * @param Frame $frame
      * @return Client
      */
-    public function send(\ZendQueue\Stomp\Frame $frame):Client
-    {
+    public function send(Frame $frame):Client{
         $this->getConnection()->write($frame);
         return $this;
     }
@@ -102,10 +100,9 @@ class Client
      *
      * Returns a frame or false if none were to be read.
      *
-     * @return \ZendQueue\Stomp\StompFrame|boolean
+     * @return Frame|boolean
      */
-    public function receive()
-    {
+    public function receive(){
         return $this->getConnection()->read();
     }
     
@@ -122,10 +119,9 @@ class Client
     /**
      * creates a frame class
      *
-     * @return \ZendQueue\Stomp\StompFrame
+     * @return Frame
      */
-    public function createFrame()
-    {
+    public function createFrame(){
         return $this->getConnection()->createFrame();
     }
 }

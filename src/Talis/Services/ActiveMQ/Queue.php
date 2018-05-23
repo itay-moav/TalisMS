@@ -28,7 +28,7 @@ abstract class Queue implements \Countable
     ;
     
     /**
-     * Use the TIMEOUT constant in the config of a \ZendQueue\Queue
+     * Use the TIMEOUT constant in the config of a Queue
      */
     const TIMEOUT = 'timeout';
     
@@ -65,7 +65,7 @@ abstract class Queue implements \Countable
      *
      * @var string
      */
-    private $_messageClass = '\ZendQueue\Message';
+    //private $_messageClass = '\ZendQueue\Message';
     
     /**
      * @var Client
@@ -83,7 +83,7 @@ abstract class Queue implements \Countable
      *
      * @var string
      */
-    private $_messageSetClass = '\ZendQueue\Message\MessageIterator';
+    //private $_messageSetClass = '\ZendQueue\Message\MessageIterator';
     
     /**
      * Make sure you use one of the two traits,
@@ -148,13 +148,11 @@ abstract class Queue implements \Countable
     
     /**
      * Set an individual configuration option
-     *
-     * @param  string $name
-     * @param  mixed $value
-     * @return \ZendQueue\Queue
+     * @param string $name
+     * @param mixed $value
+     * @return Queue
      */
-    public function setOption($name, $value)
-    {
+    public function setOption(string $name, $value):Queue{
         $this->_options[(string) $name] = $value;
         return $this;
     }
@@ -164,8 +162,7 @@ abstract class Queue implements \Countable
      *
      * @return array
      */
-    public function getOptions()
-    {
+    public function getOptions():array{
         return $this->_options;
     }
     
@@ -337,15 +334,15 @@ abstract class Queue implements \Countable
      *
      * Returns true if the adapter doesn't support message deletion.
      *
-     * @param  \ZendQueue\Message $message
+     * @param  array $message
      * @return boolean
      * @throws \Exception
      */
-    public function deleteMessage(\ZendQueue\Message $message)
+    public function deleteMessage(array $message)//NOTICE! This message includes some meta data, this is not the pure message in send()
     {
         $frame = $this->_client->createFrame();
         $frame->setCommand('ACK');
-        $frame->setHeader('message-id', $message->handle);
+        $frame->setHeader('message-id', $message['handle']);
         $this->_client->send($frame);
     }
     
@@ -396,7 +393,6 @@ abstract class Queue implements \Countable
     /**
      * Checks if the client is subscribed to the queue
      *
-     * @param  \ZendQueue\Queue $queue
      * @return boolean
      */
     protected function isSubscribed():bool{
@@ -406,7 +402,6 @@ abstract class Queue implements \Countable
     /**
      * Subscribes the client to the queue.
      *
-     * @param  \ZendQueue\Queue $queue
      * @return void
      */
     protected function subscribe(array $subscribe_headers = [])
@@ -426,7 +421,7 @@ abstract class Queue implements \Countable
      * @param  \Closure $frame_handler function to handle the received frames the signature is (string $body)
      * @param  integer $maxMessages
      * @param  integer $timeout
-     * @return \ZendQueue\Message\MessageIterator
+     * @return array
      */
     public function receive(\Closure $frame_handler,?int $maxMessages=100,?int $timeout=self::RECEIVE_TIMEOUT_DEFAULT,array $subscribe_headers=[]):array
     {

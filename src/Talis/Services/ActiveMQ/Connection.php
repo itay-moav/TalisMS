@@ -96,7 +96,7 @@ class Connection
      * Check whether we are connected to the server
      *
      * @return true
-     * @throws \ZendQueue\Exception
+     * @throws Exception_Connection
      */
     public function ping()
     {
@@ -105,17 +105,14 @@ class Connection
         }
         return true;
     }
-    
+
     /**
-     * Write a frame to the stomp server
-     *
-     * example: $response = $client->write($frame)->read();
-     *
-     * @param \ZendQueue\Stomp\Frame $frame
-     * @return \ZendQueue\Stomp\Connection
+     * 
+     * @param \Talis\Services\ActiveMQ\Frame $frame
+     * @throws Exception_Range
+     * @return \Talis\Services\ActiveMQ\Connection
      */
-    public function write(\ZendQueue\Stomp\Frame $frame)
-    {
+    public function write(Frame $frame):Connection{
         $this->ping();
         $output = $frame->toFrame();
         
@@ -151,8 +148,8 @@ class Connection
     /**
      * Reads in a frame from the socket or returns false.
      *
-     * @return \ZendQueue\Stomp\StompFrame|false
-     * @throws \ZendQueue\Exception
+     * @return Frame|false
+     * @throws \Exception
      */
     public function read()
     {
@@ -172,8 +169,8 @@ class Connection
         
         // to differenciate between a byte message and
         // non-byte message, check content-length header
-        $headers = \ZendQueue\Stomp\Frame::extractHeaders($response);
-        if (!isset($headers[\ZendQueue\Stomp\Frame::CONTENT_LENGTH])) {
+        $headers = Frame::extractHeaders($response);
+        if (!isset($headers[Frame::CONTENT_LENGTH])) {
             // read till we hit the end of frame marker
             do {
                 $chunk = @fgets($this->_socket);
@@ -181,7 +178,7 @@ class Connection
                     $this->_checkSocketReadTimeout();
                     break;
                 }
-                if (substr($chunk, -2) === \ZendQueue\Stomp\Frame::END_OF_FRAME) {
+                if (substr($chunk, -2) === Frame::END_OF_FRAME) {
                     // add the chunk above to the result before returning
                     $response .= $chunk;
                     break;
@@ -190,7 +187,7 @@ class Connection
             } while (feof($this->_socket) === false);
         } else {
             // we have a content-length header set
-            $contentLength = $headers[\ZendQueue\Stomp\Frame::CONTENT_LENGTH] + 2;
+            $contentLength = $headers[Frame::CONTENT_LENGTH] + 2;
             $current_pos = ftell($this->_socket);
             $chunk = '';
             
@@ -217,48 +214,48 @@ class Connection
         
         // we already have headers, prevent extracting the headers again
         $frame = $this->createFrame();
-        $frame->setCommand(\ZendQueue\Stomp\Frame::extractCommand($response))
+        $frame->setCommand(Frame::extractCommand($response))
               ->setHeaders($headers)
-              ->setBody(\ZendQueue\Stomp\Frame::extractBody($response));
+              ->setBody(Frame::extractBody($response));
         return $frame;
     }
     
     /**
      * Set the frameClass to be used
      *
-     * This must be a \ZendQueue\Stomp\StompFrame.
+     * This must be a Frame.
      *
-     * @param  string $classname - class is an instance of \ZendQueue\Stomp\StompFrame
+     * @param  string $classname - class is an instance of Frame
      * @return $this;
      */
+    /*
     public function setFrameClass($classname)
     {
         $this->_options['frameClass'] = $classname;
         return $this;
-    }
+    }*/
     
     /**
      * Get the frameClass
      *
      * @return string
      */
+    /*
     public function getFrameClass()
     {
         return isset($this->_options['frameClass'])
         ? $this->_options['frameClass']
         : '\ZendQueue\Stomp\Frame';
     }
+    */
     
     /**
      * Create an empty frame
      *
-     * @return \ZendQueue\Stomp\StompFrame
+     * @return Frame
      */
-    public function createFrame()
-    {
-        $class = $this->getFrameClass();
-        $frame = new $class();
-        return $frame;
+    public function createFrame():Frame{
+        return new Frame;
     }
     
     /**
