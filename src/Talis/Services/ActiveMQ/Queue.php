@@ -1,8 +1,5 @@
 <?php namespace Talis\Services\ActiveMQ;
 //Inspired by ZendQueue;
-use function Talis\Logger\dbgn;
-use function Talis\Logger\dbgr;
-
 use \Countable;
 
 /**
@@ -141,7 +138,8 @@ abstract class Queue implements \Countable
      * @return Queue
      */
     public function setOptions(array $options):Queue{
-        dbgr('SET OPTIONS FOR QUEUE',$options);
+        MainZim::$CurrentLogger->debug('=========================== SET OPTIONS FOR QUEU =======================');
+        MainZim::$CurrentLogger->debug($options);
         $this->_options = array_merge($this->_options, $options);
         return $this;
     }
@@ -454,7 +452,8 @@ abstract class Queue implements \Countable
                                 'handle'     => $response->getHeader('message-id'),
                                 'body'       => $response->getBody()
                                 );
-                                dbgr('FRAME RECEIVED',$datum);
+                                MainZim::$CurrentLogger->debug('FRAME RECEIVED');
+                                MainZim::$CurrentLogger->debug($datum);
                                 $data[] = $datum;
                                 $frame_handler($response->getBody());
                                 $this->deleteThyMessage($datum['handle']);
