@@ -16,9 +16,9 @@ class Client {
 	
 	/**
 	 *
-	 * @var Data_Redis_iKeyBoss key
+	 * @var iKeyBoss key
 	 *     
-	 * @return Data_Redis_Client with a specific key
+	 * @return Client with a specific key
 	 */
 	static public function getInstance(array $config,iKeyBoss $key, iDataBuilder $DataBuilder = null) { // was create
 		if (! self::$MyRedis) {
