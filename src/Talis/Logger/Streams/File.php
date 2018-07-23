@@ -14,9 +14,9 @@ class File extends aLogStream{
 			}
 			fclose($stream);
 		} 
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
-			throw new Exception('Unable to open log file.');
+			throw new \Exception('Unable to open log file.');
 		}
 	}
 }

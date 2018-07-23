@@ -1,10 +1,10 @@
-<?php
+<?php namespace Talis\Logger\Streams;
 /**
  * run redis-cli monitor | php ./redis_format.php | tee baba.log
  * @author Itay Moav
  *
  */
-class Logger_Streams_Redis extends Logger_MainZim{
+class Redis extends aLogStream{
 	protected function log($inp,$severity,$full_stack_data = null){
     	$config = app_env();
         $host  = $config['database']['redis']['host'];
@@ -17,7 +17,7 @@ class Logger_Streams_Redis extends Logger_MainZim{
         	    $R->set('REDIS_MONITOR',print_r($full_stack_data,true));
         	}
 
-        }catch(Exception $E){
+        }catch(\Exception $E){
     		echo "REDIS DEAD!\n";
     		echo $E->getMessage();
     		die;
