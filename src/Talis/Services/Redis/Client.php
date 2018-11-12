@@ -100,7 +100,7 @@ class Client {
 					self::$MyRedis,
 					$method_name 
 			), $arguments );
-		} catch ( Exception $e ) { // TODO if a builder was supplied, use the builder to return the data
+		} catch ( \Exception $e ) { // TODO if a builder was supplied, use the builder to return the data
 			error_monitor ( $e, 1 );
 			error_monitor ( 'We had a Redis issue, see before msg', 0 );
 			dbgn ( 'Redis call failed' );

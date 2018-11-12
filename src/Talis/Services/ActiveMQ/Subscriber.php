@@ -1,5 +1,5 @@
 <?php namespace Talis\Services\ActiveMQ;
-\Talis\Logger\MainZim::include();//enable dbg functions
+//\Talis\Logger\MainZim::include();//enable dbg functions
 
 /**
  * abstract the reading process.
@@ -31,7 +31,7 @@ abstract class Subscriber extends Queue{
         }
         catch (Exception_UnexpectedValue $e){
             $msg_count = $e->getCode();
-            \Talis\Logger\fatal("somthing bad happened while reading frame no {$msg_count}");
+            \fatal("somthing bad happened while reading frame no {$msg_count}");
             throw $e;
         }
         

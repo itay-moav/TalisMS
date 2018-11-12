@@ -24,7 +24,6 @@ abstract class aChainLink{
 	
 	/**
 	 * Context for the current flow. it is transfered same as Response/Request between each chain link
-	 * @var \Talis\Message\Context $Context
 	 */
 	protected $Context                  = null;
 	
