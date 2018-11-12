@@ -1,5 +1,5 @@
 <?php namespace Talis\Services\ActiveMQ;
-\Talis\Logger\MainZim::include();//enable dbg functions
+//\Talis\Logger\MainZim::include();//enable dbg functions
 
 /**
  * abstract the publishisng process.
@@ -27,14 +27,14 @@ abstract class Publisher extends Queue{
      */
     public function publish($msg):string{
         $msg = $this->filter_message($msg);
-        \Talis\Logger\dbgn("ActiveMQ: Sending filtered message [{$msg}]");
+        \dbgn("ActiveMQ: Sending filtered message [{$msg}]");
         $destination = $this->get_queue_name();
-        \Talis\Logger\dbgn("ActiveMQ: posting to {$destination}");
+        //\Talis\Logger\dbgn("ActiveMQ: posting to {$destination}");
         try{
             
             $this->send($msg);
         } catch (\Exception $e){
-            \Talis\Logger\fatal("ActiveMQ: Failure posting to {$destination}");
+            \fatal("ActiveMQ: Failure posting to {$destination}");
             throw $e;
         }
         return $msg;

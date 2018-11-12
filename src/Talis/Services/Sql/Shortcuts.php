@@ -63,7 +63,6 @@ class Shortcuts{
 	}
 	
 	/**
-	 *  From SiTEL_Model_Where which is being removed
 	 *  Generate sql for a query
 	 *  @param array $where
 	 *  @param array $params
@@ -101,12 +100,7 @@ class Shortcuts{
 				$k2 = ':' . $param_key;
 				$sign = $v->getString($k2);
 				$v->applyParameters($k2, $tmp_params);
-			}/** elseif($v instanceof SiTEL_Model_Where)  SiTEL_Model Where being removed
-			{
-				$temp_where[]="({$v->toSQL($params)})";
-				continue;
-			} **/else
-			{ //REGULAR statmens
+			}else{ //REGULAR statmens
 				$tmp_params[':'.$param_key]=$v;
 				$sign=" = :{$param_key}";
 			}
@@ -138,9 +132,7 @@ class Shortcuts{
 	    return self::toSQL($where, $params);
 	    //TODO fix the below, for some reason it was rewritten badly....
 	    
-		//$illegal_chars=array('.',',','(',')', ' ', "'", '-');
 		if(!$clean_where){
-			//$Where = new SiTEL_Model_Where($where);
 			return self::toSQL($where, $params);
 
 		}else{
