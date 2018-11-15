@@ -39,17 +39,6 @@ class Frame
     protected $_autoContentLength = true;
     
     /**
-     * Constructor
-     */
-    /*
-    public function __construct(){
-        $this->setHeaders(array());
-        $this->setBody(null);
-        $this->setCommand(null);
-        $this->setAutoContentLength(true);
-    }*/
-    
-    /**
      * get the status of the auto content length
      *
      * If AutoContentLength is true this code will automatically put the
@@ -74,11 +63,6 @@ class Frame
      */
     public function setAutoContentLength(bool $auto):Frame
     {
-        /*
-        if (!is_bool($auto)) {
-            throw new Exception_InvalidArgument('$auto is not a boolean');
-        }*/
-        
         $this->_autoContentLength = $auto;
         return $this;
     }
@@ -246,14 +230,6 @@ class Frame
     public function __toString()
     {
         return $this->toFrame();
-        /*
-        try {
-            $return = $this->toFrame();
-        } catch (Exception\ExceptionInterface $e) {
-            $return = '';
-        }
-        return $return;
-        */
     }
     
     /**

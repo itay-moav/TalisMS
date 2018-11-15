@@ -26,7 +26,6 @@ class Client
      */
     public function __construct(string $scheme, string $host, int $port){
         $this->addConnection($scheme, $host, $port);
-        //$this->getConnection()->setFrameClass('\ZendQueue\Stomp\Frame');
     }
     
     /**

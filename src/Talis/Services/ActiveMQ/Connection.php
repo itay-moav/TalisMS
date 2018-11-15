@@ -221,35 +221,6 @@ class Connection
     }
     
     /**
-     * Set the frameClass to be used
-     *
-     * This must be a Frame.
-     *
-     * @param  string $classname - class is an instance of Frame
-     * @return $this;
-     */
-    /*
-    public function setFrameClass($classname)
-    {
-        $this->_options['frameClass'] = $classname;
-        return $this;
-    }*/
-    
-    /**
-     * Get the frameClass
-     *
-     * @return string
-     */
-    /*
-    public function getFrameClass()
-    {
-        return isset($this->_options['frameClass'])
-        ? $this->_options['frameClass']
-        : '\ZendQueue\Stomp\Frame';
-    }
-    */
-    
-    /**
      * Create an empty frame
      *
      * @return Frame
