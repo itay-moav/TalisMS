@@ -3,11 +3,12 @@
     "description": "TalisMS",
     "type": "git",
     "keywords": ["TalisMS"],
-    
-    
+    "require": {
+        "php": ">=7.1.0"
+    },
     "autoload": {
-        "psr-4": {
-            "TalisMS\\": ""
+        "psr-0": {
+            "Talis": "src/"
         }
     }
 }
