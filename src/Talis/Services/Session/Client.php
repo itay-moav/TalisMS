@@ -1,5 +1,4 @@
 <?php namespace Talis\Services\Session;
-use function Talis\Logger\dbgn;
 /**
  * @author Itay Moav <itay.malimovka@gmail.com>
  * @Reviewer
@@ -73,7 +72,7 @@ class Client implements \Iterator{
 	 *
 	 */
 	public function destroy(){
-		dbgn('DESTROYING SESSION: ' . self::$appNamespace . ' ---- ' . $this->nameSpace);
+		//dbgn('DESTROYING SESSION: ' . self::$appNamespace . ' ---- ' . $this->nameSpace);
 		unset($_SESSION[self::$appNamespace][$this->nameSpace]);
 		return $this;
 	}//EOF destroy
@@ -85,10 +84,10 @@ class Client implements \Iterator{
 	}
 	
 	/**
-	 * @param $index is the key name
-	 * @param $default is the default value to fetch back in case this key does not exists. Defaults to NULL
+	 * @param string $index is the key name
+	 * @param mixed $default is the default value to fetch back in case this key does not exists. Defaults to NULL
 	 */
-	public function get($index,$default=null){
+	public function get(string $index,$default=null){
 		$ret=(isset($_SESSION[self::$appNamespace][$this->nameSpace][$index]))?
 			 ($_SESSION[self::$appNamespace][$this->nameSpace][$index]):
 			 $default;
@@ -102,7 +101,7 @@ class Client implements \Iterator{
 	 * 
 	 * @return mixed $value
 	 */
-	public function set($index,$value){
+	public function set(string $index,$value){
 		$_SESSION[self::$appNamespace][$this->nameSpace][$index]=$value;
 		
 		//return after filter applied
@@ -116,9 +115,9 @@ class Client implements \Iterator{
     /**
      * Clears all contents from current namespace
      *
-     * @return Data_Session this instance for chaining and PONIES!!!
+     * @return Client this instance for chaining and PONIES!!!
      */
-    public function emptyAll(){
+	public function emptyAll():Client{
     	if(isset($_SESSION[self::$appNamespace][$this->nameSpace])){
     		$_SESSION[self::$appNamespace][$this->nameSpace] = null;
     	}
@@ -139,7 +138,7 @@ class Client implements \Iterator{
      *
      * @return array
      */
-    public function getAll(){
+    public function getAll():array{
 		if(isset($_SESSION[self::$appNamespace][$this->nameSpace])){
     		return $_SESSION[self::$appNamespace][$this->nameSpace];
     	}
@@ -150,9 +149,9 @@ class Client implements \Iterator{
      * Rewrite entire name space with input array
      *
      * @param  $contents
-     * @return Data_Session $contents;
+     * @return Client $contents;
      */
-    public function setAll( $contents){
+    public function setAll( $contents):Client{
    		$_SESSION[self::$appNamespace][$this->nameSpace]=$contents;    		
     	return $this;
     }
@@ -176,7 +175,7 @@ class Client implements \Iterator{
     }
     
     public function valid() {
-        $var = $this->current() !== false;
+        $var = (false !== $this->current());
         return $var;
     }
     
