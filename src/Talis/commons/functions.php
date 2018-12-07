@@ -10,7 +10,7 @@
  * PHP's execution stack.
  *
  * @param String $class
- * @throws Exception_ClassNotFound If the file does not exist or the class was not found in the file.
+ * @throws \Talis\Exception\ClassNotFound If the file does not exist or the class was not found in the file.
  * @return void
  */
 function autoload($class) {
@@ -44,7 +44,7 @@ function isProduction() {
  * 
  * @param array $array
  * 
- * @return stdClass
+ * @return \stdClass
  */
 function array_to_object(array $array) {
     $object = new \stdClass();

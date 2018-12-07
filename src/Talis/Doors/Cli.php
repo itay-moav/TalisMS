@@ -1,7 +1,4 @@
 <?php namespace Talis\Doors;
-use function \Talis\Logger\dbgn,
-             \Talis\Logger\fatal,
-			 \Talis\Logger\dbgr;
 
 /**
  * SERVES cli originating messages
@@ -38,9 +35,9 @@ class Cli{
 			if($is_base64_encoded){
 				$raw_request_body = base64_decode($raw_request_body);
 			}
-			dbgr('json',$raw_request_body);
+			\dbgr('json',$raw_request_body);
 			$decoded_request_body = json_decode($raw_request_body);
-			dbgr('$decoded_request_body',$decoded_request_body);			
+			\dbgr('$decoded_request_body',$decoded_request_body);			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($url);
 			(new \Talis\Corwin)->begin($request_parts,
@@ -51,7 +48,7 @@ class Cli{
 			;
 
 		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
-			fatal($e);
+			\fatal($e);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);

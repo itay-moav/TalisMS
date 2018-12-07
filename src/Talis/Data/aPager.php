@@ -60,7 +60,7 @@ abstract class aPager{
 	 * Otherwise, will run a COUNT query once per new sql.
 	 *
 	 * @param integer $count
-	 * @return lib_dbutils_SqlPager
+	 * @return aPager
 	 */
 	public function setCount(int $count):aPager{
 		$this->count=$count*1; //*1 is to make it an int instead of a string

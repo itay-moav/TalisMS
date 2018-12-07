@@ -1,9 +1,5 @@
 <?php namespace Talis\Services\Sql;
 
-use function Talis\Logger\dbg;
-//use function Talis\Logger\dbgn;
-//use function Talis\Logger\fatal;
-
 /**
  * DB class purpose is to wrap the actual DB extension we use and provide easy API and syntactic sugar
  * for the various operations we need.
@@ -54,7 +50,7 @@ class MySqlClient {
 	 * Native DB class.
 	 * Most likely PDO
 	 * 
-	 * @var PDO
+	 * @var \PDO
 	 */
 	private $NativeDB = null;
 	
@@ -68,7 +64,7 @@ class MySqlClient {
 	/**
 	 * Holds the last PDO Statment object
 	 *
-	 * @var PDOStatement
+	 * @var \PDOStatement
 	 */
 	private $lastStatement = null;
 	
@@ -143,7 +139,7 @@ class MySqlClient {
 	
 	/**
 	 *
-	 * @return Talis\Services\Sql\MySqlClient
+	 * @return \Talis\Services\Sql\MySqlClient
 	 */
 	public function closeCursor() {
 		$this->lastStatement->closeCursor();
@@ -409,7 +405,7 @@ class MySqlClient {
 	/**
 	 * This function control the transaction flow & lock the auto commit.
 	 *
-	 * @throws LogicException in case we are a read connection
+	 * @throws \LogicException in case we are a read connection
 	 * @return MySqlClient
 	 */
 	public function beginTransaction():MySqlClient{
@@ -431,7 +427,7 @@ class MySqlClient {
 	 * the true.
 	 * In case of error it rollbacks and returns false flag
 	 *
-	 * @throws LogicException in case there is no transaction to close.
+	 * @throws \LogicException in case there is no transaction to close.
 	 * @return MySqlClient
 	 */
 	public function endTransaction():MySqlClient{
@@ -552,7 +548,7 @@ class MySqlClient {
 		}
 		
 		$msg .= "\n\n";
-		dbg ( $msg );
+		\dbg ( $msg );
 	}
 
 	/**

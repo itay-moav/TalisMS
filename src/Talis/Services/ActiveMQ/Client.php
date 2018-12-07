@@ -1,12 +1,6 @@
 <?php namespace Talis\Services\ActiveMQ;
 //Inspired by ZendQueue;
 
-/*uncomment when want to debug
-\Talis\Logger\MainZim::include();//enable dbg functions
-use function Talis\Logger\dbgn;
-use function Talis\Logger\dbgr;
-*/
-
 /**
  * The Stomp client interacts with a Stomp server.
  */

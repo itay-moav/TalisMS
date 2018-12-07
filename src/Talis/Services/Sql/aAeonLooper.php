@@ -87,11 +87,11 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 		static::preAutoPaging($params);
 		$count = 1;
 		$Reader = new static(self::PROCESS_TYPE_PAGED*self::PROCESS_TYPE_PROCESS,$params,$Resultset,1,$page_size);
-		dbgn('ITERATION:0');
+		\dbgn('ITERATION:0');
 		$Resultset = $Reader->run()->getResultset();
 		$num_of_pages = ($Resultset->getPager()->getTotalPages() -1);//The first page is allready taken care of, and won't be found again.
 		for($page=1; $page<=$num_of_pages;$page++){
-			dbgn("ITERATION:{$page} out of {$num_of_pages}");
+			\dbgn("ITERATION:{$page} out of {$num_of_pages}");
 			$Reader = new static(self::PROCESS_TYPE_PAGED*self::PROCESS_TYPE_PROCESS,$params,$Resultset,1,$page_size);
 			$Reader->run();
 		}

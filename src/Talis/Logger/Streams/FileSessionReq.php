@@ -1,11 +1,11 @@
-<?php
+<?php namespace Talis\Logger\Streams;
 /**
  * Stream that will create one file per session, and add to header of each log entry the request identifier
  * Even if u do same request twice, it will have different uid
  * 
  * @author Itaty Moav
  */
-class Logger_Streams_FileSessionReq extends Logger_MainZim{
+class Logger_Streams_FileSessionReq extends aLogStream{
     /**
      * @var string request uri '/'=>'_' + a rand(1,100) to prevent confusing the same request for the same user twice, as one request
      */

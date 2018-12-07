@@ -1,7 +1,4 @@
 <?php namespace Talis\Doors;
-use function \Talis\Logger\dbgn,
-             \Talis\Logger\fatal,
-			 \Talis\Logger\dbgr;
 
 /**
  * SERVES ActiveMQ originating messages
@@ -32,7 +29,7 @@ class Daemon{
 		try{
 			//decode
 			$decoded_request = json_decode(base64_decode($raw_request));
-			dbgr('RECEIVED',$decoded_request);
+			\dbgr('RECEIVED',$decoded_request);
 			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($decoded_request->url);
@@ -41,7 +38,7 @@ class Daemon{
     		    ->render(new \Talis\Message\Renderers\HTTP);
 
 		}catch(\Exception $E){ // TODO for now, all errors are Corwin, better handling later
-			fatal($E);
+			\fatal($E);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);

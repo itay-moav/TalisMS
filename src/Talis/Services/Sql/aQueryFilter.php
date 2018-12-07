@@ -1,6 +1,4 @@
 <?php namespace Talis\Services\Sql;
-use function \Talis\Logger\dbgn;
-use function \Talis\Logger\dbgr;
 
 /**
  * Query Filter is a container for WHERE/JOIN/HAVING singel field objects
@@ -42,11 +40,11 @@ abstract class aQueryFilter{
 		$class_name=$father_name . 'Filter';//The filter class should be defined in the same file as the report class itself and should have the exact same name + Filter.
 		
 		if(class_exists($class_name,false)){
-			dbgn('in filter for ' . $father_name);
+			\dbgn('in filter for ' . $father_name);
 			$filter = new $class_name($father_name,$request_params);
 			return $filter;
 		}else{
-			dbgn('No filter supplied');
+			\dbgn('No filter supplied');
 			return null;
 		}
 	}
@@ -73,7 +71,7 @@ abstract class aQueryFilter{
 		$this->init();
 		$this->owner=$owner;
 		$this->rawRequestParams=$request_params;
-		dbgr('RAW PARAMS IN FILTER',$this->rawRequestParams);
+		\dbgr('RAW PARAMS IN FILTER',$this->rawRequestParams);
 		$this->constructElements();
 	}//EOF constructor
 	

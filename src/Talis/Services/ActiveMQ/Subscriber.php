@@ -1,5 +1,4 @@
 <?php namespace Talis\Services\ActiveMQ;
-//\Talis\Logger\MainZim::include();//enable dbg functions
 
 /**
  * abstract the reading process.
@@ -27,7 +26,6 @@ abstract class Subscriber extends Queue{
         $msg_count = 0;
         try{
             $msg_count = count($this->receive($do_the_baba_dance,50,50*30*4,$subscribe_headers));
-
         }
         catch (Exception_UnexpectedValue $e){
             $msg_count = $e->getCode();

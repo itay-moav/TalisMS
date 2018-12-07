@@ -6,7 +6,7 @@
 class DatetimeYMDHIS implements i {
     /**
      * (non-PHPdoc)
-     * @see Form_Filter_i::filter()
+     * @see i::filter()
      */
     public function filter($data) {
         return date('Y-m-d H:i:s', strtotime($data));

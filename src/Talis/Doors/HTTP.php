@@ -1,7 +1,4 @@
 <?php namespace Talis\Doors;
-use function \Talis\Logger\dbgn,
-             \Talis\Logger\fatal
-;
 
 /**
  * Main entry point for the request chain
@@ -33,7 +30,7 @@ class HTTP{
 			;
 
 		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
-			fatal($e);
+			\fatal($e);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);
@@ -59,12 +56,12 @@ class HTTP{
 	
 	/**
 	 * Parses the http input stream to get the body and decode into stdClass
-	 * @return stdClass
+	 * @return \stdClass
 	 */
 	private function get_request_body():?\stdClass{
 		$json_request_body = file_get_contents('php://input');
-		dbgn('RAW INPUT FROM CLIENT');
-		dbgn("==============={$json_request_body}===============");
+		\dbgn('RAW INPUT FROM CLIENT');
+		\dbgn("==============={$json_request_body}===============");
 		return json_decode($json_request_body);
 	}
 }

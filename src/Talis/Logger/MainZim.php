@@ -5,15 +5,12 @@
  */
 abstract class MainZim{
     
-    /**
-     * Call this to includes this file with autoloader.
-     * Used inside this lib where a Bootstrap not always exists
-     * to instantiate the logger
-     */
-    static public function include(){}
-	
+    static public function include_shortcuts(){
+        require __DIR__ . DIRECTORY_SEPARATOR . 'shortcuts.php';
+    }
+    
 	/**
-	 * @var \Talis\Logger\MainZim current Logger to be used in the app.
+	 * @var \Talis\Logger\Streams\aLogStream current Logger to be used in the app.
 	 *             To change current Logger, simply use the factory again (or just instantiate 
 	 *             the logger you want.
 	 */

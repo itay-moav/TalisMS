@@ -79,13 +79,13 @@ abstract class aChainLink{
 	 * @see \Talis\Chain\AChainLink::nextLinkInchain()
 	 */
 	final public function nextLinkInchain():\Talis\Chain\aChainLink{
-		dbgn('About to process: [' . get_class($this).']');
+		\dbgn('About to process: [' . get_class($this).']');
 		$FinalLink = $this->process();
 		if($this->chain_container != null && !$this->chain_container->isEmpty()){
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
-			dbgn("STARTING NEXT CHAIN LINK WITH {$name}");
+			\dbgn("STARTING NEXT CHAIN LINK WITH {$name}");
 			$next_link = new $name($this->Request,$this->Response,$params);//TODO maybe array merge with current class params?
 			$next_link->set_chain_container($this->chain_container);
 			$FinalLink = $next_link->nextLinkInchain();

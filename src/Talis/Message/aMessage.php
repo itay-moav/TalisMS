@@ -5,7 +5,7 @@ abstract class aMessage{
 	/**
 	 * The json decoded body or stdClass
 	 *
-	 * @return stdClass|NULL
+	 * @return \stdClass|NULL
 	 */
 	public function getBody():\stdClass{
 		return $this->body??$this->setBody(new \stdClass);

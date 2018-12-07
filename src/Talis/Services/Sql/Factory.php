@@ -1,6 +1,4 @@
 <?php namespace Talis\Services\Sql;
-//use function Talis\Logger\dbgr;
-//use function Talis\Logger\fatal;
 
 /**
  * Factory class to get a SQL client

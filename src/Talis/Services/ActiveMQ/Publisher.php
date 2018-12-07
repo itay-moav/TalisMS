@@ -1,5 +1,4 @@
 <?php namespace Talis\Services\ActiveMQ;
-//\Talis\Logger\MainZim::include();//enable dbg functions
 
 /**
  * abstract the publishisng process.
@@ -29,7 +28,7 @@ abstract class Publisher extends Queue{
         $msg = $this->filter_message($msg);
         \dbgn("ActiveMQ: Sending filtered message [{$msg}]");
         $destination = $this->get_queue_name();
-        //\Talis\Logger\dbgn("ActiveMQ: posting to {$destination}");
+        \dbgn("ActiveMQ: posting to {$destination}");
         try{
             
             $this->send($msg);

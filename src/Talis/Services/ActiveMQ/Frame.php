@@ -1,7 +1,5 @@
 <?php namespace Talis\Services\ActiveMQ;
 //Inspired by ZendQueue;
-//use function Talis\Logger\dbgn;
-//use function Talis\Logger\dbgr;
 
 /**
  * The StompFrame

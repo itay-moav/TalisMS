@@ -72,7 +72,7 @@ class Client implements \Iterator{
 	 *
 	 */
 	public function destroy(){
-		//dbgn('DESTROYING SESSION: ' . self::$appNamespace . ' ---- ' . $this->nameSpace);
+		\dbgn('DESTROYING SESSION: ' . self::$appNamespace . ' ---- ' . $this->nameSpace);
 		unset($_SESSION[self::$appNamespace][$this->nameSpace]);
 		return $this;
 	}//EOF destroy

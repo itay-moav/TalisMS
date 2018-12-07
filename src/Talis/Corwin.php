@@ -1,5 +1,5 @@
 <?php namespace Talis;
-use Talis\Logger as L;
+
 /**
  * MAIN APP ENTRY POINT!
  * 
@@ -93,7 +93,7 @@ class Corwin{
 	}
 	
 	private function build_request(string $full_uri):void{
-		L\dbgr('BUILDING REQUEST WITH BODY',$this->req_body);
+		\dbgr('BUILDING REQUEST WITH BODY',$this->req_body);
 		$this->Request = new \Talis\Message\Request($full_uri,$this->route['extra_params'],$this->req_body);
 	}
 	
@@ -104,7 +104,7 @@ class Corwin{
 	 * @throws \Talis\Exception\BadUri
 	 */
 	private function prepareResponse():void{
-		L\dbgn("TRYING TO INCLUDE: {$this->route['route']}");
+		\dbgn("TRYING TO INCLUDE: {$this->route['route']}");
 		if(!include_once $this->route['route']){
 			throw new \Talis\Exception\BadUri($this->route['route']);
 		}
@@ -114,14 +114,14 @@ class Corwin{
 	/**
 	 * Understands from the URL what BL object to call
 	 * ASSUMES CONVENTION OF 3 LEVELS URL [action][subaction][type]
-	 * @param array $server
+	 * @param array $request_parts
 	 */
 	private function generate_route(array $request_parts):void{
 		if(count($request_parts) < 3){
-			throw new \Talis\Exception\BadUri($uri);
+		    throw new \Talis\Exception\BadUri(print_r($request_parts,true));
 		}
 		$this->route['route'] = APP_PATH . "/api/{$request_parts[1]}/{$request_parts[2]}/{$request_parts[3]}.php";
-		L\dbgn("Doing route [{$this->route['route']}]");
+		\dbgn("Doing route [{$this->route['route']}]");
 		$r = $request_parts[1].$request_parts[2].$request_parts[3];
 		$this->route['classname'] = '\Api\\' . $r;
 	}
@@ -131,11 +131,11 @@ class Corwin{
 	 * @param array $request_parts
 	 */
 	private function generate_query(array $request_parts):void{
-		L\dbgr('request_parts',$request_parts);
+		\dbgr('request_parts',$request_parts);
 		$c = count($request_parts);
 		for($i=4; $i<$c;$i+=2){
 			$this->route['extra_params'][$request_parts[$i]] = $request_parts[$i+1];
 		}
-		L\dbgr('GET PARAMS',$this->route['extra_params']);
+		\dbgr('GET PARAMS',$this->route['extra_params']);
 	}
 }

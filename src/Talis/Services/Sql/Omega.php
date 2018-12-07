@@ -1,5 +1,4 @@
 <?php namespace Talis\Services\Sql;
-use function Talis\Logger\dbgr;
 /**
  * Wrapper for easy access to stored procedures in Omega Supreme.
  * This depends adding the auto completion file to the Eclipse language directory for core php
