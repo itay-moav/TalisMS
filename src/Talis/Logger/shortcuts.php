@@ -21,6 +21,9 @@ function dbgrd($n,$var){
     dbgr($n,$var);
     die;
 }
+function debug($inp) {
+    \Talis\Logger\MainZim::$CurrentLogger->debug($inp);
+}
 function info($inp,$full_stack=false) {
     \Talis\Logger\MainZim::$CurrentLogger->info($inp, $full_stack);
 }

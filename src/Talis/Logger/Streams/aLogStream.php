@@ -22,11 +22,11 @@ abstract class aLogStream{
 	 * Translate to string the input, how to output? that depends on how
 	 * you implemented the `log` method
 	 *
-	 * @param unknown $inp
-	 * @param unknown $severity
+	 * @param mixed $inp
+	 * @param int $severity
 	 * @param string $full_stack
 	 */
-	protected function tlog($inp,$severity,$full_stack=false){
+	protected function tlog($inp,int $severity,bool $full_stack=false){
 		if ($inp === null){
 			$inp = 'NULL';
 			
@@ -66,7 +66,7 @@ abstract class aLogStream{
 
 	/**
 	 * @param string $log_name
-	 * @param enum $verbosity_level
+	 * @param int $verbosity_level
 	 * @param string $target_stream
 	 */
 	final public function __construct($log_name,$verbosity_level,$target_stream=null,bool $use_low_memory_footprint=false){
