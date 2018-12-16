@@ -1,10 +1,10 @@
 {
-    "name": "DirectorMoav/TalisMS",
-    "description": "TalisMS",
+    "name": "director-moav/talis-ms",
+    "description": "TalisMS Is a middleware style framework with multiple Door(r) types to invoke it",
     "type": "git",
     "keywords": ["TalisMS"],
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.2.0"
     },
     "autoload": {
         "psr-0": {
