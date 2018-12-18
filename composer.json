@@ -1,14 +1,23 @@
 {
-    "name": "TalisMS",
-    "description": "TalisMS",
+    "name": "director-moav/talis-ms",
+    "description": "TalisMS Is a middleware styled framework with multiple Door(r) types to invoke it",
     "type": "git",
-    "keywords": ["TalisMS"],
+    "keywords": ["TalisMS","php","middleware"],
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.2.0"
     },
     "autoload": {
         "psr-0": {
             "Talis": "src/"
         }
-    }
+    },
+	"authors" : [{
+			"name" : "Itay Moav",
+			"homepage" : "https://cookinginbinary.blog",
+			"role" : "Superman"
+		}
+	],
+	"support" : {
+		"issues" : "https://github.com/itay-moav/TalisMS/issues"
+	}
 }
