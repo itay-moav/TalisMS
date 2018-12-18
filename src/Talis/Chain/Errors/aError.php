@@ -1,6 +1,4 @@
 <?php namespace Talis\Chain\Errors;
-use \Talis\Logger as L;
-use function Talis\commons\array_to_object;
 
 /**
  * basic error/problem class
@@ -27,9 +25,9 @@ abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\
 	 *  
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		L\error('Following two entries are error prms and human message of the error');
-		L\error(print_r($this->params,true));
-		L\error($this->format_human_message());
+		\error('Following two entries are error prms and human message of the error');
+		\error(print_r($this->params,true));
+		\error($this->format_human_message());
 		
 		$response = new \Talis\Message\Response;
 		$response->setBody(array_to_object(['type'=>'error','message'=>$this->format_human_message()]));

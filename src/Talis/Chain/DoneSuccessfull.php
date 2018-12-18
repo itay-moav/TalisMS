@@ -1,6 +1,4 @@
 <?php namespace Talis\Chain;
-use Talis\Logger as L;
-use function \Talis\commons\array_to_object;
 
 /**
  * Responsebility:
@@ -24,7 +22,7 @@ class DoneSuccessfull extends aChainLink implements \Talis\commons\iRenderable{
 	 * @see \Talis\commons\iRenderable::render()
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		L\dbgn($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
+		\dbgn($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
 		$emitter->emit($this->Response);
 	}
 }

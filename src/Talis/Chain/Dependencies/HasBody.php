@@ -1,5 +1,4 @@
 <?php namespace Talis\Chain\Dependencies;
-use \Talis\Logger as L;
 use function Talis\commons\array_to_object;
 
 /**
@@ -18,7 +17,7 @@ class HasBody extends aDependency{
 	}
 	
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		L\dbgr('RENDER input body',print_r($this->Request->getBody(),true));
+		\dbgr('RENDER input body',print_r($this->Request->getBody(),true));
 		$response = new \Talis\Message\Response;
 		$response->setBody(array_to_object(['type'=>'dependency','message'=>"Mising params part in request"]));
 		$response->setStatus(new \Talis\Message\Status\Code500);

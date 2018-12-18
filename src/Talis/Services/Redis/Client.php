@@ -1,7 +1,4 @@
 <?php namespace Talis\Services\Redis;
-use function \Talis\Logger\dbgn;
-use function \Talis\Logger\error;
-use function \Talis\Logger\dbgr;
 /**
  * Talis Wrapper for the Redis connection
  *
@@ -24,15 +21,15 @@ class Client {
 		if (! self::$MyRedis) {
 			
 			$host = $config['host'];
-			dbgn ( "connecting to redis: [{$host}]" );
+			\dbgn ( "connecting to redis: [{$host}]" );
 			
 			try {
 				self::$MyRedis = new \Redis ();
 				self::$MyRedis->connect ( $host );
 				self::$MyRedis->setOption ( \Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP );
 			} catch ( \Exception $E ) {
-				error ( $E . ' IP: ' . $host, 1 );
-				error ( 'Using NoRedis', 0 );
+				\error ( $E . ' IP: ' . $host, 1 );
+				\error ( 'Using NoRedis', 0 );
 				self::$MyRedis = new NoRedis ();
 			}
 		}
@@ -43,7 +40,7 @@ class Client {
 	 * Close Redis server and empty Redis instance
 	 */
 	static public function close() {
-		dbgn ( 'disconnecting from redis' );
+		\dbgn ( 'disconnecting from redis' );
 		if (self::$MyRedis) {
 			self::$MyRedis->close ();
 			self::$MyRedis = null;
@@ -93,7 +90,7 @@ class Client {
 		
 		$arguments = array_merge ([$this->key], $arguments );
 		if ($this->error_verbosity)
-			dbgr ( $method_name, $arguments );
+			\dbgr ( $method_name, $arguments );
 		$r = false;
 		try {
 			$r = call_user_func_array ( array (
@@ -101,18 +98,17 @@ class Client {
 					$method_name 
 			), $arguments );
 		} catch ( \Exception $e ) { // TODO if a builder was supplied, use the builder to return the data
-			error_monitor ( $e, 1 );
-			error_monitor ( 'We had a Redis issue, see before msg', 0 );
-			dbgn ( 'Redis call failed' );
+			\error($e);
+			\dbgn ( 'Redis call failed' );
 			return false;
 		}
-		if ($this->error_verbosity > 1) dbgr ( 'RESULTS FROM MY REDIS', $r );
+		if ($this->error_verbosity > 1) \dbgr ( 'RESULTS FROM MY REDIS', $r );
 		
 		if (! $r && in_array ( $method_name, [ 
 				'get' 
 		] ) && $this->DataBuilder) {
 			if ($this->error_verbosity)
-				dbgn ( 'building data' );
+				\dbgn ( 'building data' );
 			$r = $this->DataBuilder->build ();
 			if ($r)
 				$this->set ( $r ); // Don't know, maybe no need of a condition here.
