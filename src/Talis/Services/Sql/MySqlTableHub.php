@@ -148,14 +148,15 @@ abstract class MySqlTableHub{
 		return self::selectJoin($table,$where,[$field])[0];
 	}
 
-	/**
-	 * Create one record
-	 *
-	 * @param array $records
-	 * @return integer last inserted array
-	 */
-	static public function createRecord(array $records):int{
-		return self::getInstance()->insertData($records);
+    /**
+     * Ignore duplicates is false - so an excpetion is triggerd on duplicates
+     * 
+     * @param array $records
+     * @param bool $ignore_duplicates
+     * @return int
+     */
+	static public function createRecord(array $records,bool $ignore_duplicates=false):int{
+		return self::getInstance()->insertData($records,false,$ignore_duplicates);
 	}
 	
 	/**
@@ -254,9 +255,9 @@ abstract class MySqlTableHub{
 	 *
 	 * @return int last id
 	 */
-	public function insertData(array $data, bool $on_duplicate_update=false):int{
+	public function insertData(array $data, bool $on_duplicate_update=false,bool $ignore_duplicates=false):int{
 		$data=[$data];
-		return $this->insertMultipleData($data,$on_duplicate_update);
+		return $this->insertMultipleData($data,$on_duplicate_update,$ignore_duplicates);
 	}
 	
 	/**
@@ -272,17 +273,17 @@ abstract class MySqlTableHub{
 	 *
 	 * @return int
 	 */
-	public function insertMultipleData(array $data,$on_duplicate_update=false,$ignore=false):int{
+	public function insertMultipleData(array $data,$on_duplicate_update=false,$ignore_duplicates=false):int{
 		$datas = array_chunk($data, 4);
 		$id = 0;
 		foreach ($datas as $d) {
-			$id = $this->insertMultipleDataRaw($d, $on_duplicate_update,$ignore);
+		    $id = $this->insertMultipleDataRaw($d, $on_duplicate_update,$ignore_duplicates);
 		}
 		return $id;
 	}
 	
-	protected function insertMultipleDataRaw(array $data,$on_duplicate_update=false,$ignore=false){
-		$put_ignore = $ignore?' IGNORE ':'';
+	protected function insertMultipleDataRaw(array $data,$on_duplicate_update=false,$ignore_duplicates=false){
+	    $put_ignore = $ignore_duplicates?' IGNORE ':'';
 		$data = $this->cleanData($data);
 		$this->preInsertEvent($data);
 		$fields=array_keys(Shortcuts::cleanControlFields($data[0]));//get the field names for the insert
