@@ -14,12 +14,21 @@
  *  
  */
 class HTTP{
-	protected $full_uri = '';
-	
+    /**
+     * @var string $full_uri
+     * @var string $root_uri The relative subfolder to the domain. If your system door is accessible at example.com/talisroot then the root uri is /talisroot 
+     */
+	protected $full_uri = '',
+	          $root_uri = ''
+    ;
+
 	/**
 	 * Starts the chain reaction. builds request/check dependencies/run main logic
+	 * @param string $root_uri The relative subfolder to the domain. If your system door is accessible at example.com/talisroot then the root uri is /talisroot 
+	 *                         if it is just example.com, then it is ''
 	 */
-	public function gogogo(){
+	public function gogogo(string $root_uri){
+	    $this->root_uri = $root_uri;
 		try{
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			(new \Talis\Corwin)->begin($this->get_uri_from_server(),
@@ -43,7 +52,7 @@ class HTTP{
 	 * Parses the server input to generate raw uri parts
 	 */
 	protected function get_uri_from_server():array{
-		$this->full_uri = \app_env()['paths']['root_uri'] ? 
+	    $this->full_uri = $this->root_uri ? 
 			explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1] : 
 			$_SERVER ['REQUEST_URI']
 		;

@@ -40,7 +40,7 @@ class Rest extends HTTP{
 	       
 	    }
 		$this->full_uri = \app_env()['paths']['root_uri'] ? 
-			explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1] : 
+			explode($this->root_uri,$_SERVER ['REQUEST_URI'])[1] : 
 			$_SERVER ['REQUEST_URI']
 		;
 			
