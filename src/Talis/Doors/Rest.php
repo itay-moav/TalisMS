@@ -39,16 +39,17 @@ class Rest extends HTTP{
 	            
 	       
 	    }
-		$this->full_uri = \app_env()['paths']['root_uri'] ? 
+	    
+	    
+		$this->full_uri = $this->root_uri ? 
 			explode($this->root_uri,$_SERVER ['REQUEST_URI'])[1] : 
 			$_SERVER ['REQUEST_URI']
 		;
-			
 		//remove ? and after if exists
 		$without_question = rtrim(explode('?',$this->full_uri)[0],'/');
 		$request_parts    = explode('/',$without_question);
 		//insert the method as the third part
-		$request_parts = array_splice($request_parts,2,0,$method);
+		array_splice($request_parts,3,0,$method);
 		return $request_parts;
 	}
 }

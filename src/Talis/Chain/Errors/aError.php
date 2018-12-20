@@ -33,6 +33,7 @@ abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\
 		$response->setBody(\Talis\commons\array_to_object(['type'=>'error','message'=>$this->format_human_message()]));
 		$status_class = "\Talis\Message\Status\Code{$this->http_code}";
 		$response->setStatus(new $status_class);
+		$response->markError();
 		$emitter->emit($response);
 	}
 }

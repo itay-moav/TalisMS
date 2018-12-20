@@ -22,31 +22,32 @@ class HTTP{
 	          $root_uri = ''
     ;
 
-	/**
-	 * Starts the chain reaction. builds request/check dependencies/run main logic
-	 * @param string $root_uri The relative subfolder to the domain. If your system door is accessible at example.com/talisroot then the root uri is /talisroot 
-	 *                         if it is just example.com, then it is ''
-	 */
-	public function gogogo(string $root_uri){
-	    $this->root_uri = $root_uri;
-		try{
-			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
-			(new \Talis\Corwin)->begin($this->get_uri_from_server(),
-											 $this->get_request_body(),
-											 $this->full_uri)
-									 ->nextLinkInchain()
-					                 ->render(new \Talis\Message\Renderers\HTTP)
-			;
-
-		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
-			\fatal($e);
-			$response = new \Talis\Message\Response;
-			$response->markError();
-			$response->setStatus(new \Talis\Message\Status\Code500);
-			$response->setMessage($e.'');
-			(new \Talis\Message\Renderers\HTTP)->emit($response);
-		}
-	}
+    /**
+     * Starts the chain reaction.
+     * builds request/check dependencies/run main logic
+     *
+     * @param string $root_uri
+     *            The relative subfolder to the domain. If your system door is accessible at example.com/talisroot then the root uri is /talisroot
+     *            if it is just example.com, then it is ''
+     */
+    public function gogogo(string $root_uri)
+    {
+        $this->root_uri = $root_uri;
+        try {
+            // Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
+            (new \Talis\Corwin())->begin($this->get_uri_from_server(), $this->get_request_body(), $this->full_uri)
+                                ->nextLinkInchain()
+                                ->render(new \Talis\Message\Renderers\HTTP());
+            
+        } catch (\Exception $e) { // TODO for now, all errors are Corwin, better handling later
+            \fatal($e);
+            $response = new \Talis\Message\Response();
+            $response->markError();
+            $response->setStatus(new \Talis\Message\Status\Code500());
+            $response->setMessage($e . '');
+            (new \Talis\Message\Renderers\HTTP())->emit($response);
+        }
+    }
 	
 	/**
 	 * Parses the server input to generate raw uri parts

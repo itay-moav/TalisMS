@@ -10,6 +10,7 @@ class ApiNotFound extends aError{
 	protected $http_code = 404;
 	
 	protected function format_human_message():string{
-		return "Api resource for [{$this->params[0]}] can not be found!";
+	    $params_msg = $this->Request ? $this->Request->getUri() : 'unknown';
+		return "Api resource for [{$params_msg}] can not be found!";
 	}
 }
