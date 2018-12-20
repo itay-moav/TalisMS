@@ -14,7 +14,7 @@
  *  
  */
 class HTTP{
-	private $full_uri = '';
+	protected $full_uri = '';
 	
 	/**
 	 * Starts the chain reaction. builds request/check dependencies/run main logic
@@ -42,7 +42,7 @@ class HTTP{
 	/**
 	 * Parses the server input to generate raw uri parts
 	 */
-	private function get_uri_from_server():array{
+	protected function get_uri_from_server():array{
 		$this->full_uri = \app_env()['paths']['root_uri'] ? 
 			explode(\app_env()['paths']['root_uri'],$_SERVER ['REQUEST_URI'])[1] : 
 			$_SERVER ['REQUEST_URI']
@@ -58,7 +58,7 @@ class HTTP{
 	 * Parses the http input stream to get the body and decode into stdClass
 	 * @return \stdClass
 	 */
-	private function get_request_body():?\stdClass{
+	protected function get_request_body():?\stdClass{
 		$json_request_body = file_get_contents('php://input');
 		\dbgn('RAW INPUT FROM CLIENT');
 		\dbgn("==============={$json_request_body}===============");
