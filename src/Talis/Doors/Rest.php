@@ -33,6 +33,14 @@ class Rest extends HTTP{
 	            $method = 'delete';
 	            break;
 	            
+	        case 'HEAD':
+	            $method = 'head';
+	            break;
+	        
+	        case 'OPTIONS':
+	            $method = 'options';
+	            break;
+	        
 	        default:
 	            $method = 'read';
 	            break;

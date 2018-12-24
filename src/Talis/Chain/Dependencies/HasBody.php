@@ -1,6 +1,4 @@
 <?php namespace Talis\Chain\Dependencies;
-use function Talis\commons\array_to_object;
-
 /**
  * Making sure that a body with params was sent
  * 
@@ -19,7 +17,8 @@ class HasBody extends aDependency{
 	public function render(\Talis\commons\iEmitter $emitter):void{
 		\dbgr('RENDER input body',print_r($this->Request->getBody(),true));
 		$response = new \Talis\Message\Response;
-		$response->setBody(array_to_object(['type'=>'dependency','message'=>"Mising params part in request"]));
+		$response->markDependency();
+		$response->setMessage("Missing body:{params:[...]} part of request");
 		$response->setStatus(new \Talis\Message\Status\Code500);
 		$emitter->emit($response);
 	}		

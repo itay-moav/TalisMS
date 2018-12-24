@@ -39,7 +39,7 @@ class Response extends aMessage{
 	}
 	
 	public function getPayload():?\stdClass{
-		return $this->payload = $payload;
+		return $this->payload;
 	}
 	
 	public function markError(){
@@ -67,10 +67,10 @@ class Response extends aMessage{
 	public function getBody():\stdClass{
 		$body = \Talis\commons\array_to_object([
 				'type'	   => $this->type,
-				'message'  => $this->message,
+		        'message'  => $this->getMessage(),
 				'payload'  => ''
 		]);
-		$body->payload = $this->payload;
+		$body->payload = $this->getPayload();
 		return $this->setBody($body);
 	}
 	

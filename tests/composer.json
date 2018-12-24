@@ -1,0 +1,14 @@
+{
+    "name": "itay/tests",
+    "description": "talisms test",
+    "type": "p",
+    "authors": [
+        {
+            "name": "itay-moav",
+            "email": "itay.malimovka@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^7"
+    }
+}

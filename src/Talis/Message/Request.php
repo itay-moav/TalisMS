@@ -63,5 +63,12 @@ class Request extends aMessage{
 		return $this->getBodyParams()->$k = $v;		
 	}
 	
+	/**
+	 * TODO add pretty url get params
+	 * @return \GuzzleHttp\Psr7\ServerRequest
+	 */
+	public function get_as_psr7():\GuzzleHttp\Psr7\ServerRequest{
+	    return \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
+	}
 	
 }
