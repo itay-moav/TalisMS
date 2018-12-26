@@ -23,11 +23,6 @@ abstract class aChainLink{
 	protected $Response					= null;
 	
 	/**
-	 * Context for the current flow. it is transfered same as Response/Request between each chain link
-	 */
-	protected $Context                  = null;
-	
-	/**
 	 * Extra params some classes need
 	 * @var array
 	 */
