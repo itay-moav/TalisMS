@@ -32,6 +32,7 @@ class HTTP
      */
     public function gogogo(string $root_uri)
     {
+        \dbgn("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nREQUEST LOG STARTS HERE!");
         $this->root_uri = $root_uri;
         try {
             // Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
