@@ -4,151 +4,118 @@
  *
  * @author Itay Moav
  */
-class Client {
-	/**
-	 *
-	 * @var \Redis
-	 */
-	private static $MyRedis = null;
-	
-	/**
-	 *
-	 * @var iKeyBoss key
-	 *     
-	 * @return Client with a specific key
-	 */
-	static public function getInstance(array $config,iKeyBoss $key, iDataBuilder $DataBuilder = null) { // was create
-		if (! self::$MyRedis) {
-			
-			$host = $config['host'];
-			\dbgn ( "connecting to redis: [{$host}]" );
-			
-			try {
-				self::$MyRedis = new \Redis ();
-				self::$MyRedis->connect ( $host );
-				self::$MyRedis->setOption ( \Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP );
-			} catch ( \Exception $E ) {
-				\error ( $E . ' IP: ' . $host, 1 );
-				\error ( 'Using NoRedis', 0 );
-				self::$MyRedis = new NoRedis ();
-			}
-		}
-		return new Client ( $key, $DataBuilder,$config['verbosity']);
-	}
-	
-	/**
-	 * Close Redis server and empty Redis instance
-	 */
-	static public function close() {
-		\dbgn ( 'disconnecting from redis' );
-		if (self::$MyRedis) {
-			self::$MyRedis->close ();
-			self::$MyRedis = null;
-		}
-	}
-	private function __construct(iKeyBoss $key, iDataBuilder $DataBuilder = null, $error_verbosity = 0) {
-		$this->key = $key . ''; // activate to string
-		$this->DataBuilder = $DataBuilder;
-		$this->error_verbosity = $error_verbosity;
-	}
-	
-	/**
-	 *
-	 * @var string the key this class will work on.
-	 */
-	private $key = '', 
+class  Client{
+    /**
+     * @var \Redis
+     */
+    static private $MyRedis = null;
+    
+    /**
+     * @var aKeyBoss key
+     *
+     * @return Client with a specific key
+     */
+    static public function getInstance(string $host,aKeyBoss $key,$logger,iDataBuilder $DataBuilder=null){
+        if(!self::$MyRedis){
+            $logger->debug("=================== Redis CONNECT [{$host}] ===================\n");
+            self::$MyRedis = new \Redis;
+            self::$MyRedis->connect($host);
+            self::$MyRedis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+        }
+        return new Client($key,$logger,$DataBuilder);
+    }
+    
+    /**
+     * Close Redis server and empty Redis instance
+     */
+    static public function close(){
+        \dbgn('disconnecting from redis');
+        if (self::$MyRedis) {
+            self::$MyRedis->close();
+            self::$MyRedis = null;
+        }
+    }
+    
+    /**
+     * 
+     * @param aKeyBoss $key
+     * @param mixed $logger TODO until we migrate all to Talis, we need to leave this typeless
+     * @param iDataBuilder $DataBuilder
+     */
+    private function __construct(aKeyBoss $key,$logger,iDataBuilder $DataBuilder=null){
+        $this->key         = $key . '';//activate __to_string
+        $this->logger      = $logger;
+        $this->DataBuilder = $DataBuilder;
+    }
+    
+    /**
+     * @var string the key this class will work on.
+     */
+    private $key		 = '',
+    
+    /**
+     * @var iDataBuilder
+     */
+            $DataBuilder = NULL,
+            
+    /**
+     * @var \Talis\Logger\Streams\aLogStream
+     */        
+            $logger
+    ;
 
-	/**
-	 *
-	 * @var iDataBuilder
-	 */
-	$DataBuilder = NULL,
-	
-	/**
-	 * What to output in logs
-	 */
-	$error_verbosity = 0;
-	
-	/**
-	 * 
-	 * @return string
-	 */
-	public function getKey() {
-		return $this->key;
-	}
-	
-	/**
-	 * Wrapper for the redis class
-	 * To get dbg and error recovery
-	 *
-	 * @param string $name
-	 *        	Redis class method name
-	 * @param array $arguments        	
-	 */
-	public function __call($method_name, array $arguments = []) {
-		if ($this->error_verbosity) dbgn ( "Redis SUNSET" );
-		
-		$arguments = array_merge ([$this->key], $arguments );
-		if ($this->error_verbosity)
-			\dbgr ( $method_name, $arguments );
-		$r = false;
-		try {
-			$r = call_user_func_array ( array (
-					self::$MyRedis,
-					$method_name 
-			), $arguments );
-		} catch ( \Exception $e ) { // TODO if a builder was supplied, use the builder to return the data
-			\error($e);
-			\dbgn ( 'Redis call failed' );
-			return false;
-		}
-		if ($this->error_verbosity > 1) \dbgr ( 'RESULTS FROM MY REDIS', $r );
-		
-		if (! $r && in_array ( $method_name, [ 
-				'get' 
-		] ) && $this->DataBuilder) {
-			if ($this->error_verbosity)
-				\dbgn ( 'building data' );
-			$r = $this->DataBuilder->build ();
-			if ($r)
-				$this->set ( $r ); // Don't know, maybe no need of a condition here.
-		}
-		return $r;
-	}
-	public function serialize() {
-		self::$MyRedis->setOption ( \Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP );
-	}
-	public function dontSerialize() {
-		self::$MyRedis->setOption ( \Redis::OPT_SERIALIZER, \Redis::SERIALIZER_NONE );
-	}
-	
-	/**
-	 * Read Redis.io and redisphp to understand how pattern works
-	 *
-	 * @param integer $cursor
-	 *        	(resource)
-	 * @param string $pattern        	
-	 */
-	public function sscan(&$cursor, $pattern = false) {
-		self::$MyRedis->setOption ( \Redis::OPT_SCAN, \Redis::SCAN_RETRY ); // do not bring empty results
-		if ($pattern) {
-			return self::$MyRedis->sscan ( $this->key, $cursor, $pattern );
-		} else {
-			return self::$MyRedis->sscan ( $this->key, $cursor );
-		}
-	}
-}
-
-/**
- * In case we do not have Redis available, use this as pseudo connection.
- * Will always return false
- *
- * @author itaymoav
- */
-class NoRedis {
-	public function __call($name, array $arguments) {
-		return false;
-	}
-	public function close() {
-	}
+    /**
+     * Wrapper for the redis class
+     * To get dbg and error recovery
+     *
+     * @param string $name Redis class method name
+     * @param array $arguments
+     */
+    public function __call($method_name , array $arguments=[]){
+        $this->logger->debug("=================== Redis SUNSET ===================\n");
+        $arguments = array_merge(array($this->key),$arguments);
+        $this->logger->debug("===== Redis: {$method_name}\n" . print_r($arguments,true));
+        $r = call_user_func_array(array(self::$MyRedis, $method_name), $arguments);
+        $this->logger->debug("===== Redis: RESULTS FROM MY REDIS\n" . print_r($r,true));
+        
+        if(!$r && in_array($method_name,['get']) && $this->DataBuilder){
+            $this->logger->debug("===== Redis: Building data\n");
+            $r = $this->DataBuilder->build();
+            if($r) {
+                $this->DataBuilder->ttl()?$this->set($r,$this->DataBuilder->ttl()):$this->set($r);
+            }
+        }
+        return $r;
+    }
+    
+    /**
+     * IF data has to be serilized (primitives should not be, this take memeory and time)
+     */
+    public function serialize(){
+        self::$MyRedis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+    }
+    
+    /**
+     * Prevent key data serialization
+     */
+    public function dontSerialize(){
+        self::$MyRedis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_NONE);
+    }
+    
+    /**
+     * TODO move to the correct ClientMask object !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11111111111111111111111111111111111111111111111111111111111111111111111111
+     * 
+     * Read Redis.io and redisphp to understand how pattern works
+     *
+     * @param integer $cursor (resource)
+     * @param string $pattern
+     */
+    public function sscan(&$cursor,$pattern=false){
+        self::$MyRedis->setOption(\Redis::OPT_SCAN, \Redis::SCAN_RETRY);//do not bring empty results
+        if($pattern){
+            return self::$MyRedis->sscan($this->key,$cursor,$pattern);
+        }else{
+            return self::$MyRedis->sscan($this->key,$cursor);
+        }
+    }
 }

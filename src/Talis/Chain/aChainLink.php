@@ -76,7 +76,8 @@ abstract class aChainLink{
 	final public function nextLinkInchain():\Talis\Chain\aChainLink{
 		\dbgn('About to process: [' . get_class($this).']');
 		$FinalLink = $this->process();
-		if($this->chain_container != null && !$this->chain_container->isEmpty()){
+		//If the returned chain is not a new chain (road diversion) and there are more links in the current chain, go after it.
+		if($FinalLink == $this && $this->chain_container != null && !$this->chain_container->isEmpty()){
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
