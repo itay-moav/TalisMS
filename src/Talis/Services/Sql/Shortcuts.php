@@ -6,7 +6,7 @@
 class Shortcuts{
 
 	const EMPTY_IN_VALUE = -12837;
-	static private $param_count = array();
+	static private $param_count = [];
 	
 	/**
 	 * Generates an IN values part.
@@ -19,11 +19,11 @@ class Shortcuts{
 	 * If data does not need to be cleaned, returns [str]=('v1','v2','v3'....'vn');
 	 * 
 	 * @var array $values
-	 * @var bolean $clean_data
+	 * @var bool $clean_data
 	 * 
 	 * @return array
 	 */
-	static public function generateInData(array $values,$clean_data=true,$prefix=''){
+	static public function generateInData(array $values,$clean_data=true,$prefix=''):array{
 	    if (empty($values)) {
 			return [
 				'str'		=> '('.self::EMPTY_IN_VALUE.')',
@@ -34,27 +34,33 @@ class Shortcuts{
 		if($prefix){
 			$prefix=str_replace(array('`',"'",'_',':',' ','='),'',$prefix);
 		}
+		
 		if($clean_data){
-			$res=array('str'=>'(',
-					   'params'=>array()
-					);
+			
+		    $res=['str'      => '(',
+				  'params'   => []
+			];
+			
 			foreach ($values as $i => $value) {
-				// ADDED BY MATT AS POC , changed by Itay 2.14 as another POC.
-				if ($value === null) {
+				
+			    if ($value === null) {
 					$res['str'] .= ',NULL';
 					continue;
-				} // END POC
+				} 
 				
-				if(!($value instanceof Data_MySQL_Operator_SQL)){
-    				$index=":{$prefix}invv{$i}";
-    				$res['str'].=',' . $index;
-    				$res['params'][$index]=$value;
+				if($value instanceof Operator\aOperator){
+				    $ops = $value->cleaned_operator("{$prefix}invv{$i}");
+				    $res['str'] .= ',' . $ops['str'];
+				    $res['params'] = array_merge($res['params'],$ops['params']);
+				    
 				}else{
-				    $res['str'].=',' . $value->getString(null);
+				    $index                 = ":{$prefix}invv{$i}";
+				    $res['str']           .= ',' . $index;
+				    $res['params'][$index] = $value;
 				}	
 			}
-			$res['str'] = str_replace('(,', '(', $res['str']);
-			$res['str'].=')';
+			$res['str'] = str_replace('(,',  '(',  $res['str']) . ')';
+
 		}else{
 			$res['str']="('".join("','",$values)."')";
 		}
@@ -95,8 +101,7 @@ class Shortcuts{
 					$sign=" IN {$IN['str']} ";
 					$tmp_params=array_merge($tmp_params,$IN['params']);
 				}
-			} elseif($v instanceof Data_MySQL_Operator)
-			{
+			} elseif($v instanceof Data_MySQL_Operator){
 				$k2 = ':' . $param_key;
 				$sign = $v->getString($k2);
 				$v->applyParameters($k2, $tmp_params);
@@ -155,35 +160,6 @@ class Shortcuts{
 	}
 	
 	/**
-	 * Generate the SET statment part of an UPDATE sql statment
-	 * 
-	 * @var array $values (field=>value)
-	 * @var array &$params the params array to be populated (passed by ref
-	 * @var boolean $clean_values
-	 * 
-	 * @return string SET statment, without the "SET"
-	 */
-	static public function generateSetData(array $values,array &$params,$clean_values=true){
-		$set=array();
-		if($clean_values){
-			foreach($values as $k=>$v){
-				$params[':_'.$k]=$v;
-				$set[]="{$k}=:_{$k}";
-			}
-		}else{
-			foreach($values as $k=>$v){
-				$set[]="{$k}={$v}";
-			}
-		}
-
-		//Add modified by and modify date MW 4/12/10 now uses loggedIn
-		$set[]='modified_by=' . \User_Current::pupetMasterId();
-		$set[]='date_modified=NOW()';
-		$set=join(',',$set);
-		return $set;	
-	}
-	
-	/**
 	 * A method to clean ALL control fields from an array of data which is supposed to e inserted/updated
 	 */
 	static public function cleanControlFields(array $data_to_clean){
@@ -200,6 +176,6 @@ class Shortcuts{
 	 * @return string 'Y-m-d H:i:s' YYYY-MM-DD hh:mm:ss
 	 */
 	static public function now(){
-	    return (new DateTime())->format('Y-m-d H:i:s');
+	    return (new \DateTime())->format('Y-m-d H:i:s');
 	}
 }
