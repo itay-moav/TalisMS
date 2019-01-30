@@ -1,11 +1,17 @@
 <?php namespace Talis\Services\Redis;
 /**
- * This class is where u manage the key values for each
- * entity we create 
+ * This class is where u construct the Client specific for a key 
+ * with all it's constraints.
  * 
  * @author itaymoav
  */
 abstract class aKeyBoss{
+    
+    /**
+     * @var \Talis\Services\Redis\aClientMask
+     */
+    static protected $KeyClient = null;
+    
     /**
      * @var char key field separator
      */
@@ -35,13 +41,17 @@ abstract class aKeyBoss{
      * @return \Talis\Services\Redis\aClientMask
      */
     protected function get_client():\Talis\Services\Redis\aClientMask{
-        $r = Client::getInstance($this->host(),$this,$this->builder);
+        if(static::$KeyClient){
+            return static::$KeyClient;
+        }
+        $r = Client::getInstance($this->host(),$this,$this->logger(),$this->builder);
         if($this->should_i_serilize()){
             $r->serialize();
         } else {
             $r->dontSerialize();
         }
-        return $this->get_redis_mask($r);
+        static::$KeyClient = $this->get_redis_mask($r);
+        return static::$KeyClient;
     }
     
     /**
@@ -58,6 +68,13 @@ abstract class aKeyBoss{
      * all abstract methods.
      */
     abstract protected function host():string;
+    
+    /**
+     * Returns a logger instance. 
+     * I suggest you create another abstract on top of this class 
+     * to serve all classes in your specific project/sub project.
+     */
+    abstract protected function logger();
     
     /**
      * Restrict the key to be one type of Redis object

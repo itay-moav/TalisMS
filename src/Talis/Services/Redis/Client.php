@@ -4,32 +4,34 @@
  *
  * @author Itay Moav
  */
-class  Client{
+class Client{
     /**
      * @var \Redis
      */
     static private $MyRedis = null;
     
     /**
+     * TODO how to do different DBs?
+     * 
      * @var aKeyBoss key
      *
-     * @return Client with a specific key
+     * @return \Talis\Services\Redis\Client with a specific key
      */
-    static public function getInstance(string $host,aKeyBoss $key,$logger,iDataBuilder $DataBuilder=null){
+    static public function getInstance(array $config,aKeyBoss $key,$logger,iDataBuilder $DataBuilder=null){
         if(!self::$MyRedis){
-            $logger->debug("=================== Redis CONNECT [{$host}] ===================\n");
+            $logger->debug("=================== Redis CONNECT [{$config['host']}] ===================\n");
             self::$MyRedis = new \Redis;
-            self::$MyRedis->connect($host);
+            self::$MyRedis->connect($config['host']);
             self::$MyRedis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
         }
-        return new Client($key,$logger,$DataBuilder);
+        return new \Talis\Services\Redis\Client($key,$logger,$DataBuilder);
     }
     
     /**
      * Close Redis server and empty Redis instance
      */
-    static public function close(){
-        \dbgn('disconnecting from redis');
+    static public function close($logger){
+        $logger->debug("=================== disconnecting from redis ===================\n");
         if (self::$MyRedis) {
             self::$MyRedis->close();
             self::$MyRedis = null;
