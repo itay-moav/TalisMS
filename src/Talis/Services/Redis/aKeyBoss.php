@@ -40,7 +40,7 @@ abstract class aKeyBoss{
      * 
      * @return \Talis\Services\Redis\aClientMask
      */
-    protected function get_client():\Talis\Services\Redis\aClientMask{
+    public function get_client():\Talis\Services\Redis\aClientMask{
         if(static::$KeyClient){
             return static::$KeyClient;
         }
@@ -78,9 +78,10 @@ abstract class aKeyBoss{
     
     /**
      * Restrict the key to be one type of Redis object
+     * @param \Talis\Services\Redis\Client $r
      * @return \Talis\Services\Redis\aClientMask
      */
-    abstract protected function get_redis_mask(Client $r):\Talis\Services\Redis\aClientMask;
+    abstract protected function get_redis_mask(\Talis\Services\Redis\Client $r):\Talis\Services\Redis\aClientMask;
     
 	/**
 	 * The namespace part of the key
