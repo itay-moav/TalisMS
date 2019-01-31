@@ -44,7 +44,7 @@ abstract class aKeyBoss{
         if(static::$KeyClient){
             return static::$KeyClient;
         }
-        $r = Client::getInstance($this->host(),$this,$this->logger(),$this->builder);
+        $r = Client::getInstance(['host'=>$this->host()],$this,$this->logger(),$this->builder);
         if($this->should_i_serilize()){
             $r->serialize();
         } else {
@@ -118,7 +118,6 @@ abstract class aKeyBoss{
 	 * @return string
 	 */
 	public function __toString(){
-	    return $this->name_space() . self::FIELD_SEPARATOR . $this->sub_entity . self::FIELD_SEPARATOR . $this->var_key();
+	    return $this->name_space() . self::FIELD_SEPARATOR . $this->entity_name() . self::FIELD_SEPARATOR . $this->var_key();
 	}
-	
 }

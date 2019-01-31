@@ -89,6 +89,7 @@ class Shortcuts{
 			// *End
 			if(is_null($v)){ //IS NULL statments
 				$sign=' IS NULL ';
+				
 			}elseif(is_array($v)){ //IN statments
 				if (in_array(null, $v, true)) { // IN WITH IS NULL
 					$IN=self::generateInData($v,true,$param_key);
@@ -101,10 +102,12 @@ class Shortcuts{
 					$sign=" IN {$IN['str']} ";
 					$tmp_params=array_merge($tmp_params,$IN['params']);
 				}
+				
 			} elseif($v instanceof Data_MySQL_Operator){
 				$k2 = ':' . $param_key;
 				$sign = $v->getString($k2);
 				$v->applyParameters($k2, $tmp_params);
+				
 			}else{ //REGULAR statmens
 				$tmp_params[':'.$param_key]=$v;
 				$sign=" = :{$param_key}";
@@ -160,6 +163,34 @@ class Shortcuts{
 	}
 	
 	/**
+	 * Generate the SET statment part of an UPDATE sql statment
+	 *
+	 * @var array $values (field=>value)
+	 * @var array &$params the params array to be populated (passed by ref
+	 * @var boolean $clean_values
+	 *
+	 * @return string SET statment, without the "SET"
+	 */
+	static public function generateSetData(array $values,array &$params,$clean_values=true){
+	    $set=array();
+	    if($clean_values){
+	        foreach($values as $k=>$v){
+	            $params[':_'.$k]=$v;
+	            $set[]="{$k}=:_{$k}";
+	        }
+	    }else{
+	        foreach($values as $k=>$v){
+	            $set[]="{$k}={$v}";
+	        }
+	    }
+	    
+	    $set[]='modified_by=' . \User_Current::pupetMasterId();//TODO USERID figure out CONTEXT for this to fetch a user from
+	    $set[]='date_modified=NOW()';
+	    $set=join(',',$set);
+	    return $set;
+	}
+	    
+    /**
 	 * A method to clean ALL control fields from an array of data which is supposed to e inserted/updated
 	 */
 	static public function cleanControlFields(array $data_to_clean){
