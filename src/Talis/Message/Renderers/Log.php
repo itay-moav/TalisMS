@@ -11,12 +11,11 @@ class Log implements \Talis\commons\iEmitter{
 	 * Formats and echoes the results headers and then body
 	 */
 	public function emit(\Talis\Message\Response $message):void{
-		$stat   = $message->getStatus()->getCode();
 		$body = json_encode($message->getBody());
-		if($stat>=500){
+		if($message->getResponseType() != \Talis\Message\Response::RESPONSE_TYPE__RESPONSE){
 			\fatal("CHAIN BROKE {$body}");
-			exit(1);
+		} else {
+		    \dbgr('END OF PROCESS',$body);
 		}
-		\dbgr('END OF PROCESS',$body);
 	}
 }

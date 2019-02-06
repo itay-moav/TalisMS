@@ -11,12 +11,14 @@ class Cli implements \Talis\commons\iEmitter{
 	 * Formats and echoes the results headers and then body
 	 */
 	public function emit(\Talis\Message\Response $message):void{
-		$stat   = $message->getStatus()->getCode();
+		//TODO move to exit status? $stat   = $message->getStatus()->getCode();
 		$body = json_encode($message->getBody());
 		echo $body;
+		/* TOBEDELETED
 		if($stat>=500){
 			exit(1);
 		}
 		exit($stat);
+		*/
 	}
 }

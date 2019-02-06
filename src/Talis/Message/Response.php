@@ -66,6 +66,7 @@ class Response extends aMessage{
 	 */
 	public function getBody():\stdClass{
 		$body = \Talis\commons\array_to_object([
+		        'status'   => $this->getStatus(),
 				'type'	   => $this->type,
 		        'message'  => $this->getMessage(),
 				'payload'  => ''

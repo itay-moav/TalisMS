@@ -37,13 +37,13 @@ class Daemon{
     		    ->nextLinkInchain()
     		    ->render(new \Talis\Message\Renderers\HTTP);
 
-		}catch(\Exception $E){ // TODO for now, all errors are Corwin, better handling later
-			\fatal($E);
+		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
+			\fatal($e);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);
 			$response->setMessage($e.'');
-			(new \Talis\Message\Renderers\HTTP)->emit($respone);
+			(new \Talis\Message\Renderers\HTTP)->emit($response);
 		}
 	}
 	

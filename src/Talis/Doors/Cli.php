@@ -53,7 +53,7 @@ class Cli{
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);
 			$response->setMessage($e.'');
-			(new \Talis\Message\Renderers\Cli)->emit($respone);
+			(new \Talis\Message\Renderers\Cli)->emit($response);
 		}
 	}
 	
