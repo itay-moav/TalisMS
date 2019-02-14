@@ -10,7 +10,7 @@ abstract class aKeyBoss{
     /**
      * @var \Talis\Services\Redis\aClientMask
      */
-    static protected $KeyClient = null;
+    protected $KeyClient = null;
     
     /**
      * @var char key field separator
@@ -41,8 +41,8 @@ abstract class aKeyBoss{
      * @return \Talis\Services\Redis\aClientMask
      */
     public function get_client():\Talis\Services\Redis\aClientMask{
-        if(static::$KeyClient){
-            return static::$KeyClient;
+        if($this->KeyClient){
+            return $this->KeyClient;
         }
         $r = Client::getInstance(['host'=>$this->host()],$this,$this->logger(),$this->builder);
         if($this->should_i_serilize()){
@@ -50,8 +50,8 @@ abstract class aKeyBoss{
         } else {
             $r->dontSerialize();
         }
-        static::$KeyClient = $this->get_redis_mask($r);
-        return static::$KeyClient;
+        $this->KeyClient = $this->get_redis_mask($r);
+        return $this->KeyClient;
     }
     
     /**
