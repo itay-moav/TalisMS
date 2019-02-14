@@ -53,10 +53,10 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
     /**
      * Union input keys and stores them in THIS key
      * 
-     * @param \Talis\Services\Redis\aKeyBoss ...$keys
+     * @param array of \Talis\Services\Redis\aKeyBoss
      * @return int number of members in new key
      */
-    public function sunionstore(\Talis\Services\Redis\aKeyBoss ...$keys):int{
+    public function sunionstore(array $keys):int{
         return call_user_func_array([$this->r,'sunionstore'],$keys);
     }
     
@@ -75,12 +75,10 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
      * raw SET scanner
      * 
      * @param int $cursor should be mnanaged by Redis. See iterator function below to see usage
-     * @return unknown
+     * @return bool|array
      */
-    public function sscan(&$cursor){
-        $r = $this->r->sscan($cursor);
-        var_dump($r);
-        return $r;
+    public function sscan(?int &$cursor){
+        return $this->r->sscan($cursor);
     }
     
     /**
@@ -89,7 +87,7 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
      * {@inheritDoc}
      * @see \Talis\Services\Redis\iScannable::scan_me()
      */
-    public function scan_me(int &$cursor){
+    public function scan_me(?int &$cursor){
         return $this->sscan($cursor);
     }
 }
