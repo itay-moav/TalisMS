@@ -11,8 +11,11 @@ class Client{
     static private $MyRedis = null;
     
     /**
-     * TODO how to do different DBs?
-     * 
+     * @var int the db name, defaults to 0.
+     */
+    static private $current_MyRedis_db = 0;
+    
+    /**
      * @var aKeyBoss key
      *
      * @return \Talis\Services\Redis\Client with a specific key
@@ -45,15 +48,15 @@ class Client{
      * @param iDataBuilder $DataBuilder
      */
     private function __construct(aKeyBoss $key,$logger,iDataBuilder $DataBuilder=null){
-        $this->key         = $key . '';//activate __to_string
+        $this->key         = $key;
         $this->logger      = $logger;
         $this->DataBuilder = $DataBuilder;
     }
     
     /**
-     * @var string the key this class will work on.
+     * @var aKeyBoss the key this class will work on.
      */
-    private $key		 = '',
+    private $key,
     
     /**
      * @var iDataBuilder
@@ -64,7 +67,20 @@ class Client{
      * @var \Talis\Logger\Streams\aLogStream
      */        
             $logger
-    ;
+    ;   
+    
+    /**
+     * Makes sure we run the Redis command on the right DB.
+     */
+    protected function call_db_init(){
+        $this->logger->debug("=================== Redis SUNSET ===================\n");
+        if(self::$current_MyRedis_db != $this->key->get_db()){
+            dbgn('SELECT (new db) [' . $this->key->get_db() . ']');
+            $res = self::$MyRedis->select($this->key->get_db());
+            dbgn($res);
+            self::$current_MyRedis_db = $this->key->get_db();
+        }
+    }
 
     /**
      * Wrapper for the redis class
@@ -74,10 +90,12 @@ class Client{
      * @param array $arguments
      */
     public function __call($method_name , array $arguments=[]){
-        $this->logger->debug("=================== Redis SUNSET ===================\n");
-        $arguments = array_merge(array($this->key),$arguments);
+        
+        $this->call_db_init();
+        
+        $arguments = array_merge([$this->key->key_as_string()],$arguments);
         $this->logger->debug("===== Redis: {$method_name}\n" . print_r($arguments,true));
-        $r = call_user_func_array(array(self::$MyRedis, $method_name), $arguments);
+        $r = call_user_func_array([self::$MyRedis, $method_name], $arguments);
         $this->logger->debug("===== Redis: RESULTS FROM MY REDIS\n" . print_r($r,true));
         
         if(!$r && in_array($method_name,['get']) && $this->DataBuilder){
@@ -105,19 +123,32 @@ class Client{
     }
     
     /**
-     * TODO move to the correct ClientMask object !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11111111111111111111111111111111111111111111111111111111111111111111111111
+     * setOption wrapper
+     * 
+     * @param int $key use \Redis constants
+     * @param int $value  use \Redis constants
+     */
+    public function setOption(int $key, int $value){
+        self::$MyRedis->setOption($key,$value);
+    }
+    
+    /**
+     * MUST STAY HERE, due to by ref not passing to __call properly
      * 
      * Read Redis.io and redisphp to understand how pattern works
      *
      * @param integer $cursor (resource)
-     * @param string $pattern
+     * @param string  $pattern
      */
     public function sscan(&$cursor,$pattern=false){
-        self::$MyRedis->setOption(\Redis::OPT_SCAN, \Redis::SCAN_RETRY);//do not bring empty results
+        $this->call_db_init();
+        
+        $this->setOption(\Redis::OPT_SCAN, \Redis::SCAN_RETRY);//do not bring empty results
+        dbgr('Redis: SSCAN',['cursor' => $cursor,'pattern' => $pattern]);
         if($pattern){
-            return self::$MyRedis->sscan($this->key,$cursor,$pattern);
+            return self::$MyRedis->sscan($this->key->key_as_string(),$cursor,$pattern);
         }else{
-            return self::$MyRedis->sscan($this->key,$cursor);
+            return self::$MyRedis->sscan($this->key->key_as_string(),$cursor);
         }
     }
 }

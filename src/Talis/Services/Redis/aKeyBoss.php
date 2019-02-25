@@ -55,6 +55,15 @@ abstract class aKeyBoss{
     }
     
     /**
+     * Returns the db number, defaults to 0
+     * 
+     * @return int
+     */
+    public function get_db():int{
+        return 0;
+    }
+    
+    /**
      * set to true will cause data sent to Redis to be serilized.
      * more expensive.
      */
@@ -119,5 +128,13 @@ abstract class aKeyBoss{
 	 */
 	public function __toString(){
 	    return $this->name_space() . self::FIELD_SEPARATOR . $this->entity_name() . self::FIELD_SEPARATOR . $this->var_key();
+	}
+	
+	/**
+	 * alias for __toString()
+	 * @return string
+	 */
+	public function key_as_string():string{
+	    return $this->__toString();
 	}
 }

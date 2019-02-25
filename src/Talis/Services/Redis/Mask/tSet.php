@@ -77,8 +77,8 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
      * @param int $cursor should be mnanaged by Redis. See iterator function below to see usage
      * @return bool|array
      */
-    public function sscan(?int &$cursor){
-        return $this->r->sscan($cursor);
+    public function sscan(?int &$cursor,$pattern=false){
+        return $this->r->sscan($cursor,$pattern);
     }
     
     /**
@@ -87,7 +87,7 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
      * {@inheritDoc}
      * @see \Talis\Services\Redis\iScannable::scan_me()
      */
-    public function scan_me(?int &$cursor){
-        return $this->sscan($cursor);
+    public function scan_me(?int &$cursor,$pattern=false){
+        return $this->sscan($cursor,$pattern);
     }
 }
