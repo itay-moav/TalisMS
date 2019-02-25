@@ -20,7 +20,7 @@ class Simple extends \Talis\Services\Redis\aClientMask{
     /**
      * @return string
      */
-    public function get():string{
+    public function get(){
         return $this->r->get();
     }
     
