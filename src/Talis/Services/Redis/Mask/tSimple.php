@@ -20,8 +20,8 @@ class Simple extends \Talis\Services\Redis\aClientMask{
     /**
      * @return string
      */
-    public function get(){
-        return $this->r->get();
+    public function get(bool $with_build = true){
+        return $this->r->get($with_build);
     }
     
     public function set($value,$ttl=0){
@@ -41,7 +41,7 @@ class Simple extends \Talis\Services\Redis\aClientMask{
      * @param mixed $value serializable
      */
     public function setnx($value){
-        $this->r->setnx($value);
+        return $this->r->setnx($value);
     }
     
     /**

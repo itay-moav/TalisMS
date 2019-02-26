@@ -97,12 +97,25 @@ class Client{
         $this->logger->debug("===== Redis: {$method_name}\n" . print_r($arguments,true));
         $r = call_user_func_array([self::$MyRedis, $method_name], $arguments);
         $this->logger->debug("===== Redis: RESULTS FROM MY REDIS\n" . print_r($r,true));
+        return $r;
+    }
+    
+    /**
+     * hardcore get
+     * @return mixed $r
+     */
+    public function get(bool $with_build = true){
+        $this->call_db_init();
+        $this->logger->debug("===== Redis: GET\n");
+        $r = self::$MyRedis->get($this->key->key_as_string());
+        $this->logger->debug("===== Redis: RESULTS FROM MY REDIS\n" . print_r($r,true));
         
-        if(!$r && in_array($method_name,['get']) && $this->DataBuilder){
+        if(!$r && $this->DataBuilder && $with_build){
             $this->logger->debug("===== Redis: Building data\n");
             $r = $this->DataBuilder->build();
             if($r) {
-                $this->DataBuilder->ttl()?$this->set($r,$this->DataBuilder->ttl()):$this->set($r);
+                $this->DataBuilder->ttl()?$this->set($r,$this->DataBuilder->ttl()):
+                                          $this->set($r);
             }
         }
         return $r;
