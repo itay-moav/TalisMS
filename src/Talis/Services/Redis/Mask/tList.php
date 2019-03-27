@@ -34,11 +34,33 @@ class ListR extends \Talis\Services\Redis\aClientMask{
     }
     
     /**
+     * Returns the specified elements of the list stored at key.
+     * The offsets start and stop are zero-based indexes, with 0 being the first element of the list (the head of the list), 1 being the next element and so on.
+     * These offsets can also be negative numbers indicating offsets starting at the end of the list.
+     * For example, -1 is the last element of the list, -2 the penultimate, and so on.
+     *
+     * @param int $start
+     * @param int $stop
+     * @return mixed
+     */
+    public function lrange_all(){
+        return $this->lrange(0, -1);
+    }
+    
+    /**
      * TODO in redis, this actuall supposed to get variable amount
      *      of input variables.
      * @param mixed $value
      */
-    public function rpush($value){
+    public function rpush(...$value){
+        return $this->r->rpush($value);
+    }
+    
+    /**
+     * rpush with array
+     * @param array $value
+     */
+    public function rpush_array(array $value){
         return $this->r->rpush($value);
     }
     
@@ -70,8 +92,17 @@ class ListR extends \Talis\Services\Redis\aClientMask{
      * @param mixed $value
      * @return mixed
      */
-    public function lpush($value){
+    public function lpush(...$value){
         return $this->r->lpush($value);    
+    }
+    
+    /**
+     * lpush with array
+     * @param array $value
+     * @return mixed
+     */
+    public function lpush_array (array $value){
+        return $this->r->lpush($value);
     }
     
     /**
