@@ -127,10 +127,10 @@ class Client{
      * @param string $pattern
      * @return array
      */
-    public function keys(string $pattern):array{
+    public function keys():array{
         $this->call_db_init();
         $pattern = $this->key->key_as_string();
-        $this->logger->debug("===== Redis: KEYS {$pattern}\n");
+        $this->logger->debug("===== Redis: KEYS {$this->key}\n");
         return self::$MyRedis->keys($pattern);
     }
     
