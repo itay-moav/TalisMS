@@ -18,14 +18,6 @@ trait tSet{
  */
 class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\Redis\iScannable{
     /**
-     * @param ...$members
-     * @return number of members added
-     */
-    public function sadd (...$members):int{
-        return \call_user_func_array([$this->r,'sadd'],$members);
-    }
-    
-    /**
      * @param array $members
      * @return number of members added
      */
