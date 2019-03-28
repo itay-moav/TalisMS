@@ -38,11 +38,7 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
     public function smembers():array{
         return $this->r->smembers();
     }
-    
-    public function sismember($member) :int{
-        return $this->r->sismember($member);
-    }
-    
+        
     /**
      * intersects two other keys and stores them in THIS key
      * 
