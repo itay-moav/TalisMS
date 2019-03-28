@@ -29,7 +29,7 @@ abstract class Subscriber extends Queue{
         }
         catch (Exception_UnexpectedValue $e){
             $msg_count = $e->getCode();
-            \fatal("somthing bad happened while reading frame no {$msg_count}");
+            $this->logger->fatal("somthing bad happened while reading frame no {$msg_count}");
             throw $e;
         }
         
