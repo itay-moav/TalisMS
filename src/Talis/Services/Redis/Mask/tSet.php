@@ -21,8 +21,32 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
      * @param array $members
      * @return number of members added
      */
-    public function sadd (array $members):int{
+    public function sadd_array (array $members):int{
         return \call_user_func_array([$this->r,'sadd'],$members);
+    }
+    
+    /**
+     * @param array $members
+     * @return number of members added
+     */
+    public function sadd (...$members):int{
+        return $this->sadd_array($members);
+    }
+    
+    /**
+     * @param ...$members
+     * @return number of members removed
+     */
+    public function srem (...$members):int{
+        return $this->srem_array($members);
+    }
+    
+    /**
+     * @param array $members
+     * @return number of members removed
+     */
+    public function srem_array (array $members):int{
+        return \call_user_func_array([$this->r,'srem'],$members);
     }
     
     /**
@@ -56,8 +80,18 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
      * @param array of \Talis\Services\Redis\aKeyBoss
      * @return int number of members in new key
      */
-    public function sunionstore(array $keys):int{
+    public function sunionstore_array(array $keys):int{
         return call_user_func_array([$this->r,'sunionstore'],$keys);
+    }
+    
+    /**
+     * Union input keys and stores them in THIS key
+     *
+     * @param \Talis\Services\Redis\aKeyBoss $keys array of 
+     * @return int number of members in new key
+     */
+    public function sunionstore(\Talis\Services\Redis\aKeyBoss ...$keys):int{
+        return $this->sunionstore_array($keys);
     }
     
     /**
@@ -69,6 +103,15 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
      */
     public function sdiffstore(\Talis\Services\Redis\aKeyBoss $subtract_from_that, \Talis\Services\Redis\aKeyBoss $subtract_this):int{
         return $this->r->sdiffstore($subtract_from_that,$subtract_this);
+    }
+    
+    /**
+     * Returns if member is a member of the set stored at key.
+     * @param mixed $member
+     * @return int 0 | 1
+     */
+    public function sismember($member):int{
+        return $this->r->sismember($member);
     }
     
     /**

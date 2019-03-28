@@ -13,6 +13,11 @@ abstract class aClientMask{
         $this->r = $r;
     }
     
+    //TODO maybe a global object?
+    public function keys(string $pattern):array{
+        return $this->r->keys($pattern);    
+    }
+    
     public function expire(int $seconds){
         $this->r->expire($seconds);
     }

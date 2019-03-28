@@ -122,6 +122,18 @@ class Client{
     }
     
     /**
+     * The KEYS command, it is generic. Ovverides the __call
+     *
+     * @param string $pattern
+     * @return array
+     */
+    public function keys(string $pattern):array{
+        $this->call_db_init();
+        $this->logger->debug("===== Redis: KEYS {$pattern}\n");
+        return self::$MyRedis->keys($pattern);
+    }
+    
+    /**
      * IF data has to be serilized (primitives should not be, this take memeory and time)
      */
     public function serialize(){
