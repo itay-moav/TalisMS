@@ -43,6 +43,14 @@ class ListR extends \Talis\Services\Redis\aClientMask{
     }
     
     /**
+     * rpush an array
+     * @param mixed $value
+     */
+    public function rpush_array(array $value){
+        return \call_user_func_array([$this->r,'rpush'],$value);
+    }
+    
+    /**
      * Removes and returns the last element of the list stored at key.
      * 
      * @return ?string
@@ -72,6 +80,15 @@ class ListR extends \Talis\Services\Redis\aClientMask{
      */
     public function lpush($value){
         return $this->r->lpush($value);    
+    }
+    
+    /**
+     * lpush an array
+     * @param array $value
+     * @return mixed
+     */
+    public function lpush_array(array $value){
+        return \call_user_func_array([$this->r,'lpush'],$value);
     }
     
     /**
