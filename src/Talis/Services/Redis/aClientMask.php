@@ -54,5 +54,4 @@ abstract class aClientMask{
         return $this->r->exists();
     }
     
-
 }
