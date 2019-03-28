@@ -38,7 +38,7 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
     public function smembers():array{
         return $this->r->smembers();
     }
-     
+    
     /**
      * intersects two other keys and stores them in THIS key
      * 
