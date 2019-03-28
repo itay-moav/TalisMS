@@ -21,14 +21,13 @@ class Set extends \Talis\Services\Redis\aClientMask implements \Talis\Services\R
      * @param array $members
      * @return number of members added
      */
-    public function sadd(array $members):int{
+    public function sadd (array $members):int{
         return \call_user_func_array([$this->r,'sadd'],$members);
     }
     
     /**
      * @return number of elements in set
      */
-    
     public function scard():int{
         return $this->r->scard();
     }
