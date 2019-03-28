@@ -13,9 +13,12 @@ abstract class aClientMask{
         $this->r = $r;
     }
     
-    //TODO maybe a global object?
-    public function keys(string $pattern):array{
-        return $this->r->keys($pattern);    
+    /**
+     * Depending on the variable part of the key, suggested to use '*' to initialize a key
+     * @return array
+     */
+    public function keys():array{
+        return $this->r->keys();    
     }
     
     public function expire(int $seconds){
