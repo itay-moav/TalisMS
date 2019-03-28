@@ -54,10 +54,5 @@ abstract class aClientMask{
         return $this->r->exists();
     }
     
-    /**
-     * @return int 1 key exists 0 does not
-     */
-    public function keys():array{
-        return $this->r->keys();
-    }
+
 }
