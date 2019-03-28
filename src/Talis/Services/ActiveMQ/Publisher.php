@@ -26,14 +26,14 @@ abstract class Publisher extends Queue{
      */
     public function publish($msg):string{
         $msg = $this->filter_message($msg);
-        \dbgn("ActiveMQ: Sending filtered message [{$msg}]");
+        $this->logger->debug("ActiveMQ: Sending filtered message [{$msg}]");
         $destination = $this->get_queue_name();
-        \dbgn("ActiveMQ: posting to {$destination}");
+        $this->logger->debug("ActiveMQ: posting to {$destination}");
         try{
             
             $this->send($msg);
         } catch (\Exception $e){
-            \fatal("ActiveMQ: Failure posting to {$destination}");
+            $this->logger->fatal("ActiveMQ: Failure posting to {$destination}");
             throw $e;
         }
         return $msg;

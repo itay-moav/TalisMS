@@ -15,7 +15,9 @@ abstract class Queue implements \Countable
         $options = ['driverOptions' => ['host' => $config['host'],
                                         'port' => $config['port']]
         ];
-        return (new static($options));
+        
+        $logger = $config['logger'] ?? \Talis\Logger\MainZim::factory2('nananananana',\Talis\Logger\Streams\Nan::class,\Talis\Logger\Streams\aLogStream::VERBOSITY_LVL_FATAL,null,true);
+        return (new static($options,$logger));
     }
     
     
@@ -42,7 +44,7 @@ abstract class Queue implements \Countable
     /**
      * @var string
      */
-    private $queue_name = '';
+    protected $queue_name = '';
     
     /**
      * User-provided configuration
@@ -63,6 +65,11 @@ abstract class Queue implements \Countable
     private $_subscribed = false;
     
     /**
+     * @var \Talis\Logger\Streams\aLogStream
+     */
+    protected $logger      = null;
+    
+    /**
      * Make sure you use one of the two traits,
      * tQueue or tTopic, which will satisfy this
      * contract
@@ -74,8 +81,12 @@ abstract class Queue implements \Countable
      *
      * @param  array $options
      */
-    public function __construct(array $options){
-            
+    public function __construct(array $options,$logger=null){
+        if(!$logger){
+            $logger = \Talis\Logger\MainZim::factory2('nananananana',\Talis\Logger\Streams\Nan::class,\Talis\Logger\Streams\aLogStream::VERBOSITY_LVL_FATAL);
+        }
+        $this->logger = $logger; 
+        
         // Make sure we have some defaults to work with
         if (! isset($options['driverOptions'][self::TIMEOUT])) {
             $options['driverOptions'][self::TIMEOUT] = self::VISIBILITY_TIMEOUT;
@@ -118,7 +129,8 @@ abstract class Queue implements \Countable
      * @return Queue
      */
     public function setOptions(array $options):Queue{
-        //dbgr('SET OPTIONS FOR QUEUE',$options);
+        $this->logger->debug('SET OPTIONS FOR QUEUE');
+        $this->logger->debug($options);
         $this->_options = array_merge($this->_options, $options);
         return $this;
     }
@@ -310,7 +322,9 @@ abstract class Queue implements \Countable
                                 'handle'     => $response->getHeader('message-id'),
                                 'body'       => $response->getBody()
                                 );
-                                //dbgr('FRAME RECEIVED',$datum);
+                                $this->logger->debug('FRAME RECEIVED');
+                                $this->logger->debug($datum);
+                                
                                 $data[] = $datum;
                                 $frame_handler($response->getBody());
                                 $this->deleteThyMessage($datum['handle']);
@@ -369,7 +383,7 @@ abstract class Queue implements \Countable
     public function __destruct()
     {
         // Gracefully disconnect
-        $this->_client->getConnection()->close(true);
+        if($this->_client) $this->_client->getConnection()->close(true);
         unset($this->_client);
     }
 }

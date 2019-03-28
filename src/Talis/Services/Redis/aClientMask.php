@@ -13,6 +13,14 @@ abstract class aClientMask{
         $this->r = $r;
     }
     
+    /**
+     * Depending on the variable part of the key, suggested to use '*' to initialize a key
+     * @return array
+     */
+    public function keys():array{
+        return $this->r->keys();    
+    }
+    
     public function expire(int $seconds){
         $this->r->expire($seconds);
     }
