@@ -130,7 +130,7 @@ class Client{
     public function keys():array{
         $this->call_db_init();
         $pattern = $this->key->key_as_string();
-        $this->logger->debug("===== Redis: KEYS {$this->key}\n");
+        $this->logger->debug("===== Redis: KEYS {$pattern}\n");
         return self::$MyRedis->keys($pattern);
     }
     
