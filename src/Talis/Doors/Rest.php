@@ -48,7 +48,6 @@ class Rest extends HTTP{
 	       
 	    }
 	    
-	    
 		$this->full_uri = $this->root_uri ? 
 			explode($this->root_uri,$_SERVER ['REQUEST_URI'])[1] : 
 			$_SERVER ['REQUEST_URI']

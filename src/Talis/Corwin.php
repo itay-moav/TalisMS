@@ -106,7 +106,7 @@ class Corwin{
 	 */
 	private function prepareResponse():void{
 		\dbgn("TRYING TO INCLUDE: {$this->route['route']}");
-		if(!include_once $this->route['route']){
+		if(!@include_once $this->route['route']){
 			throw new \Talis\Exception\BadUri($this->route['route']);
 		}
 		$this->RequestChainHead = new $this->route['classname']($this->Request,new \Talis\Message\Response);
@@ -135,7 +135,7 @@ class Corwin{
 		\dbgr('request_parts',$request_parts);
 		$c = count($request_parts);
 		for($i=4; $i<$c;$i+=2){
-			$this->route['extra_params'][$request_parts[$i]] = $request_parts[$i+1];
+			$this->route['extra_params'][$request_parts[$i]] = ($request_parts[$i+1]??true);
 		}
 		\dbgr('GET PARAMS',$this->route['extra_params']);
 	}

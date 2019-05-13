@@ -340,6 +340,7 @@ abstract class MySqlTableHub{
 		return $sql;
 	}
 	
+	/* silenced until replaced. This is a ledger of changes to a record.
 	protected function createInsertDeltaRecord(int $n_of_records_just_created){
 		$type        = self::DELTA_TYPE__CREATE;
 		$explanation = Action_LogMsgs::getActionLogMsg()?:
@@ -376,7 +377,7 @@ abstract class MySqlTableHub{
 		} catch(\Exception $e){
 			throw new FailedDeltaRecordCreation("Failed creating UPDATE delta records for {$this->databaseName}.{$this->tableName}");
 		}
-	}
+	}*/
 	
 	/**
 	 * Wrapper for UPDATE queries. Default sets the DB obj to a WRITE one.
@@ -458,8 +459,10 @@ abstract class MySqlTableHub{
 	 * @return string json encoded Events queue message {source:db,table:table,event_type: 'event_type', params:{field:value,field:value}}
 	 */
 	protected function sendEventMessage($command,$where){
+	    /*Silenced until a replacement is done
 		$msg = DataPusher_ActiveMQ_Publisher_Events::construct_message($this->database_name,$this->table_name,$command,$where);
 		return DataPusher_ActiveMQ_Publisher_Events::get_client()->publish($msg);
+		*/
 	}
 	
 	/**
@@ -501,10 +504,10 @@ abstract class MySqlTableHub{
 	/**
 	 * Event called after insert
 	 * @param array $params
-	 * @param unknown $last_insert_id
+	 * @param int $last_insert_id
 	 * @return MySqlTableHub
 	 */
-	protected function postInsertEvent(array $params, $last_insert_id){
+	protected function postInsertEvent(array $params, int $last_insert_id){
 		return $this;
 	}
 	

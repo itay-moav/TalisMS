@@ -14,11 +14,5 @@ class Cli implements \Talis\commons\iEmitter{
 		//TODO move to exit status? $stat   = $message->getStatus()->getCode();
 		$body = json_encode($message->getBody());
 		echo $body;
-		/* TOBEDELETED
-		if($stat>=500){
-			exit(1);
-		}
-		exit($stat);
-		*/
 	}
 }
