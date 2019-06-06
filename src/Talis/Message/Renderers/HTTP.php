@@ -15,6 +15,13 @@ class HTTP implements \Talis\commons\iEmitter{
 		$explanation = $message->getStatus()->getMsg();
 		$header = "HTTP/1.1 {$stat} {$explanation}";
 		header($header);
+		$all_other_headers = $message->getHeaders();
+		\dbgr('SENDING HEADERS',[$header] + $all_other_headers);
+		if($all_other_headers){
+		    foreach($all_other_headers as $other_header){
+		        header($other_header);
+		    }
+		}
 		$body = json_encode($message->getBody());
 		\dbgr('SENDING BODY',$body);
 		echo $body;

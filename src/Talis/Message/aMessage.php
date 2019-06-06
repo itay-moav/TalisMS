@@ -1,8 +1,19 @@
 <?php namespace Talis\Message;
 abstract class aMessage{
-	protected $body = null;
+	protected $headers = [],
+	          $body = null
+    ;
 	
-	/**
+    public function getHeaders():array{
+        return $this->headers;
+    }
+    
+    public function setHeader(string $header):aMessage{
+        $this->headers[] = $header;
+        return $this;
+    }
+	
+    /**
 	 * The json decoded body or stdClass
 	 *
 	 * @return \stdClass|NULL
