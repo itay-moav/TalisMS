@@ -1,5 +1,5 @@
 <?php namespace Talis\commons;
-interface iMessageFilter{
+interface iFilter{
 	/**
 	 * gets as input a message. MODIFIES THE ACTUAL MESSAGE which is pased by reference.
 	 * returns NOTHING!
@@ -7,5 +7,5 @@ interface iMessageFilter{
 	 *  
 	 * @param \Talis\Message\Response $message
 	 */
-	public function filter(\Talis\Message\aMessage $message):void;
+	public function filter(\Talis\Message\Request $Request):void;
 }

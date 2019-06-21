@@ -1,11 +1,13 @@
 <?php namespace Talis\Message;
-class Response extends aMessage{
+class Response{
 	const RESPONSE_TYPE__RESPONSE   = 'response',
 		  RESPONSE_TYPE__DEPENDENCY = 'dependency',
 		  RESPONSE_TYPE__ERROR      = 'error'
 	;
 	
-	private 	$status       = null,
+	private 	$headers      = [],
+	            $body         = null,
+	            $status       = null,
 				$message	  = '',
 				$type		  = self::RESPONSE_TYPE__RESPONSE,
 				$payload	  = null
@@ -16,6 +18,19 @@ class Response extends aMessage{
 	 */
 	public function __construct(){
 		$this->body = new \stdClass;
+	}
+	
+	public function getHeaders():array{
+	    return $this->headers;
+	}
+	
+	public function setHeader(string $header):aMessage{
+	    $this->headers[] = $header;
+	    return $this;
+	}
+	
+	public function setBody(\stdClass $body):\stdClass{
+	    return $this->body = $body;
 	}
 
 	public function setStatus(aStatus $status):aStatus{
@@ -62,7 +77,7 @@ class Response extends aMessage{
 	 * Carefull, it rebuilds the body each time from it's parts
 	 * 
 	 * {@inheritDoc}
-	 * @see \Talis\Message\aMessage::getBody()
+	 * @see \Talis\Message\Response::getBody()
 	 */
 	public function getBody():\stdClass{
 		$body = \Talis\commons\array_to_object([
@@ -74,5 +89,4 @@ class Response extends aMessage{
 		$body->payload = $this->getPayload();
 		return $this->setBody($body);
 	}
-	
 }
