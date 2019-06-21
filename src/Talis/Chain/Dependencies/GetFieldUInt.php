@@ -1,26 +1,31 @@
 <?php namespace Talis\Chain\Dependencies;
+
 /**
  * Making sure that a get field exist in the request
  * 
  * @author Itay Moav
  */
-class GetFieldExist extends aDependency{
+class GetFieldUInt extends aDependency{
 	/**
 	 * 
 	 * {@inheritDoc}
 	 * @see \Talis\Chain\Dependencies\ADependency::validate()
 	 */
 	protected function validate():bool{
-		$valid = isset($this->Request->getAllGetParams()[$this->params['field']]);
+	    $field_to_validate = $this->Request->get_param($this->params['field']);
+	    if(is_numeric($field_to_validate)){//if numeric, cast to number var type.
+	        $field_to_validate = $field_to_validate *1;
+	    }
+	    $valid = is_integer($field_to_validate) && $field_to_validate >= 0;	    
 		\dbgr('validaror ' . self::class, 'params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
 		return $valid;
 	}
 	
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		//\dbgr('RENDER',print_r($this->params,true));
 		$response = new \Talis\Message\Response;
 		$response->markDependency();
-		$response->setMessage("Mising URI PARAM {$this->params['field']}");
+		$field = $this->Request->get_param($this->params['field']);
+		$response->setMessage("GET PARAM {$this->params['field']} is not an unsigned int, it is: [{$field}]");
 		$response->setStatus(new \Talis\Message\Status\Code500);
 		$emitter->emit($response);
 	}		
