@@ -14,3 +14,5 @@ Talis\Logger\MainZim::setGlobalLogger(
 );
 
 require_once 'Talis/Logger/shortcuts.php';
+
+//\Talis\Corwin::$registered_router = 'Some Router Class Name to voverride defaults'; 
