@@ -19,7 +19,7 @@ class Request{
 	    return $this->headers;
 	}
 	
-	public function setHeader(string $header):aMessage{
+	public function setHeader(string $header):Request{
 	    $this->headers[] = $header;
 	    return $this;
 	}

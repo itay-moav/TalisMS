@@ -11,18 +11,10 @@ function app_env(){
 			],
 	
 			'paths'=> [
-				'root_path'	=> '/home/admin/dev/talisms',
+				'root_path'	=> '/home/itay/clidev/TalisMS',
 				'domain'	=> '192.168.12.148',
-			    'root_uri'  => '/talis'
+			    	'root_uri'  => '/talis'
 			],
-			
-			'microservices' => [
-				'mail'	    => [
-							'url'  	=> '192.168.12.148/api/mail',
-						    'async' => true
-				]
-			],
-			
 			'database'=>[
 				'mysql'=>array(
 			        'host'=> '127.0.0.1',

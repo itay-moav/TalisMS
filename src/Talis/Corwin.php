@@ -25,13 +25,15 @@ class Corwin{
 	static public $Context = null;
 	
 	/**
+	 * 
+	 * @var DefaultRouter
+	 */
+	private $Router = null;
+	
+	/**
 	 * @var array
 	 */
-	private $route = [
-			'route'	       => 'maps to class file',
-			'classname'	   => 'object to init',
-			'extra_params' => []
-	];
+	private $extra_params = [];
 	
 	/**
 	 * Body of the request, json decoded string
@@ -67,10 +69,13 @@ class Corwin{
 		self::$Context = new \Talis\Data\Context;
 		
 		try{
-			$this->generate_route($request_parts);
-			$this->generate_query($request_parts);
+		    $this->Router = new DefaultRouter($request_parts);
+		    $this->Router->generate_route();
+			$this->extra_params = $this->Router->generate_query();
+			
 			$this->build_request($full_uri);
-			$this->prepareResponse();
+			$this->RequestChainHead = $this->Router->get_chainhead($this->Request,new \Talis\Message\Response);
+
 			//the dynamic init
 			if(self::$registered_init_func){
 				$func = self::$registered_init_func;
@@ -95,48 +100,72 @@ class Corwin{
 	
 	private function build_request(string $full_uri):void{
 		\dbgr('BUILDING REQUEST WITH BODY',$this->req_body);
-		$this->Request = new \Talis\Message\Request($full_uri,$this->route['extra_params'],$this->req_body);
+		$this->Request = new \Talis\Message\Request($full_uri,$this->extra_params,$this->req_body);
 	}
-	
-	/**
-	 * Instantiate the first step in the chain, The API class that we got from the route.
-	 * Or, an error response, if API does not exist
-	 * 
-	 * @throws \Talis\Exception\BadUri
-	 */
-	private function prepareResponse():void{
-		\dbgn("TRYING TO INCLUDE: {$this->route['route']}");
-		if(!@include_once $this->route['route']){
-			throw new \Talis\Exception\BadUri($this->route['route']);
-		}
-		$this->RequestChainHead = new $this->route['classname']($this->Request,new \Talis\Message\Response);
-	}
-	
-	/**
-	 * Understands from the URL what BL object to call
-	 * ASSUMES CONVENTION OF 3 LEVELS URL [action][subaction][type]
-	 * @param array $request_parts
-	 */
-	private function generate_route(array $request_parts):void{
-		if(count($request_parts) < 3){
-		    throw new \Talis\Exception\BadUri(print_r($request_parts,true));
-		}
-		$this->route['route'] = APP_PATH . "/api/{$request_parts[1]}/{$request_parts[2]}/{$request_parts[3]}.php";
-		\dbgn("Doing route [{$this->route['route']}]");
-		$r = $request_parts[1].$request_parts[2].$request_parts[3];
-		$this->route['classname'] = '\Api\\' . $r;
-	}
-	
-	/**
-	 * See if part of the uri is actually a query string. Accepts ONLY /field/value/ffield/value...
-	 * @param array $request_parts
-	 */
-	private function generate_query(array $request_parts):void{
-		\dbgr('request_parts',$request_parts);
-		$c = count($request_parts);
-		for($i=4; $i<$c;$i+=2){
-			$this->route['extra_params'][$request_parts[$i]] = ($request_parts[$i+1]??true);
-		}
-		\dbgr('GET PARAMS',$this->route['extra_params']);
-	}
+}
+
+
+
+
+
+
+
+class DefaultRouter{
+    protected $request_parts = [];
+    
+    private   $route = [];
+    
+   public function __construct(array $request_parts){
+       \dbgr('request_parts',$request_parts);
+       $this->request_parts = $request_parts;
+   }
+   
+   /**
+    * Generates the API class name. This will be the name
+    * of the class to start the chain, business wise
+    * 
+    * ASSUMES CONVENTION OF 3 LEVELS URL [action][subaction][type]
+    * 
+    * array [route=>the path to the class, classname=>the name of the class]
+    */
+   public function generate_route():void{
+       if(count($this->request_parts) < 3){
+           throw new \Talis\Exception\BadUri(print_r($this->request_parts,true));
+       }
+
+       $this->route= [
+           'route'      => APP_PATH . "/api/{$this->request_parts[1]}/{$this->request_parts[2]}/{$this->request_parts[3]}.php",
+           'classname'  => "\Api\\{$this->request_parts[1]}{$this->request_parts[2]}{$this->request_parts[3]}"
+       ];
+       \dbgn("Doing route [{$this->route['route']}]");
+   }
+   
+   /**
+    * Return would be GET params from butified urls
+    * @return array
+    */
+   public function generate_query():array{
+       $c = count($this->request_parts);
+       $extra_params = [];
+       for($i=4; $i<$c;$i+=2){
+           $extra_params[$this->request_parts[$i]] = ($this->request_parts[$i+1]??true);
+       }
+       \dbgr('GET PARAMS',$extra_params);
+       return $extra_params;
+   }
+
+    /**
+     * Instantiate the first step in the chain, The API class that we got from the route.
+     * Or, an error response, if API does not exist
+     *
+     * @throws \Talis\Exception\BadUri
+     */
+    public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response): \Talis\Chain\aChainLink
+    {
+        \dbgn("TRYING TO INCLUDE: {$this->route['route']}");
+        if (! @include_once $this->route['route']) {
+            throw new \Talis\Exception\BadUri($this->route['route']);
+        }
+        return new $this->route['classname']($Request, $Response);
+    }
 }

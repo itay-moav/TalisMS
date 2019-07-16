@@ -5,7 +5,7 @@ require_once 'Talis/commons/functions.php';
 spl_autoload_register('Talis\commons\autoload');
 
 //Logger
-Talis\Logger\MainZim::factory(
+Talis\Logger\MainZim::setGlobalLogger(
 		app_env()['log']['name'],
 		app_env()['log']['handler'],
 		app_env()['log']['verbosity'],
@@ -13,3 +13,4 @@ Talis\Logger\MainZim::factory(
 		app_env()['log']['low_memory_footprint']
 );
 
+require_once 'Talis/Logger/shortcuts.php';

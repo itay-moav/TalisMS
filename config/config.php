@@ -17,10 +17,7 @@ ini_set('display_errors',1);
 \define('PREVENT_FORCE_HTTPS',-1); //a value u send to the url function to force the use of http (prevent https)
 
 \ini_set('include_path', '.' .
-	PATH_SEPARATOR . '/usr/share/php/TalisMS001'.
-	PATH_SEPARATOR . APP_PATH   . '/lib' .
-	PATH_SEPARATOR . APP_PATH   . '/aux' .
-	PATH_SEPARATOR . APP_PATH   . '/model' .
-	PATH_SEPARATOR . '/usr/share/php/ZendFW2411'
+    PATH_SEPARATOR . APP_PATH .
+	PATH_SEPARATOR . CORE_PATH . '/src'
 );
 
