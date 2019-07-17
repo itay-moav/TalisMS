@@ -38,10 +38,12 @@ class Container{
         return $this;
     }
     
-    /**
+    /***
      * adds JS header of the validation at the same level of excluded/live/...
+     * @param string $header_name
+     * @param string $header_action
      */
-    public function add_header(string $header_name,string $header_action=''){
+    public function add_to_header(string $header_name,string $header_action=''){
         if(!isset($this->headers[$header_name])){
             $this->headers[$header_name] = $header_action;
         }
@@ -82,7 +84,9 @@ class Container{
             'invalid'       => 'glyphicon glyphicon-remove',
             'validating'    => 'glyphicon glyphicon-refresh'
         ]);
-        
+        foreach($this->headers as $name => $action){
+            $header->$name = $action;
+        }
         return $header;
     }
     
@@ -91,10 +95,6 @@ class Container{
      */
     public function __toString(){
         $full_js = $this->header();
-        foreach($this->headers as $name => $action){
-            $full_js->$name = $action;
-        }
-        
         foreach($this->validators as $name => $validator){
             $full_js->fields->{$name} = $validator;
         }
