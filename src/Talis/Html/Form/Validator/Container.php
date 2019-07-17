@@ -21,6 +21,8 @@ class Container{
     
     private $validators = [];
     
+    private $headers = [];
+    
     public function __construct(string $form_id){
         $this->form_id = $form_id;
     }
@@ -36,6 +38,17 @@ class Container{
         return $this;
     }
     
+    /***
+     * adds JS header of the validation at the same level of excluded/live/...
+     * @param string $header_name
+     * @param string $header_action
+     */
+    public function add_to_header(string $header_name,string $header_action=''){
+        if(!isset($this->headers[$header_name])){
+            $this->headers[$header_name] = $header_action;
+        }
+
+    }
     /**
      * initiate element in container
      * 
@@ -71,7 +84,9 @@ class Container{
             'invalid'       => 'glyphicon glyphicon-remove',
             'validating'    => 'glyphicon glyphicon-refresh'
         ]);
-        
+        foreach($this->headers as $name => $action){
+            $header->$name = $action;
+        }
         return $header;
     }
     
