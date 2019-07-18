@@ -80,7 +80,6 @@ class Container{
                                     invalid     : 'glyphicon glyphicon-remove',
                                     validating  : 'glyphicon glyphicon-refresh'
                     }
-   
                    ";
         
         foreach($this->headers as $name => $action){
