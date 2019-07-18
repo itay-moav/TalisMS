@@ -48,6 +48,6 @@ abstract class aRouter{
      * @throws \Talis\Exception\BadUri
      * @return \Talis\Chain\aFilteredValidatedChainLink
      */
-    abstract public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response):\Talis\Chain\aFilteredValidatedChainLink;
+    abstract public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response):\Talis\Chain\aChainLink;
     
 }

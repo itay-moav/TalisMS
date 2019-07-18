@@ -42,7 +42,7 @@ class DefaultRouter extends aRouter{
      *
      * @throws \Talis\Exception\BadUri
      */
-    public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response): \Talis\Chain\aFilteredValidatedChainLink
+    public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response): \Talis\Chain\aChainLink
     {
         \dbgn("TRYING TO INCLUDE: {$this->route['route']}");
         if (! @include_once $this->route['route']) {
