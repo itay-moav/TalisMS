@@ -24,7 +24,7 @@ class Response{
 	    return $this->headers;
 	}
 	
-	public function setHeader(string $header):aMessage{
+	public function setHeader(string $header):Response{
 	    $this->headers[] = $header;
 	    return $this;
 	}
