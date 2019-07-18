@@ -69,23 +69,22 @@ class Container{
      * Generate the JS header of the validation
      * @return \stdClass
      */
-    private function header():\stdClass{
-        $header = \array_to_object([
-            'excluded'  => '',
-            'message'   => 'This value is not valid',
-            'live'      => 'enabled',
-            'feedbackIcons' => ''
-        ]);
-
-        $header->fields        = new \stdClass;
-        $header->excluded      = [];
-        $header->feedbackIcons = \array_to_object([
-            'valid'         => 'glyphicon glyphicon-ok',
-            'invalid'       => 'glyphicon glyphicon-remove',
-            'validating'    => 'glyphicon glyphicon-refresh'
-        ]);
+    
+    private function header():string{
+        $header = "
+                    excluded  : [],
+                    message   : 'This value is not valid',
+                    live      : 'enabled',
+                    feedbackIcons: {
+                                    valid       : 'glyphicon glyphicon-ok',
+                                    invalid     : 'glyphicon glyphicon-remove',
+                                    validating  : 'glyphicon glyphicon-refresh'
+                    }
+   
+                   ";
+        
         foreach($this->headers as $name => $action){
-            $header->$name = $action;
+            $header .= ",".$name.":".$action;
         }
         return $header;
     }
@@ -94,17 +93,21 @@ class Container{
      * Echo JS
      */
     public function __toString(){
-        $full_js = $this->header();
-        foreach($this->validators as $name => $validator){
-            $full_js->fields->{$name} = $validator;
+        $header = $this->header();
+        $fields='';
+        $validators=new \stdClass;
+        if (isset($this->validators)){
+            $fields = ",fields:";
+            foreach($this->validators as $name => $validator){
+                $validators->{$name} = $validator;
+            }
+            $fields .= json_encode($validators);
+           
         }
-        return '$("#' . $this->form_id . '").bootstrapValidator(' . json_encode($full_js) . ');';
+        $full_js ="{".$header.$fields."}";
+        return '$("#' . $this->form_id . '").bootstrapValidator(' . $full_js . ');';
     }
 }
-
-
-
-
 
 
 /**
