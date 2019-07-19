@@ -38,18 +38,7 @@ class Container{
         return $this;
     }
     
-    /***
-     * adds JS header of the validation at the same level of excluded/live/...
-     * @param string $header_name
-     * @param string $header_action
-     */
-    public function add_to_header(string $header_name,string $header_action=''){
-        if(!isset($this->headers[$header_name])){
-            $this->headers[$header_name] = $header_action;
-        }
-
-    }
-    /**
+  /**
      * initiate element in container
      * 
      * @param \Talis\Html\Form\Element\aElement $element
@@ -94,11 +83,19 @@ class Container{
      * Echo JS
      */
     public function __toString(){
+        return '$("#' . $this->form_id . '").bootstrapValidator(' . $this->get_json() . ');';
+    }
+    
+    /**
+     * Encodes JS
+     * @return string
+     */
+    public function get_json():string{
         $full_js = $this->header();
         foreach($this->validators as $name => $validator){
             $full_js->fields->{$name} = $validator;
         }
-        return '$("#' . $this->form_id . '").bootstrapValidator(' . json_encode($full_js) . ');';
+        return json_encode($full_js);
     }
 }
 
