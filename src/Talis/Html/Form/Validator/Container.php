@@ -21,8 +21,6 @@ class Container{
     
     private $validators = [];
     
-    private $headers = [];
-    
     public function __construct(string $form_id){
         $this->form_id = $form_id;
     }
@@ -73,9 +71,6 @@ class Container{
             'invalid'       => 'glyphicon glyphicon-remove',
             'validating'    => 'glyphicon glyphicon-refresh'
         ]);
-        foreach($this->headers as $name => $action){
-            $header->$name = $action;
-        }
         return $header;
     }
     
