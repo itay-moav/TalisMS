@@ -53,6 +53,17 @@ abstract class MySqlTableHub{
 	 * @param mixed $id
 	 * @return MySqlTableHub
 	 */
+
+	static protected $current_user = 0;
+        
+	/**
+	 * Sets the current user
+	 */
+
+	static public function setCurrentUser(int $current_user):void{
+		self::$current_user=$current_user;
+	}
+	 
 	static public function getInstance($db_name=''){
 		return new static($db_name);
 	}
@@ -288,7 +299,7 @@ abstract class MySqlTableHub{
 		$this->preInsertEvent($data);
 		$fields=array_keys(Shortcuts::cleanControlFields($data[0]));//get the field names for the insert
 		$fields_str=join('`,`',$fields);
-		$modified_by = \User_Current::pupetMasterId();
+		$modified_by = self::$current_user;
 		$sql="INSERT {$put_ignore} INTO {$this->database_name}.{$this->table_name} (`{$fields_str}`,date_created,created_by,modified_by)\nVALUES\n";
 		$params=array();
 		
@@ -704,7 +715,7 @@ abstract class MySqlTableHub{
 		
 		
 		$fields_str		= join('`,`',$fields);
-		$modified_by	= \User_Current::pupetMasterId();
+		$modified_by	= self::$current_user;
 		
 		$update_fields	= $fields;
 		unset($update_fields[array_search($primary_key,$update_fields)]);
