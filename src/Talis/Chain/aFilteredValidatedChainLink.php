@@ -26,7 +26,7 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	 * builds the chain from the filter+dependencies+bls
 	 */
 	final protected function load_chain_container():void{
-		$this->set_chain_container(new \Ds\Queue(array_merge($this->filters,$this->dependencies,$this->get_next_bl())));	
+		$this->set_chain_container(new \Ds\Queue(array_merge($this->filters,$this->dependencies,$this->get_next_bl())));
 	}
 	
 	/**

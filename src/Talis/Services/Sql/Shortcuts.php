@@ -171,8 +171,10 @@ class Shortcuts{
 	 *
 	 * @return string SET statment, without the "SET"
 	 */
-	static public function generateSetData(array $values,array &$params,$clean_values=true){
+	static public function generateSetData(array $values,array &$params,bool $clean_values=true,int $current_user_making_changes=0):string{
 	    $set=array();
+	    $values['modified_by'] = $current_user_making_changes;
+
 	    if($clean_values){
 	        foreach($values as $k=>$v){
 	            $params[':_'.$k]=$v;
@@ -184,7 +186,7 @@ class Shortcuts{
 	        }
 	    }
 	    
-	    $set[]='modified_by=' . \User_Current::pupetMasterId();//TODO USERID figure out CONTEXT for this to fetch a user from
+	    //TOBEDELETED once we make sure it works $set[]='modified_by=' . \User_Current::pupetMasterId();//TODO USERID figure out CONTEXT for this to fetch a user from
 	    $set[]='date_modified=NOW()';
 	    $set=join(',',$set);
 	    return $set;
