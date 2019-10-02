@@ -19,7 +19,7 @@
 class Container{
     private $form_id = '';
     
-    private $validators = [];
+    protected $validators = [];
     
     public function __construct(string $form_id){
         $this->form_id = $form_id;
