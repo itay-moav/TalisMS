@@ -328,7 +328,7 @@ class MySqlClient {
 	 * @return array
 	 */
 	public function fetchAllPaired():array {
-		return $this->lastStatement->fetchAll ( PDO::FETCH_KEY_PAIR );
+		return $this->lastStatement->fetchAll ( \PDO::FETCH_KEY_PAIR );
 	}
 	
 	/**
