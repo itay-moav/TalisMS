@@ -186,7 +186,6 @@ class Shortcuts{
 	        }
 	    }
 	    
-	    //TOBEDELETED once we make sure it works $set[]='modified_by=' . \User_Current::pupetMasterId();//TODO USERID figure out CONTEXT for this to fetch a user from
 	    $set[]='date_modified=NOW()';
 	    $set=join(',',$set);
 	    return $set;
