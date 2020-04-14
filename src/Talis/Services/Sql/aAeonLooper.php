@@ -1,5 +1,4 @@
 <?php namespace Talis\Services\Sql;
-use function \Talis\Logger\dbgn;
 
 /**
  * @author 	Itay Moav
@@ -27,28 +26,28 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	/**
 	 * FOR IMMEDIATE RUN!
 	 *
-	 * @param unknown $process_type
+	 * @param int $process_type PROCESS_TYPE_NONE = 2, PROCESS_TYPE_PROCESS	= 3, PROCESS_TYPE_PAGED = 5
 	 * @param array $params
-	 * @param BL_iDataTransport $Resultset
-	 * @param unknown $page
-	 * @param unknown $page_size
-	 * @return \Talis\Message\aMessage
+	 * @param \Talis\Data\ResultSet\i $Resultset
+	 * @param int $page
+	 * @param int $page_size
+	 * @return \Talis\Data\ResultSet\i
 	 */
-	static public function resultSet($process_type,array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):\Talis\Data\ResultSet\i{
+	static public function resultSet(int $process_type,array $params=[],\Talis\Data\ResultSet\i $Resultset=null,int $page=self::PAGE,int $page_size=self::PAGE_SIZE):\Talis\Data\ResultSet\i{
 		return self::create($process_type,$params,$Resultset,$page,$page_size)->run()->getResultset();
 	}
 	
 	/**
 	 * Just create the object, u still need to RUN!
 	 *
-	 * @param unknown $process_type
+	 * @param int $process_type PROCESS_TYPE_NONE = 2, PROCESS_TYPE_PROCESS	= 3, PROCESS_TYPE_PAGED = 5
 	 * @param array $params
-	 * @param BL_iDataTransport $Resultset
+	 * @param \Talis\Data\ResultSet\i $Resultset
 	 * @param integer $page
 	 * @param integer $page_size
 	 * @return aAeonLooper
 	 */
-	static public function create($process_type,array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page=self::PAGE,$page_size=self::PAGE_SIZE):aAeonLooper{
+	static public function create(int $process_type,array $params=[],\Talis\Data\ResultSet\i $Resultset=null,int $page=self::PAGE,int $page_size=self::PAGE_SIZE):aAeonLooper{
 		return new static($process_type,$params,$Resultset,$page,$page_size);
 	}
 	
@@ -78,14 +77,13 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * and getting smaller.
 	 * Means the first page, technicaly is always the bnew page.
 	 *
-	 * @param unknown_type $params
+	 * @param array $params
 	 * @param integer $page_size
 	 */
 	static public function autoPagingManipulatedData(array $params=[],\Talis\Data\ResultSet\i $Resultset=null,$page_size=self::PAGE_SIZE_AUTOPAGING):void{
 		if(!$Resultset) $Resultset = new \Talis\Data\ResultSet\Loki;
 		
 		static::preAutoPaging($params);
-		$count = 1;
 		$Reader = new static(self::PROCESS_TYPE_PAGED*self::PROCESS_TYPE_PROCESS,$params,$Resultset,1,$page_size);
 		\dbgn('ITERATION:0');
 		$Resultset = $Reader->run()->getResultset();
@@ -101,9 +99,9 @@ abstract class aAeonLooper extends \Talis\Data\aAeonLooper{
 	 * If the input where statment has no where in it, I'll add it with a mock condition (I assume it is followed by an AND)
 	 *
 	 * @param string $where
-	 * @return sql	WHERE statment
+	 * @return string sql	WHERE statment
 	 */
-	static protected function putWhere($where){
+	static protected function putWhere($where):string{
 		if(!$where){
 			return ' WHERE 1=1 ';
 		}

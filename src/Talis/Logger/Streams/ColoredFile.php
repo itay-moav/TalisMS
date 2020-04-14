@@ -1,5 +1,5 @@
-<?php
-class Logger_Streams_ColoredFile extends Logger_MainZim{
+<?php namespace Talis\Logger\Streams;
+class ColoredFile extends aLogStream{
     const   VI_COLOR__RED   = 9,
             VI_COLOR__BLUE  = 12,
             VI_COLOR__GREEN = 2,
@@ -60,19 +60,14 @@ class Logger_Streams_ColoredFile extends Logger_MainZim{
 	    if($severity < self::VERBOSITY_LVL_INFO){
 	        $inp = self::colorize($inp,self::VI_COLOR__RED);
 	    }
-	    //EOF TODO move to formatter 
 	    
-	    try {
-			$stream = fopen($this->log_name, 'a');
-			fwrite($stream, "[{$severity_out}][" . self::colorize(@date('h:i:s', time()),self::VI_COLOR__GRAY) . "] " . $inp . PHP_EOL);
-			
-			if($full_stack_data){
-			    fwrite($stream, "[FULL STACK] \n" . print_r($full_stack_data,true) . PHP_EOL);
-			}
-			fclose($stream);
-		}catch (Exception $e){
-			throw new Exception('Unable to open log file.');
+		$stream = fopen($this->log_name, 'a');
+		fwrite($stream, "[{$severity_out}][" . self::colorize(@date('h:i:s', time()),self::VI_COLOR__GRAY) . "] " . $inp . PHP_EOL);
+		
+		if($full_stack_data){
+		    fwrite($stream, "[FULL STACK] \n" . print_r($full_stack_data,true) . PHP_EOL);
 		}
+		fclose($stream);
 	}
 	
 	static private function colorize($txt,$color){

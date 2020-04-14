@@ -7,12 +7,12 @@
 abstract class aAeonIteratorLooper extends aAeonLooper{
 
 	/**
-	 * @var Iterator
+	 * @var \Iterator
 	 */
 	protected   $iterator = NULL;
 	
 	/**
-	 * @param Iterator $iterator
+	 * @param \Iterator $iterator
 	 * @param array $user_params
 	 */
 	public function __construct(\Iterator $iterator,array $user_params=[]){

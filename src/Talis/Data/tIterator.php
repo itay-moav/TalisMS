@@ -8,20 +8,19 @@
 trait tIterator{
 	/**
 	 * Current row
-	 * @var row
 	 */
 	protected $row = true; //initial value, as iterator starts by asking questions here.
 	
 	/**
 	 * Row number
-	 * @var row_index
+	 * @var int row_index
 	 */
 	public $row_index = 0;
 	
 	/**
 	 * Returns row index
 	 * (non-PHPdoc)
-	 * @see Iterator::key()
+	 * @see \Iterator::key()
 	 * @return number
 	 */
 	public function key () {

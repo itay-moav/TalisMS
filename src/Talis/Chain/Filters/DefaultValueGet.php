@@ -14,6 +14,6 @@ class DefaultValueGet extends aFilter{
 	    }
 	    
 	    $this->Request = new \Talis\Message\Request($Request->getUri(), $all_get_params, $Request->getBody());
-	    var_dump($this->Request);
+	    \dbgr('FILTERED REQUEST',$this->Request);
 	}
 }
