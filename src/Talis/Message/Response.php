@@ -49,11 +49,11 @@ class Response{
 		return $this->message;
 	}
 	
-	public function setPayload(?\stdClass $payload):?\stdClass{
+	public function setPayload($payload){
 		return $this->payload = $payload;
 	}
 	
-	public function getPayload():?\stdClass{
+	public function getPayload(){
 		return $this->payload;
 	}
 	
