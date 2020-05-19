@@ -1,5 +1,5 @@
 <?php
-function app_env(){
+function app_envXX(){
 	$ret = [
 	        'debug_verbosity' => 2, //[1] no debug trace, [2] debug trace up to 4 lines, no args, [3] debug trace up to 4 lines + args , [4] full debug trace 
 			'log' =>[

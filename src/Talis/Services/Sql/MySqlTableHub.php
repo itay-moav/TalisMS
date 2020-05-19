@@ -410,7 +410,7 @@ abstract class MySqlTableHub{
 		//get SET fields
 		$params=[];
 		$values = $this->cleanData($values);
-		$set=Shortcuts::generateSetData($values,$params,$clean_values);
+		$set=Shortcuts::generateSetData($values,$params,$clean_values,self::$current_user);
 		//Clean the where array and add to the $params array and rebuild the $where array
 		$where_sql = Shortcuts::generateWhereData($where,$params,$clean_where);
 		//sql
