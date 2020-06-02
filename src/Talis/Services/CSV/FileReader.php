@@ -3,7 +3,7 @@
  * Iterates and reads a CSV file
  * @author itay modified by holly
  */
-class FileReader implements Iterator {
+class FileReader implements \Iterator {
 	use \Talis\Data\tIterator;
 
     protected   $csv_file_name          = '',
@@ -16,6 +16,7 @@ class FileReader implements Iterator {
      * @param integer $education_group_id
      */
     public function __construct($csv_file_name,$delimiter=','){
+        \fatal('TOBEDELETED202021');
         $this->delimiter      = $delimiter;
         $this->csv_file_name  = $csv_file_name;
         if(($this->csv_handle = @fopen($this->csv_file_name, "r")) === FALSE){
@@ -34,7 +35,6 @@ class FileReader implements Iterator {
      * Close the file, so next iteration will 
      * reopen it and start from beginning.
      * 
-     * @see Data_CSV_Reader::rewind()
      */
     public function rewind()
     {
@@ -44,8 +44,6 @@ class FileReader implements Iterator {
     }
     
     /**
-     * (non-PHPdoc)
-     * @see Data_CSV_Reader::next()
      */
     public function next()
     {

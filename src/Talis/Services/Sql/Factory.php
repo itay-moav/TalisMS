@@ -18,7 +18,7 @@ class Factory {
 	
 	/**
 	 *
-	 * @return Talis\Services\Sql\MySqlClient
+	 * @return \Talis\Services\Sql\MySqlClient
 	 */
 	static public function getConnectionMySQL(string $connection_name, array $config = []) {
 		if (isset ( self::$registered_connections [$connection_name] ))
@@ -62,7 +62,7 @@ class Factory {
 	
 	/**
 	 *
-	 * @return Talis\Services\Sql\MySqlClient
+	 * @return \Talis\Services\Sql\MySqlClient
 	 */
 	static public function getReadConn() {
 		return self::getConnectionMySQL ( self::CONNECTION_NAME__READ, app_env () ['database'] ['mysql_slave'] );
@@ -70,17 +70,22 @@ class Factory {
 	
 	/**
 	 *
-	 * @return Talis\Services\Sql\MySqlClient
+	 * @return \Talis\Services\Sql\MySqlClient
 	 */
 	static public function getWriteConn() {
 		return self::getConnectionMySQL ( self::CONNECTION_NAME__WRITE, app_env () ['database'] ['mysql_master'] );
 	}
 	
-	static public function getDebugInfo(){
+	/**
+	 * 
+	 * @return array
+	 */
+	static public function getDebugInfo():array{
 		$ret = [];
 		foreach(self::$registered_connections as $name=>$connection){
 			$ret[$name] = $connection->getDebugInfo();
 		}
+		return $ret;
 	}
 }
 	
