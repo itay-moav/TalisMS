@@ -14,7 +14,7 @@ abstract class aRequestHandler{
     ;
     
     /**
-     * 
+     *
      */
     abstract public function execute();
     
@@ -23,7 +23,7 @@ abstract class aRequestHandler{
      *
      * @param string $request
      */
-    protected function parseParams(array $request){
+    protected function parseParams(string $request){
         $parts = explode('/', $request);
         $no_parts = count($parts);
         $last_get_index = '';
@@ -43,9 +43,9 @@ abstract class aRequestHandler{
     
     /**
      *
-     * @param array $request
+     * @param array $request base64 encoded
      */
-    final public function __construct(array $request){
+    final public function __construct(string $request){
         $this->parseParams($request);
         $this->init();
         $this->start_time = time();
