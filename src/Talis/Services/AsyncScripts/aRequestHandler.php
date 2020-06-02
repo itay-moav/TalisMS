@@ -10,8 +10,7 @@
  */
 abstract class aRequestHandler{
     protected   $params = [],
-                $start_time,
-                $logger = null
+                $start_time
     ;
     
     /**
@@ -24,8 +23,7 @@ abstract class aRequestHandler{
      *
      * @param string $request
      */
-    protected function parseParams(array $request,\Talis\Logger\Streams\aLogStream $logger){
-        $this->logger = $logger;
+    protected function parseParams(array $request){
         $parts = explode('/', $request);
         $no_parts = count($parts);
         $last_get_index = '';
@@ -51,11 +49,7 @@ abstract class aRequestHandler{
         $this->parseParams($request);
         $this->init();
         $this->start_time = time();
-        $this->logger->debug("\n\n\n\n\n\n");
-        $this->logger->debug("================================================== STARTING NEW ASYNC =======================================================================");
-        $this->logger->debug("================================================== START TIME: <{$this->start_time}> =================================================================");
-        $this->logger->debug($this->params);
-        $this->logger->debug("\n\n\n\n\n\n");
+        echo "START: {$this->start_time}\n";
     }
     
     /**
@@ -64,7 +58,7 @@ abstract class aRequestHandler{
     final public function conclusion(){
         $end_time = time();
         $total_time = $end_time - $this->start_time;
-        $this->logger->debug("FINISHED async: Took me {$total_time} seconds");
+        echo("FINISHED async: Took me {$total_time} seconds");
     }
 }
 
