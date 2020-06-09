@@ -59,7 +59,14 @@ abstract class MainZim{
 	 * @return \Talis\Logger\MainZim
 	 */
 	static public function factory(string $log_name,string $logger_classname,int $verbosity_level,$target_stream=null,bool $use_low_memory_footprint=false):\Talis\Logger\Streams\aLogStream{
-	    $class_name = strpos($logger_classname, '_')? ('\\' . $logger_classname) : ('\Talis\Logger\Streams\\' . ucfirst($logger_classname));
+	    $class_name = '';
+	    if(strpos($logger_classname, '_')){
+	        $class_name = '\\' . $logger_classname;  
+	    } elseif(strpos($logger_classname, '\\')){
+	        $class_name = $logger_classname;
+	    } else {
+	        $class_name = '\Talis\Logger\Streams\\' . ucfirst($logger_classname);
+	    }
 	    return new $class_name($log_name,$verbosity_level,$target_stream,$use_low_memory_footprint);
 	}
 	
