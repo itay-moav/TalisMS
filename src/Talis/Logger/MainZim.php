@@ -62,7 +62,7 @@ abstract class MainZim{
 	    $class_name = '';
 	    if(strpos($logger_classname, '_')){
 	        $class_name = '\\' . $logger_classname;  
-	    } elseif(strpos($logger_classname, '\\')){
+	    } elseif(strpos($logger_classname, '\\') !== false){
 	        $class_name = $logger_classname;
 	    } else {
 	        $class_name = '\Talis\Logger\Streams\\' . ucfirst($logger_classname);
