@@ -6,7 +6,7 @@ ini_set('display_errors',1);
  * Common config values all subdomains and CLI will be using
  */
 //generic paths
-\define('CORE_PATH', 		\app_env()['paths']['root_path']);
+\define('CORE_PATH', 		__DIR__ . '/..');
 \define('APP_PATH', 		CORE_PATH . '/application');
 \define('LOG_PATH',			'/var/log/lms2/');
 

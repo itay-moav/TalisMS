@@ -1,5 +1,7 @@
 #!/bin/php
 <?php
-require_once __DIR__ . '/../../config/environment/'.lifeCycle().'.php';
-require_once app_env()['paths']['root_path']. '/config/bootstrap.php';
+//require_once __DIR__ . '/../../config/environment/'.lifeCycle().'.php';
+
+//require_once app_env()['paths']['root_path']. '/config/bootstrap.php';
+require_once __DIR__ . '/../../config/bootstrap.php';
 (new \Talis\Doors\Cli)->gogogo($argv[1],$argv[2],$argv[3]??false);
