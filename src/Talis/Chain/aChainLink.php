@@ -59,6 +59,13 @@ abstract class aChainLink{
 	}
 	
 	/**
+	 * Returns a copy of the response object
+	 */
+	public function clone_response():\Talis\Message\Response{
+	    return clone $this->Response;
+	}
+	
+	/**
 	 * Actual logic should happen here.
 	 * 99.999999999% it should return itself!
 	 * 
