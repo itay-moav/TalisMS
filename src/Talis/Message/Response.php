@@ -54,6 +54,9 @@ class Response{
 	}
 	
 	public function getPayload(){
+	    if(!$this->payload){
+	        $this->payload = new \stdClass;
+	    }
 		return $this->payload;
 	}
 	
@@ -83,8 +86,7 @@ class Response{
 		$body = \Talis\commons\array_to_object([
 		        'status'   => $this->getStatus(),
 				'type'	   => $this->type,
-		        'message'  => $this->getMessage(),
-				'payload'  => ''
+		        'message'  => $this->getMessage()
 		]);
 		$body->payload = $this->getPayload();
 		return $this->setBody($body);
