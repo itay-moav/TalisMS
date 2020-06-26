@@ -31,7 +31,7 @@ class ScrapAPIs extends \Talis\Chain\aChainLink
         $filtered_apis = [];
         foreach($apis as $api){
             if(strpos($api,'.php')){
-                $filtered_apis[] = str_replace('.php','',explode('api/',$api)[1]);
+                $filtered_apis[] = str_replace('.php','',explode('/../..',$api)[1]);
             }
         }
         

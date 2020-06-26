@@ -52,16 +52,20 @@ class Request{
 		return $this->get_params;
 	}
 	
+
 	/**
+	 * the url/param/value or a default 
 	 * 
 	 * @param string $key
+	 * @param ?string $default
 	 * @return string
 	 */
-	public function get_param(string $key):string{
-		return $this->get_params[$key];
+	public function get_param(string $key,?string $default=null):?string{
+	    return $this->get_params[$key] ?? $default;
 	}
 	
 	/**
+	 * the body->params 
 	 * @return \stdClass
 	 */
 	public function getBodyParams():\stdClass{
@@ -72,6 +76,7 @@ class Request{
 	}
 	
 	/**
+	 * the the body->params->key
 	 * @return mixed
 	 */
 	public function getBodyParam($k,$default=null){
