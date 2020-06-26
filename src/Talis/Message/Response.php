@@ -91,4 +91,12 @@ class Response{
 		$body->payload = $this->getPayload();
 		return $this->setBody($body);
 	}
+	
+	/**
+	 *
+	 * @return string
+	 */
+	public function __toString():string{
+	    return json_encode($this->getBody());
+	}
 }
