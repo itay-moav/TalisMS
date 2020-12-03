@@ -4,7 +4,7 @@
     "type": "git",
     "keywords": ["TalisMS","php","middleware"],
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.2.0"
     },
     "autoload": {
         "psr-0": {
