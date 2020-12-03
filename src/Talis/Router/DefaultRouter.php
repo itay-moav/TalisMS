@@ -33,6 +33,10 @@ class DefaultRouter extends aRouter{
             $extra_params[$this->request_parts[$i]] = ($this->request_parts[$i+1]??true);
         }
         \dbgr('GET PARAMS',$extra_params);
+        if(isset($_GET) && is_array($_GET) && count($_GET)>0){
+            $extra_params = array_merge($extra_params,$_GET);
+            \dbgr('W HTTP GET PARAMS',$extra_params);
+        }
         return $extra_params;
     }
     
