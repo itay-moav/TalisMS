@@ -41,7 +41,7 @@ abstract class QueryFilter_aField{
 	protected $otherRawValue;
 
 	/**
-	 * @var BL_Filter_Abstract
+	 * @var aQueryFilter
 	 */
 	public $ParentFilter=null;
 	

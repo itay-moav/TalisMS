@@ -24,7 +24,20 @@ class Client{
         if(!self::$MyRedis){
             $logger->debug("=================== Redis CONNECT [{$config['host']}] ===================\n");
             self::$MyRedis = new \Redis;
-            self::$MyRedis->connect($config['host']);
+            if(isset($config['advanced'])){
+                $cn = $config['advanced'];
+                self::$MyRedis->connect(
+                    $cn[0],
+                    $cn[1],
+                    $cn[2],
+                    $cn[3],
+                    $cn[4],
+                    $cn[5],
+                    $cn[6]
+                );
+            } else {
+                self::$MyRedis->connect($config['host']);
+            }
             self::$MyRedis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
         }
         return new \Talis\Services\Redis\Client($key,$logger,$DataBuilder);
