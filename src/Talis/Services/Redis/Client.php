@@ -22,10 +22,10 @@ class Client{
      */
     static public function getInstance(array $config,aKeyBoss $key,$logger,iDataBuilder $DataBuilder=null){
         if(!self::$MyRedis){
-            $logger->debug("=================== Redis CONNECT [{$config['host']}] ===================\n");
             self::$MyRedis = new \Redis;
             if(isset($config['advanced'])){
                 $cn = $config['advanced'];
+                $logger->debug("=================== Redis CONNECT [{$cn[0]}] ===================\n");
                 self::$MyRedis->connect(
                     $cn[0],
                     $cn[1],
@@ -36,6 +36,7 @@ class Client{
                     $cn[6]
                 );
             } else {
+                $logger->debug("=================== Redis CONNECT [{$config['host']}] ===================\n");
                 self::$MyRedis->connect($config['host']);
             }
             self::$MyRedis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
