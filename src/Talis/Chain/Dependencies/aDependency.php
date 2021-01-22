@@ -19,7 +19,7 @@ abstract class aDependency extends \Talis\Chain\aChainLink implements \Talis\com
 	final public function process():\Talis\Chain\aChainLink{
 	    //for clear sake I added this condition...how can we have a dependency with no continuity? There always must be a BL at the end.
 	    if($this->chain_container->isEmpty()) {
-	        return new \Talis\Chain\Errors\BLLinkMissingInChain($this->Request,null);
+	        return new \Talis\Chain\Errors\BLLinkMissingInChain($this->Request,new \Talis\Message\Response);
 	    }
 	    
 	    $valid = $this->validate();
