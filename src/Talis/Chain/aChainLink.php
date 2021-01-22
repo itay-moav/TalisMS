@@ -29,7 +29,7 @@ abstract class aChainLink{
 	protected array $params;
 
 	/**
-	 * @var ?\Ds\Queue<aChainLink> $chain_container
+	 * @var ?\Ds\Queue<array> $chain_container
 	 */
 	protected ?\Ds\Queue $chain_container = null;
 	
@@ -53,7 +53,7 @@ abstract class aChainLink{
 	/**
 	 * A chain of links that will be (depends on process) processed one after the other.
 	 * 
-	 * @param \Ds\Queue<aChainLink> $chain_container
+	 * @param \Ds\Queue<array> $chain_container
 	 */
 	public function set_chain_container(\Ds\Queue $chain_container):void{
 		$this->chain_container = $chain_container;
