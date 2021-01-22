@@ -2,3 +2,9 @@ parameters:
    level: 8
    paths:
       - src
+   ignoreErrors:
+      - '#app_env#'
+      - '#Variable \$_GET in isset#'
+      - '#Variable \$_POST in isset#'
+      - '#Class Talis\\Chain\\aChainLink referenced with incorrect case: Talis\\Chain\\AChainLink.#'
+      

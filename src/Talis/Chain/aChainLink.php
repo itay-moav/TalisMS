@@ -15,35 +15,36 @@ abstract class aChainLink{
 	/**
 	 * @var \Talis\Message\Request $Request
 	 */
-	protected $Request 					= null;
+    protected \Talis\Message\Request $Request;
 	
 	/**
 	 * @var \Talis\Message\Response $Response
 	 */
-	protected $Response					= null;
+    protected \Talis\Message\Response $Response;
 	
 	/**
 	 * Extra params some classes need
-	 * @var array
+	 * @var array<mixed>
 	 */
-	protected $params					= [];
+	protected array $params;
 
 	/**
-	 * @var \Ds\Queue $chain_container
+	 * @var ?\Ds\Queue<aChainLink> $chain_container
 	 */
-	protected $chain_container          = null;
+	protected ?\Ds\Queue $chain_container = null;
 	
 	/**
 	 * @var boolean
 	 */
-	protected $valid					= true;
-	
-	
+	protected bool $valid        		  = true;
+    
 	/**
 	 * 
 	 * @param \Talis\Message\Request $Request
+	 * @param \Talis\Message\Response $Response
+	 * @param array<mixed> $params
 	 */
-	public function __construct(?\Talis\Message\Request $Request,?\Talis\Message\Response $Response,array $params=[]){
+	public function __construct(\Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params=[]){
 		$this->Request  = $Request;
 		$this->Response = $Response;
 		$this->params   = $params;
@@ -52,7 +53,7 @@ abstract class aChainLink{
 	/**
 	 * A chain of links that will be (depends on process) processed one after the other.
 	 * 
-	 * @param \Ds\Queue $chain_container
+	 * @param \Ds\Queue<aChainLink> $chain_container
 	 */
 	public function set_chain_container(\Ds\Queue $chain_container):void{
 		$this->chain_container = $chain_container;
@@ -60,6 +61,7 @@ abstract class aChainLink{
 	
 	/**
 	 * Returns a copy of the response object
+	 * @return \Talis\Message\Response
 	 */
 	public function clone_response():\Talis\Message\Response{
 	    return clone $this->Response;
@@ -77,14 +79,16 @@ abstract class aChainLink{
 	 * Do the filter chain
 	 * Pass the filtered get params and req body and next bl to the dependency chain
 	 * Sets the result as the response
-	 *
+	 * 
+	 * @return \Talis\Chain\aChainLink
+	 * 
 	 * @see \Talis\Chain\AChainLink::nextLinkInchain()
 	 */
 	final public function nextLinkInchain():\Talis\Chain\aChainLink{
 	    \dbgn('About to process: [' . get_class($this).']');
 		$FinalLink = $this->process();
 		//If the returned chain is not a new chain (road diversion) and there are more links in the current chain, go after it.
-		if($FinalLink == $this && $this->chain_container != null && !$this->chain_container->isEmpty()){
+		if($FinalLink == $this && $this->chain_container !== null && !$this->chain_container->isEmpty()){
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];

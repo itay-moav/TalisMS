@@ -33,16 +33,9 @@ function mysql_db(string $db_name='mysql'):\Talis\Services\Sql\MySqlClient{
 }
 
 /**
- * Check for production environment. Used in the initialize_tests
- */
-function isProduction() {
-	return strpos(lifecycle(), 'prod') !== false;
-}
-
-/**
  * Takes an array of arrays and recursivly translates to stdClass
  * 
- * @param array $array
+ * @param array<mixed> $array
  * 
  * @return \stdClass
  */

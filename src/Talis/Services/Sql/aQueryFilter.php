@@ -14,9 +14,9 @@
 abstract class aQueryFilter{
 	/**
 	 * Making sure indexes are same as elements names, will have to make sure about the local ids tooo
-	 *
+	 * @return array<string>
 	 */
-	static public function arrayBuilder(...$filter_elements){
+	static public function arrayBuilder(...$filter_elements):array{
 		$ret=[];
 		foreach($filter_elements as $FilterElement){
 			$ret[$FilterElement->elementName]=$FilterElement;
@@ -51,17 +51,17 @@ abstract class aQueryFilter{
 	/**
 	 * @var string owner of this filter (the DG that instantiated it)
 	 */
-	public $owner='';
+	public string $owner='';
 
 	/**
-	 * @var array $rawRequestParams
+	 * @var array<string> $rawRequestParams
 	 */
-	public 	$rawRequestParams;
+	public 	array $rawRequestParams;
 
 	/**
-	 * @var array of filter elements accessed by element name which the filter element creates
+	 * @var array<QueryFilter_aField> of filter elements accessed by element name which the filter element creates
 	 */
-	public	$filterElements=[];
+	public array $filterElements=[];
 	
 	/**
 	 * @param string $owner Looper name
@@ -119,7 +119,7 @@ abstract class aQueryFilter{
 	 *
 	 * @return string
 	 */
-	public function getFiltersAsQueryString(){
+	public function getFiltersAsQueryString():string{
 		$query_string='';
 		foreach ($this->filterElements as $MyFilterElement){
 			/*@var $MyFilterElement QueryFilter_aField */
@@ -147,9 +147,9 @@ abstract class aQueryFilter{
 	/**
 	 * GETTTT
 	 *
-	 * @param string $param_key
+	 * @param ?string $param_key
 	 */
-	public function getParam($param_key){
+	public function getParam($param_key):?string{
 		return isset($this->filterElements[$param_key])?$this->filterElements[$param_key]->getRawValue():null;
 	}
 	
@@ -157,7 +157,7 @@ abstract class aQueryFilter{
 	 * Removes a filter element (not destroying it) from the filter
 	 *
 	 * @param string $param_key
-	 * @return aQueryFilter|NULL
+	 * @return ?aQueryFilter
 	 */
 	public function removeFilter(string $param_key):?aQueryFilter{
 		$ret = null;

@@ -8,8 +8,7 @@
  *
  */
 abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\iRenderable{
-	protected $http_code	 = 0
-	;
+	protected int $http_code	 = 0;
 	
 	abstract protected function format_human_message():string;
 	

@@ -7,7 +7,7 @@
  * @date 2017-05-23
  */
 class BLLinkMissingInChain extends aError{
-	protected $http_code = 500;
+	protected int $http_code = 500;
 	
 	protected function format_human_message():string{
 		$api_uri = $this->Request->getUri();

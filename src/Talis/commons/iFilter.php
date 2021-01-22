@@ -5,7 +5,7 @@ interface iFilter{
 	 * returns NOTHING!
 	 * BE AWARE THIS IS AGAINST THE CURRENT buzz to go fully immutable!
 	 *  
-	 * @param \Talis\Message\Response $message
+	 * @param \Talis\Message\Request $Request
 	 */
 	public function filter(\Talis\Message\Request $Request):void;
 }
