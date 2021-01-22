@@ -11,7 +11,7 @@ function autoload($class) {
 spl_autoload_register('autoload');
 
 /**
- * @param unknown $uri
+ * @param string $uri
  * @param stdClass $obj
  * @param string $https
  * @return mixed

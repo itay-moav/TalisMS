@@ -162,7 +162,7 @@ abstract class QueryFilter_aField{
 	/**
 	 * Default Group By overwritten in child classes.  Allows for variable Group By
 	 * @param string $group_by
-	 * @return unknown
+	 * @return string
 	 */
 	protected function groupByDefault($group_by=''){
 		return $group_by;

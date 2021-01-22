@@ -103,11 +103,12 @@ class Shortcuts{
 					$tmp_params=array_merge($tmp_params,$IN['params']);
 				}
 				
-			} elseif($v instanceof Data_MySQL_Operator){
+				/*TOBEDELETED202102
+		    }elseif($v instanceof Data_MySQL_Operator){
 				$k2 = ':' . $param_key;
 				$sign = $v->getString($k2);
 				$v->applyParameters($k2, $tmp_params);
-				
+				*/
 			}else{ //REGULAR statmens
 				$tmp_params[':'.$param_key]=$v;
 				$sign=" = :{$param_key}";

@@ -19,5 +19,8 @@
 	],
 	"support" : {
 		"issues" : "https://github.com/itay-moav/TalisMS/issues"
-	}
+	},
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.68"
+    }
 }

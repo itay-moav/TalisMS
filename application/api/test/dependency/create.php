@@ -7,8 +7,9 @@
  */
 class TestDependencyCreate extends \Talis\Chain\aFilteredValidatedChainLink{
 
-	protected $filters                  = [],
-			  $dependencies 			= [
+	protected array $filters                  = [];
+	
+	protected array $dependencies 			  = [
 			  		[\Talis\Chain\Dependencies\GetFieldExist::class,['field'=>'user']],
 			  		[\Talis\Chain\Dependencies\GetFieldExist::class,['field'=>'baba']],
 			  ]
@@ -17,6 +18,8 @@ class TestDependencyCreate extends \Talis\Chain\aFilteredValidatedChainLink{
 	/**
 	 * a default way to finish a chain.
 	 * Mostly for debug purposes
+	 * 
+	 * @return array<array>
 	 * 
 	 * @see \Talis\Chain\AFilteredValidatedChainLink::get_next_bl()
 	 */
