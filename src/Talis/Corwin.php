@@ -14,9 +14,9 @@ class Corwin{
 	 * I am setting this up in the specific apps using Talis. 
 	 * I usually would like to use  it to login someone or check generic roles etc
 	 * 
-	 * @var callable a function to run on init.
+	 * @var ?callable a function to run on init.
 	 */
-	static public $registered_init_func = null;
+    static public ?callable $registered_init_func = null;
 	
 	/**
 	 * The name of the router to use to get the API class and GET params.
@@ -25,30 +25,30 @@ class Corwin{
 	 * 
 	 * @var string
 	 */
-	static public $registered_router    = \Talis\Router\DefaultRouter::class;
+	static public string $registered_router    = \Talis\Router\DefaultRouter::class;
 	
 	/**
 	 * Context for this process, which is not part of the Response Request
 	 * @var \Talis\Data\Context
 	 */
-	static public $Context = null;
+	static public \Talis\Data\Context $Context = null;
 	
 	/**
 	 * 
 	 * @var \Talis\Router\aRouter
 	 */
-	private $Router = null;
+	private \Talis\Router\aRouter $Router = null;
 	
 	/**
 	 * @var array
 	 */
-	private $extra_params = [];
+	private array $extra_params = [];
 	
 	/**
 	 * Body of the request, json decoded string
 	 * @var \stdClass
 	 */
-	private $req_body  = null;
+	private \stdClass $req_body  = null;
 	
 	/**
 	 * The head of the BL process chain, usually that would be the API head class built from the route,
@@ -56,14 +56,14 @@ class Corwin{
 	 * 
 	 * @var \Talis\Chain\aChainLink $RequestChainHead
 	 */
-	private $RequestChainHead = null;
+	private \Talis\Chain\aChainLink $RequestChainHead = null;
 
 	/**
 	 * Holds the request parameters (GET/POST etc)
 	 * 
 	 * @var \Talis\Message\Request $Request
 	 */
-	private $Request  = Null;
+	private \Talis\Message\Request $Request;
 	
 	/**
 	 * Main entry point after the Door for a specific protocol is finished (http/rest/stopmp/async etc)
