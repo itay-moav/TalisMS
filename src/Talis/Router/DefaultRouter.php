@@ -1,6 +1,8 @@
 <?php namespace Talis\Router;
 
-
+/**
+ * @author itay
+ */
 class DefaultRouter extends aRouter{
     /**
      * Generates the API class name. This will be the name
@@ -16,15 +18,15 @@ class DefaultRouter extends aRouter{
         }
         
         $this->route= [
-            'route'      => APP_PATH . "/api/{$this->request_parts[1]}/{$this->request_parts[2]}/{$this->request_parts[3]}.php",
+            'route'      => \Talis\Corwin::$APP_PATH . "/api/{$this->request_parts[1]}/{$this->request_parts[2]}/{$this->request_parts[3]}.php",
             'classname'  => "\Api\\{$this->request_parts[1]}{$this->request_parts[2]}{$this->request_parts[3]}"
-            ];
-        \dbgn("Doing route [{$this->route['route']}]");
+        ];
+        \ZimLogger\MainZim::$CurrentLogger->debug("Doing route [{$this->route['route']}]");
     }
     
     /**
      * Return would be GET params from butified urls
-     * @return array
+     * @return array<string>
      */
     public function generate_query():array{
         $c = count($this->request_parts);
@@ -32,27 +34,32 @@ class DefaultRouter extends aRouter{
         for($i=4; $i<$c;$i+=2){
             $extra_params[$this->request_parts[$i]] = ($this->request_parts[$i+1]??true);
         }
-        \dbgr('GET PARAMS',$extra_params);
-        if(isset($_GET) && is_array($_GET) && count($_GET)>0){
+
+        if(count($_GET)>0){
             $extra_params = array_merge($extra_params,$_GET);
-            \dbgr('W HTTP GET PARAMS',$extra_params);
+            \ZimLogger\MainZim::$CurrentLogger->debug('extra with HTTP GET params');
+            \ZimLogger\MainZim::$CurrentLogger->debug($extra_params);
         }
         return $extra_params;
     }
-    
+
     /**
      * Instantiate the first step in the chain, The API class that we got from the route.
      * Or, an error response, if API does not exist
      *
      * @throws \Talis\Exception\BadUri
+     * {@inheritDoc}
+     * @see \Talis\Router\aRouter::get_chainhead()
      */
     public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response): \Talis\Chain\aChainLink
     {
-        \dbgn("TRYING TO INCLUDE: {$this->route['route']}");
-        if (! @include_once $this->route['route']) {
-            throw new \Talis\Exception\BadUri($this->route['route']);
+        $full_path_route = $this->route['route'];
+        \ZimLogger\MainZim::$CurrentLogger->debug("TRYING TO INCLUDE: {$full_path_route}");
+        if(file_exists($full_path_route)){
+            require_once $full_path_route;
+        } else {            
+            throw new \Talis\Exception\BadUri($full_path_route);
         }
         return new $this->route['classname']($Request, $Response);
     }
-    
 }

@@ -7,9 +7,12 @@
  * @date 2017-06-07
  */
 class Cli implements \Talis\commons\iEmitter{
-	/**
-	 * Formats and echoes the results headers and then body
-	 */
+    /**
+     * Formats and echoes the results headers and then body
+     * 
+     * {@inheritDoc}
+     * @see \Talis\commons\iEmitter::emit()
+     */
 	public function emit(\Talis\Message\Response $message):void{
 		//TODO move to exit status? $stat   = $message->getStatus()->getCode();
 		$body = json_encode($message->getBody());

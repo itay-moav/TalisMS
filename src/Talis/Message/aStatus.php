@@ -1,9 +1,20 @@
 <?php namespace Talis\Message;
 abstract class aStatus{
-	protected	$code          = '',
-				$msg           = '',
-				$dyn_error_msg = ''
-	;
+    
+    /**
+     * @var int
+     */
+    protected int $code;
+    
+    /**
+     * @var string
+     */
+    protected string $msg;
+    
+    /**
+     * @var string
+     */
+    protected string $dyn_error_msg = '';
 	
 	public function getCode():int{
 		return $this->code;
@@ -13,7 +24,12 @@ abstract class aStatus{
 		return $this->msg;
 	}
 	
-	public function dynamic_message($msg){
+	/**
+	 * @param string $msg
+	 * @return string
+	 */
+	public function dynamic_message(string $msg):string{
 		$this->dyn_error_msg = $msg;
+		return $this->dyn_error_msg;
 	}
 }

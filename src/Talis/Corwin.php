@@ -10,13 +10,20 @@
  * @Date  2017-05-19
  */
 class Corwin{
+    
+    /**
+     * instantiate this in the app bootstrap
+     * @var string
+     */
+    static public string $APP_PATH;
+    
 	/**
 	 * I am setting this up in the specific apps using Talis. 
 	 * I usually would like to use  it to login someone or check generic roles etc
 	 * 
 	 * @var ?callable a function to run on init.
 	 */
-    static public ?callable $registered_init_func = null;
+    static public $registered_init_func = null;
 	
 	/**
 	 * The name of the router to use to get the API class and GET params.
@@ -37,7 +44,7 @@ class Corwin{
 	 * 
 	 * @var \Talis\Router\aRouter
 	 */
-	private \Talis\Router\aRouter $Router = null;
+	private \Talis\Router\aRouter $Router;
 	
 	/**
 	 * @var array
@@ -46,9 +53,9 @@ class Corwin{
 	
 	/**
 	 * Body of the request, json decoded string
-	 * @var \stdClass
+	 * @var ?\stdClass
 	 */
-	private \stdClass $req_body  = null;
+	private ?\stdClass $req_body;
 	
 	/**
 	 * The head of the BL process chain, usually that would be the API head class built from the route,
@@ -56,7 +63,7 @@ class Corwin{
 	 * 
 	 * @var \Talis\Chain\aChainLink $RequestChainHead
 	 */
-	private \Talis\Chain\aChainLink $RequestChainHead = null;
+	private \Talis\Chain\aChainLink $RequestChainHead;
 
 	/**
 	 * Holds the request parameters (GET/POST etc)

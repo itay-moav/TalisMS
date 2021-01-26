@@ -1,6 +1,12 @@
 <?php namespace Talis\Message\Status;
 class Code401 extends \Talis\Message\aStatus{
-	protected 	$code          = 401,
-				$msg           = 'Unauthorized'
-	;
+    /**
+     * @var int
+     */
+    protected int $code = 401;
+    
+    /**
+     * @var string
+     */
+    protected string $msg = 'Unauthorized';
 }

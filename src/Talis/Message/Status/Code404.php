@@ -1,6 +1,12 @@
 <?php namespace Talis\Message\Status;
 class Code404 extends \Talis\Message\aStatus{
-	protected 	$code          = 404,
-				$msg           = 'Not Found'
-	;
+    /**
+     * @var int
+     */
+    protected int $code = 404;
+    
+    /**
+     * @var string
+     */
+    protected string $msg = 'Not Found';
 }

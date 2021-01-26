@@ -1,6 +1,12 @@
 <?php namespace Talis\Message\Status;
 class Code500 extends \Talis\Message\aStatus{
-	protected 	$code          = 500,
-				$msg           = 'Server Error'
-	;
+    /**
+     * @var int
+     */
+    protected int $code = 500;
+    
+    /**
+     * @var string
+     */
+    protected string $msg = 'Server Error';
 }

@@ -27,10 +27,12 @@ function autoload($class) {
  * 
  * @return \Talis\Services\Sql\MySqlClient
  */
+/*TOBEDELETED
 function mysql_db(string $db_name='mysql'):\Talis\Services\Sql\MySqlClient{
 	$config = \app_env()['database'][$db_name]??current(reset(\app_env()['database']));
 	return \Talis\Services\Sql\Factory::getConnectionMySQL($db_name,$config);
 }
+*/
 
 /**
  * Takes an array of arrays and recursivly translates to stdClass

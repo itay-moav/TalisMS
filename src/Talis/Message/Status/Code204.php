@@ -1,6 +1,13 @@
 <?php namespace Talis\Message\Status;
 class Code204 extends \Talis\Message\aStatus{
-    protected 	$code          = 204,
-                $msg           = 'No Content'
-    ;
+    
+    /**
+     * @var int
+     */
+    protected int $code = 204;
+    
+    /**
+     * @var string
+     */
+    protected string $msg = 'No Content';
 }

@@ -7,15 +7,20 @@
  * @date 2017-06-07
  */
 class Log implements \Talis\commons\iEmitter{
-	/**
-	 * Formats and echoes the results headers and then body
-	 */
+    
+    /**
+     * Formats and echoes the results headers and then body
+     * 
+     * {@inheritDoc}
+     * @see \Talis\commons\iEmitter::emit()
+     */
 	public function emit(\Talis\Message\Response $message):void{
 		$body = json_encode($message->getBody());
 		if($message->getResponseType() != \Talis\Message\Response::RESPONSE_TYPE__RESPONSE){
-			\fatal("CHAIN BROKE {$body}");
+		    \ZimLogger\MainZim::$CurrentLogger->fatal("CHAIN BROKE {$body}",true);
 		} else {
-		    \dbgr('END OF PROCESS',$body);
+		    \ZimLogger\MainZim::$CurrentLogger->debug('END OF PROCESS');
+		    \ZimLogger\MainZim::$CurrentLogger->debug($body);
 		}
 	}
 }

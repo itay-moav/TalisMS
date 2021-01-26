@@ -17,6 +17,7 @@ class Rest extends HTTP{
 	
 	/**
 	 * Parses the server input to generate raw uri parts
+	 * @return array<string>
 	 */
 	protected function get_uri_from_server():array{
 	    $method = '';
@@ -60,4 +61,3 @@ class Rest extends HTTP{
 		return $request_parts;
 	}
 }
-

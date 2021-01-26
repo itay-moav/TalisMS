@@ -1,6 +1,13 @@
 <?php namespace Talis\Message\Status;
 class Code403 extends \Talis\Message\aStatus{
-    protected 	$code          = 403,
-                $msg           = 'Forbbiden'
-    ;
+    
+    /**
+     * @var int
+     */
+    protected int $code = 403;
+    
+    /**
+     * @var string
+     */
+    protected string $msg = 'Forbbiden';
 }

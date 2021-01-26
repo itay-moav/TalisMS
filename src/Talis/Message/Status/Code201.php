@@ -1,6 +1,12 @@
 <?php namespace Talis\Message\Status;
 class Code201 extends \Talis\Message\aStatus{
-	protected 	$code          = 201,
-				$msg           = 'Resource Created'
-	;
+    /**
+     * @var int
+     */
+    protected int $code = 201;
+    
+    /**
+     * @var string
+     */
+    protected string $msg = 'Resource Created';
 }

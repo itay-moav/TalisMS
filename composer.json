@@ -1,26 +1,32 @@
 {
-    "name": "director-moav/talis-ms",
-    "description": "TalisMS Is a middleware styled framework with multiple Door(r) types to invoke it",
-    "type": "git",
-    "keywords": ["TalisMS","php","middleware"],
-    "require": {
-        "php": ">=7.2.0"
-    },
-    "autoload": {
-        "psr-0": {
-            "Talis": "src/"
-        }
-    },
-	"authors" : [{
-			"name" : "Itay Moav",
-			"homepage" : "https://cookinginbinary.blog",
-			"role" : "Superman"
+	"name": "director-moav/talis-ms",
+	"description": "TalisMS Is a middleware styled framework with multiple Door(r) types to invoke it",
+	"type": "git",
+	"keywords": [
+		"TalisMS",
+		"php",
+		"middleware"
+	],
+	"require": {
+		"php": ">=7.4.0",
+		"director-moav/zimlogger": "dev-master"
+	},
+	"autoload": {
+		"psr-0": {
+			"Talis": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Itay Moav",
+			"homepage": "https://cookinginbinary.blog",
+			"role": "Superman"
 		}
 	],
-	"support" : {
-		"issues" : "https://github.com/itay-moav/TalisMS/issues"
+	"support": {
+		"issues": "https://github.com/itay-moav/TalisMS/issues"
 	},
-    "require-dev": {
-        "phpstan/phpstan": "^0.12.68"
-    }
+	"require-dev": {
+		"phpstan/phpstan": "^0.12.68"
+	}
 }

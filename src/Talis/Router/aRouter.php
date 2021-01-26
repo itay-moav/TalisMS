@@ -9,19 +9,23 @@
 abstract class aRouter{
     /**
      * Original request parts broken down by the respective doors of this request
-     * @var array
+     * @var array<string>
      */
-    protected $request_parts = [];
+    protected array $request_parts;
     
     /**
      * Holds data about the initial API class, path and class name, usually
      * 
-     * @var array
+     * @var array<string, string>
      */
-    protected $route = [];
+    protected array $route;
     
+    /**
+     * @param array<string> $request_parts
+     */
     public function __construct(array $request_parts){
-        \dbgr('request_parts',$request_parts);
+        \ZimLogger\MainZim::$CurrentLogger->debug("request_parts");
+        \ZimLogger\MainZim::$CurrentLogger->debug($request_parts);
         $this->request_parts = $request_parts;
     }
     
@@ -37,7 +41,7 @@ abstract class aRouter{
     
     /**
      * Return would be GET params from butified urls
-     * @return array
+     * @return array<string>
      */
     abstract public function generate_query():array;
     
