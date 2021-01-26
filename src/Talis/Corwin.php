@@ -29,9 +29,9 @@ class Corwin{
 	
 	/**
 	 * Context for this process, which is not part of the Response Request
-	 * @var \Talis\Data\Context
+	 * @var \Talis\Context
 	 */
-	static public \Talis\Data\Context $Context = null;
+	static public \Talis\Context $Context;
 	
 	/**
 	 * 
@@ -75,7 +75,7 @@ class Corwin{
 	 */
 	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri){
 		$this->req_body = $request_body;
-		self::$Context = new \Talis\Data\Context;
+		self::$Context = new \Talis\Context;
 		
 		try{
 		    $this->Router = new self::$registered_router($request_parts);

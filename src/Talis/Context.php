@@ -1,4 +1,4 @@
-<?php namespace Talis\Data;
+<?php namespace Talis;
 /**
  * The context object purpose is to be shared via 
  * and entire process and hold information/resources/settings common to it all.
