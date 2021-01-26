@@ -85,15 +85,15 @@ abstract class aChainLink{
 	 * @see \Talis\Chain\AChainLink::nextLinkInchain()
 	 */
 	final public function nextLinkInchain():\Talis\Chain\aChainLink{
-	    \dbgn('About to process: [' . get_class($this).']');
+	    \ZimLogger\MainZim::$CurrentLogger->debug('About to process: [' . get_class($this).']');
 		$FinalLink = $this->process();
 		//If the returned chain is not a new chain (road diversion) and there are more links in the current chain, go after it.
 		if($FinalLink == $this && $this->chain_container !== null && !$this->chain_container->isEmpty()){
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
-			\dbgn("STARTING NEXT CHAIN LINK WITH {$name}");
-			$next_link = new $name($this->Request,$this->Response,$params);//TODO maybe array merge with current class params?
+			\ZimLogger\MainZim::$CurrentLogger->debug("STARTING NEXT CHAIN LINK WITH {$name}");
+			$next_link = new $name($this->Request,$this->Response,$params);
 			$next_link->set_chain_container($this->chain_container);
 			$FinalLink = $next_link->nextLinkInchain();
 		}

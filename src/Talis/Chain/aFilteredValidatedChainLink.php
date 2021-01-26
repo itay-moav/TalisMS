@@ -10,17 +10,16 @@
  * @Date  2017-05-19
  */
 abstract class aFilteredValidatedChainLink extends aChainLink{
+
+    /**
+     * @var array<\Talis\Chain\Filters\aFilter>
+     */
+	protected array $filters = [];
 	
 	/**
-	 * 
-	 * @var \Ds\Queue $chain_container
-	 * @var array $filters
-	 * @var array $dependencies
-	 * @var AChainLink $Response
+	 * @var array<\Talis\Chain\Dependencies\aDependency>
 	 */
-	protected $filters                  = [],
-		  	  $dependencies 			= []
-	;
+	protected array $dependencies = [];
 	
 	/**
 	 * builds the chain from the filter+dependencies+bls
@@ -46,10 +45,15 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	 * [   class name,[params]  ],
 	 * [   class name,[params]  ]
 	 * 
-	 * @return array with single or more BL aChainLink objects
+	 * @return array<array> with single or more BL aChainLink objects
 	 */
 	abstract protected function get_next_bl():array;
 		
+	/**
+	 * @param \Talis\Message\Request $Request
+	 * @param \Talis\Message\Response $Response
+	 * @param array<mixed> $params
+	 */
 	public function __construct(\Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params=[]){
 		parent::__construct($Request,$Response,$params);
 		$this->load_chain_container();

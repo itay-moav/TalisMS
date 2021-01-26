@@ -8,6 +8,12 @@
  * @date 20202-04-30
  */
 class PayloadToString200 extends aChainLink implements \Talis\commons\iRenderable{
+    /**
+     * No processing, just rendering
+     * 
+     * {@inheritDoc}
+     * @see \Talis\Chain\aChainLink::process()
+     */
 	public function process():aChainLink{
 	    /*
 		$this->Response->setMessage('GREAT SUCCESS!');
@@ -24,11 +30,16 @@ class PayloadToString200 extends aChainLink implements \Talis\commons\iRenderabl
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
 	    $res = $this->Response->getPayload() . '';
-	    dbgr('PAYLOAD RESPONSE STRINGIFIED',$res);
+	    
+	    \ZimLogger\MainZim::$CurrentLogger->debug('PAYLOAD RESPONSE STRINGIFIED');
+	    \ZimLogger\MainZim::$CurrentLogger->debug($res);
+
 	    header('HTTP/1.1 200 Ok');
 	    $all_other_headers = $this->Response->getHeaders();
 	    if($all_other_headers){
-	        \dbgr('SENDING HEADERS',$all_other_headers);
+	    
+	        \ZimLogger\MainZim::$CurrentLogger->debug('SENDING HEADERS');
+	        \ZimLogger\MainZim::$CurrentLogger->debug($all_other_headers);
 	        
 	        foreach($all_other_headers as $other_header){
 	            header($other_header);

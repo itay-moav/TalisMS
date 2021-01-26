@@ -17,10 +17,17 @@ class GetFieldUInt extends aDependency{
 	        $field_to_validate = $field_to_validate *1;
 	    }
 	    $valid = is_integer($field_to_validate) && $field_to_validate >= 0;	    
-		\dbgr('validaror ' . self::class, 'params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
+		
+	    \ZimLogger\MainZim::$CurrentLogger->debug('validaror ' . self::class);
+		\ZimLogger\MainZim::$CurrentLogger->debug('params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
+		
 		return $valid;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Talis\commons\iRenderable::render()
+	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
 		$response = new \Talis\Message\Response;
 		$response->markDependency();

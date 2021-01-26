@@ -24,12 +24,17 @@ class PayloadToJson200 extends aChainLink implements \Talis\commons\iRenderable{
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
 	    $res = json_encode($this->Response->getPayload());
-	    dbgr('JSON RESPONSE',$res);
+	    
+	    \ZimLogger\MainZim::$CurrentLogger->debug('JSON RESPONSE');
+	    \ZimLogger\MainZim::$CurrentLogger->debug($res);
+	    
 	    header('HTTP/1.1 200 Ok');
 	    header('Content-Type: application/json');
 	    $all_other_headers = $this->Response->getHeaders();
 	    if($all_other_headers){
-	        \dbgr('SENDING HEADERS',$all_other_headers);
+
+	        \ZimLogger\MainZim::$CurrentLogger->debug('SENDING HEADERS');
+	        \ZimLogger\MainZim::$CurrentLogger->debug($all_other_headers);
 	        
 	        foreach($all_other_headers as $other_header){
 	            header($other_header);

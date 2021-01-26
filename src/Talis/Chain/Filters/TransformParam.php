@@ -5,9 +5,16 @@
  *
  */
 class TransformParam extends aFilter{
+    /**
+     * {@inheritDoc}
+     * @see \Talis\Chain\Filters\aFilter::filter()
+     */
     public function filter(\Talis\Message\Request $Request):void{
         $params = $Request->getBody()->params;
-		\dbgr('input params for filter TransformParam',$params);
+
+        \ZimLogger\MainZim::$CurrentLogger->debug('input params for filter TransformParam');
+		\ZimLogger\MainZim::$CurrentLogger->debug($params);
+		
 		if(isset($params->{$this->params[0]}) && $params->{$this->params[0]} == $this->params[1]){
 			$params->{$this->params[0]} = $this->params[2];
 		}

@@ -9,8 +9,11 @@
 class ApiNotFound extends a400Info{
 	protected int $http_code = 404;
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Talis\Chain\Errors\aError::format_human_message()
+	 */
 	protected function format_human_message():string{
-	    //TOBEDELETED202102 $params_msg = $this->Request ? $this->Request->getUri() : 'unknown';
 	    $api_uri = $this->Request->getUri();
 		return "Api resource for [{$api_uri}] can not be found!";
 	}

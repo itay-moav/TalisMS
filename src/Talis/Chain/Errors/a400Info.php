@@ -14,9 +14,9 @@ abstract class a400Info extends \Talis\Chain\Errors\aError{
      *
      */
     public function render(\Talis\commons\iEmitter $emitter):void{
-        \info('Following two entries are error prms and human message of the error');
-        \info(print_r($this->params,true));
-        \info($this->format_human_message());
+        \ZimLogger\MainZim::$CurrentLogger->info('Following two entries are error prms and human message of the error',false);
+        \ZimLogger\MainZim::$CurrentLogger->info($this->params,false);
+        \ZimLogger\MainZim::$CurrentLogger->info($this->format_human_message(),true);
         
         $response = new \Talis\Message\Response;
         $response->setBody(\Talis\commons\array_to_object(['type'=>'error','message'=>$this->format_human_message()]));

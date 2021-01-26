@@ -24,9 +24,9 @@ abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\
 	 *  
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		\error('Following two entries are error prms and human message of the error');
-		\error(print_r($this->params,true));
-		\error($this->format_human_message());
+	    \ZimLogger\MainZim::$CurrentLogger->error('Following two entries are error prms and human message of the error',false);
+	    \ZimLogger\MainZim::$CurrentLogger->error($this->params,false);
+	    \ZimLogger\MainZim::$CurrentLogger->error($this->format_human_message(),true);
 		
 		$response = new \Talis\Message\Response;
 		$response->setBody(\Talis\commons\array_to_object(['type'=>'error','message'=>$this->format_human_message()]));

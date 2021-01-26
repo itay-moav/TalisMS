@@ -20,7 +20,10 @@ class BodyParamsFieldExist extends aDependency{
 	}
 	
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		\dbgr('RENDER input body',print_r($this->Request->getBody(),true));
+		
+		\ZimLogger\MainZim::$CurrentLogger->debug('RENDER input body');
+		\ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getBody());
+		
 		$response = new \Talis\Message\Response;
 		$response->setMessage("Mising param [{$this->params['field']}] part in request body->params[]");
 		$response->markDependency();

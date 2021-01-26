@@ -17,8 +17,15 @@ class BodyFieldExist extends aDependency{
 		return isset($body->$field);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Talis\commons\iRenderable::render()
+	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		\dbgr('RENDER input body',print_r($this->Request->getBody(),true));
+
+	    \ZimLogger\MainZim::$CurrentLogger->debug('RENDER input body');
+		\ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getBody());
+		
 		$response = new \Talis\Message\Response;
 		$response->setMessage("Mising field [{$this->params['field']}] in request body");
 		$response->markDependency();

@@ -12,10 +12,17 @@ class GetFieldExist extends aDependency{
 	 */
 	protected function validate():bool{
 		$valid = isset($this->Request->getAllGetParams()[$this->params['field']]);
-		\dbgr('validaror ' . self::class, 'params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
+		
+		\ZimLogger\MainZim::$CurrentLogger->debug('validaror ' . self::class);
+		\ZimLogger\MainZim::$CurrentLogger->debug('params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
+		
 		return $valid;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Talis\commons\iRenderable::render()
+	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
 		//\dbgr('RENDER',print_r($this->params,true));
 		$response = new \Talis\Message\Response;

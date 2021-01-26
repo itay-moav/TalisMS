@@ -18,6 +18,10 @@ class OptionsAllowed extends aChainLink implements \Talis\commons\iRenderable{
         return 'OPTIONS';
     }
     
+    /**
+     * {@inheritDoc}
+     * @see \Talis\Chain\aChainLink::process()
+     */
     final public function process():aChainLink{
         $this->Response->setHeader('Allow: ' . $this->allowed());
 		return $this;
@@ -29,7 +33,7 @@ class OptionsAllowed extends aChainLink implements \Talis\commons\iRenderable{
 	 * @see \Talis\commons\iRenderable::render()
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		\dbgn($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
+		\ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getUri() . ' FINISHED CHAIN WITH optional SUCCESS');
 		$this->Response->setMessage('Allowed Options');
 		$this->Response->setStatus(new \Talis\Message\Status\Code204);
 		$this->Response->markResponse();

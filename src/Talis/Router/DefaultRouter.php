@@ -32,7 +32,7 @@ class DefaultRouter extends aRouter{
         $c = count($this->request_parts);
         $extra_params = [];
         for($i=4; $i<$c;$i+=2){
-            $extra_params[$this->request_parts[$i]] = ($this->request_parts[$i+1]??true);
+            $extra_params[$this->request_parts[$i]] = ($this->request_parts[$i+1]??'');
         }
 
         if(count($_GET)>0){
