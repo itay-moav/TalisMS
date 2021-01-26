@@ -13,15 +13,16 @@
 class Context{
     /**
      * 
-     * @var array of shared resources in the current process. 
+     * @var array<mixed> of shared resources in the current process. 
      */
-	private $resources	  = [];
+	private array $resources = [];
 	
 	/**
 	 * getter/setter for resources array.
 	 * 
 	 * @param string $resource_name
 	 * @param mixed $resource
+	 * @return mixed
 	 */
 	public function resource(string $resource_name,$resource=null){
 	    if($resource){

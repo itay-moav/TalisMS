@@ -24,12 +24,13 @@ class Daemon{
 	/**
 	 * Starts the chain reaction. builds request/check dependencies/run main logic
 	 */
-	public function gogogo(string $raw_request){
+	public function gogogo(string $raw_request):void{
 		
 		try{
 			//decode
 			$decoded_request = json_decode(base64_decode($raw_request));
-			\dbgr('RECEIVED',$decoded_request);
+			\ZimLogger\MainZim::$CurrentLogger->debug('MESSAGE RECEIVED');
+			\ZimLogger\MainZim::$CurrentLogger->debug($decoded_request);
 			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($decoded_request->url);
@@ -38,7 +39,7 @@ class Daemon{
     		    ->render(new \Talis\Message\Renderers\HTTP);
 
 		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
-			\fatal($e);
+		    \ZimLogger\MainZim::$CurrentLogger->fatal($e,true);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);
@@ -49,6 +50,7 @@ class Daemon{
 	
 	/**
 	 * Parses the server input to generate raw uri parts
+	 * @return array<string>
 	 */
 	private function get_uri(string $uri):array{
 		return explode('/',$uri);

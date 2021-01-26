@@ -47,7 +47,7 @@ class Corwin{
 	private \Talis\Router\aRouter $Router;
 	
 	/**
-	 * @var array
+	 * @var array<mixed>
 	 */
 	private array $extra_params = [];
 	
@@ -75,12 +75,12 @@ class Corwin{
 	/**
 	 * Main entry point after the Door for a specific protocol is finished (http/rest/stopmp/async etc)
 	 * 
-	 * @param array $request_parts
+	 * @param array<string> $request_parts
 	 * @param \stdClass $request_body
 	 * @param string $full_uri
 	 * @return \Talis\Corwin
 	 */
-	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri){
+	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri):\Talis\Corwin{
 		$this->req_body = $request_body;
 		self::$Context = new \Talis\Context;
 		
@@ -99,8 +99,7 @@ class Corwin{
 			}
 			
 		} catch(\Talis\Exception\BadUri $e){
-		    $req = $this->Request ?: null;
-		    $this->RequestChainHead = new Chain\Errors\ApiNotFound($req,new \Talis\Message\Response,[$e->getMessage()]);
+		    $this->RequestChainHead = new Chain\Errors\ApiNotFound($this->Request,new \Talis\Message\Response,[$e->getMessage()]);
 		}
 		return $this;
 	}
@@ -108,14 +107,18 @@ class Corwin{
 	/**
 	 * Init the API class and call it's dependency checks
 	 * 
-	 * @return Chain\aChainLink
+	 * @return \Talis\commons\iRenderable
 	 */
 	public function nextLinkInchain():\Talis\commons\iRenderable{
 		return $this->RequestChainHead->nextLinkInchain();
 	}
 	
+	/**
+	 * @param string $full_uri
+	 */
 	private function build_request(string $full_uri):void{
-		\dbgr('BUILDING REQUEST WITH BODY',$this->req_body);
+	    \ZimLogger\MainZim::$CurrentLogger->debug('BUILDING REQUEST WITH BODY');
+	    \ZimLogger\MainZim::$CurrentLogger->debug($this->req_body);
 		$this->Request = new \Talis\Message\Request($full_uri,$this->extra_params,$this->req_body);
 	}
 }
