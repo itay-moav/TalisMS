@@ -17,7 +17,10 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	protected array $filters = [];
 	
 	/**
-	 * @var array<\Talis\Chain\Dependencies\aDependency>
+	 *                   dependency class name
+	 *                                param name
+	 *                                        param value         
+	 * @var array<array<string, array<string, string>>>
 	 */
 	protected array $dependencies = [];
 	
@@ -45,7 +48,7 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	 * [   class name,[params]  ],
 	 * [   class name,[params]  ]
 	 * 
-	 * @return array<array> with single or more BL aChainLink objects
+	 * @return array<int, array<int, array|class-string>>
 	 */
 	abstract protected function get_next_bl():array;
 		

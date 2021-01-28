@@ -15,7 +15,7 @@ ini_set('include_path', '.' .
     PATH_SEPARATOR . '../../src/'
 );
 
-Talis\Logger\MainZim::factory(
+\ZimLogger\MainZim::factory(
                 'PHPUNIT_TALISMS_',
                 'File',
                 4,

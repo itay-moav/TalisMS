@@ -21,12 +21,12 @@ class Ping extends \Talis\Chain\aChainLink
 {
     public function process(): \Talis\Chain\aChainLink
     {
-        $this->Response->setPayload(\Talis\commons\array_to_object([
-            'type'      => 'test',
-            'message'   => 'boom',
-            'params'    => print_r($this->Request->getAllGetParams(), true),
-            'body'      => print_r($this->Request->getBody(), true)
-        ]));
+        $payload = new \stdClass;
+        $payload->type = 'test';
+        $payload->message = 'boom';
+        $payload->params = print_r($this->Request->getAllGetParams(), true);
+        $payload->body = print_r($this->Request->getBody(), true);
+        $this->Response->setPayload($payload);
         return $this;
     }
 }

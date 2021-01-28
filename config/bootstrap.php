@@ -5,7 +5,7 @@ require_once 'Talis/commons/functions.php';
 spl_autoload_register('Talis\commons\autoload');
 
 //Logger
-Talis\Logger\MainZim::setGlobalLogger(
+\ZimLogger\MainZim::setGlobalLogger(
 		'talisms_test',
 		'Stdio',
 		4,

@@ -41,6 +41,7 @@ function mysql_db(string $db_name='mysql'):\Talis\Services\Sql\MySqlClient{
  * 
  * @return \stdClass
  */
+/*TOBEDELETED - moved to commons in sitelLib
 function array_to_object(array $array) {
     $object = new \stdClass();
     foreach ($array as $key => $value) {
@@ -51,3 +52,4 @@ function array_to_object(array $array) {
     }
     return $object;
 }
+*/

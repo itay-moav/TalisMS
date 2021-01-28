@@ -19,7 +19,11 @@ abstract class a400Info extends \Talis\Chain\Errors\aError{
         \ZimLogger\MainZim::$CurrentLogger->info($this->format_human_message(),true);
         
         $response = new \Talis\Message\Response;
-        $response->setBody(\Talis\commons\array_to_object(['type'=>'error','message'=>$this->format_human_message()]));
+        $body     = new \stdClass;
+        $body->type    = 'error';
+        $body->message = $this->format_human_message();
+        $response->setBody($body);
+        
         $status_class = "\Talis\Message\Status\Code{$this->http_code}";
         $response->setStatus(new $status_class);
         $response->markError();
