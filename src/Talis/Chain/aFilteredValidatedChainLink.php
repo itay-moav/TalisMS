@@ -48,7 +48,7 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	 * [   class name,[params]  ],
 	 * [   class name,[params]  ]
 	 * 
-	 * @return array<int, array<int, array|class-string>>
+	 * @return  array<array<mixed>>
 	 */
 	abstract protected function get_next_bl():array;
 		
