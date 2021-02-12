@@ -93,6 +93,32 @@ class Request{
 	}
 	
 	/**
+	 * the url/param/value
+	 * This can be called if you are sure the param exists
+	 * 
+	 * @param string $key
+	 * @return string
+	 */
+	public function get_param_exists(string $key):string{
+	    return $this->get_params[$key];
+	}
+	
+	/**
+	 * The url/param/value
+	 * Failes if no param found
+	 * @param string $key
+	 * @throws \Talis\Exception\ParamNotFound
+	 * @return string
+	 */
+	public function get_param_or_fail(string $key):string{
+	    if(!isset($this->get_params[$key])){
+	        throw new \Talis\Exception\ParamNotFound($key);
+	    }
+	    return $this->get_params[$key];
+	}
+	
+	
+	/**
 	 * the body->params 
 	 * @return \stdClass
 	 */
@@ -104,14 +130,40 @@ class Request{
 	}
 	
     /**
-     * the the body->params->key
+     * The the body->params->key or default value | null
      * 
-     * @param string $k
+     * @param string $key
      * @param mixed $default
      * @return mixed
      */
-	public function getBodyParam(string $k,$default=null){
-		return $this->getBody()->params->$k ?? $default;
+	public function getBodyParam(string $key,$default=null){
+	    return $this->getBody()->params->$key ?? $default;
+	}
+	
+	/**
+	 * The the body->params->key
+	 * This can be called if you are sure the param exists
+	 * 
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function getBodyParamExists(string $key){
+	    return $this->getBody()->params->$key;
+	}
+	
+	/**
+	 * The the body->params->key
+	 * Failes if no param found
+	 * 
+	 * @param string $key
+	 * @throws \Talis\Exception\ParamNotFound
+	 * @return mixed
+	 */
+	public function getBodyParamOrFail(string $key){
+	    if(!isset($this->getBody()->params->$key)){
+	        throw new \Talis\Exception\ParamNotFound($key);
+	    }
+	    return $this->getBody()->params->$key;
 	}
 	
 	/**
@@ -123,11 +175,5 @@ class Request{
 	public function addToBodyParams(string $k,$v){
 		return $this->getBodyParams()->$k = $v;		
 	}
-	
-	/**
-	 * 
-	 *TOBEDELETED 
-	public function get_as_psr7():\GuzzleHttp\Psr7\ServerRequest{
-	    return \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
-	}*/
+
 }
