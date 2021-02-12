@@ -87,8 +87,30 @@ class Request{
 	 * @param string $key
 	 * @param ?string $default
 	 * @return ?string
+	 * @deprecated
 	 */
 	public function get_param(string $key,?string $default=null):?string{
+	    return $this->get_params[$key] ?? $default;
+	}
+	
+	/**
+	 * The url/param/value or NULL
+	 * 
+	 * @param string $key
+	 * @return string|NULL
+	 */
+	public function get_param_null(string $key):?string{
+	    return $this->get_params[$key] ?? null;
+	}
+	
+	/**
+	 * The url/param/value or a default 
+	 * 
+	 * @param string $key
+	 * @param string $default
+	 * @return string
+	 */
+	public function get_param_default(string $key,string $default):string{
 	    return $this->get_params[$key] ?? $default;
 	}
 	
