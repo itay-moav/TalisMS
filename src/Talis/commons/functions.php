@@ -19,37 +19,3 @@ function autoload($class) {
 		throw new \Talis\Exception\ClassNotFound("{$file_path} {$class}");
 	}
 }
-
-//DB shortcuts - since we used it the same all over.
-
-/**
- * Get a db connection shortcut with config
- * 
- * @return \Talis\Services\Sql\MySqlClient
- */
-/*TOBEDELETED
-function mysql_db(string $db_name='mysql'):\Talis\Services\Sql\MySqlClient{
-	$config = \app_env()['database'][$db_name]??current(reset(\app_env()['database']));
-	return \Talis\Services\Sql\Factory::getConnectionMySQL($db_name,$config);
-}
-*/
-
-/**
- * Takes an array of arrays and recursivly translates to stdClass
- * 
- * @param array<mixed> $array
- * 
- * @return \stdClass
- */
-/*TOBEDELETED - moved to commons in sitelLib
-function array_to_object(array $array) {
-    $object = new \stdClass();
-    foreach ($array as $key => $value) {
-        if (is_array($value)) {
-            $value = array_to_object($value);
-        }
-        $object->$key = $value;
-    }
-    return $object;
-}
-*/

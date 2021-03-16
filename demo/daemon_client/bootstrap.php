@@ -14,13 +14,13 @@ function autoload($class) {
 spl_autoload_register('autoload');
 
 //Logger
-\Talis\Logger\MainZim::factory(
+\ZimLogger\MainZim::factory(
 		'none important',
 		'Stdio',
 		4,
 		'none important'
 );
 
-class talis extends Talis\Services\ActiveMQ\Publisher{
-	use \Talis\Services\ActiveMQ\tQueue;
+class talis extends \SiTEL\DataSources\ActiveMQ\Publisher{
+    use \SiTEL\DataSources\ActiveMQ\tQueue;
 }
