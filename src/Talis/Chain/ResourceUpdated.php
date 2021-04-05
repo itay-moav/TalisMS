@@ -2,20 +2,19 @@
 
 /**
  * Responsebility:
- *  reports successfull resource creations (POSTs)
- *  NOTICE! if you want to return the new resource, you need to handle it in your chain links.
+ *  reports successfull resource updating (not creating)
  *  
  * @author Itay Moav
- * @Date  2019-05-13
+ * @Date  2021-04-05
  */
-class ResourceCreated extends aChainLink implements \Talis\commons\iRenderable{
+class ResourceUpdated extends aChainLink implements \Talis\commons\iRenderable{
     /**
      * {@inheritDoc}
      * @see \Talis\Chain\aChainLink::process()
      */
 	public function process():aChainLink{
-		$this->Response->setMessage('Resource created');
-		$this->Response->setStatus(new \Talis\Message\Status\Code201);
+		$this->Response->setMessage('Resource updated');
+		$this->Response->setStatus(new \Talis\Message\Status\Code204);
 		$this->Response->markResponse();
 		return $this;
 	}

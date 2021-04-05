@@ -60,6 +60,17 @@ abstract class aChainLink{
 	}
 	
 	/**
+	 * 
+	 * @param string $classname
+	 * @param array<mixed> $params
+	 * @return \Talis\Chain\aChainLink
+	 */
+	public function append_chainlink(string $classname,array $params=[]):\Talis\Chain\aChainLink{
+	    $this->chain_container->push([$classname,$params]);
+	    return $this;
+	}
+	
+	/**
 	 * Returns a copy of the response object
 	 * @return \Talis\Message\Response
 	 */
