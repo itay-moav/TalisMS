@@ -90,7 +90,7 @@ class Corwin{
 		    $this->build_request($full_uri);
 		    $this->Router->generate_route();
 			$this->RequestChainHead = $this->Router->get_chainhead($this->Request,new \Talis\Message\Response);
-
+			
 			//the dynamic init
 			if(self::$registered_init_func){
 				$func = self::$registered_init_func;

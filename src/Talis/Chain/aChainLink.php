@@ -29,9 +29,9 @@ abstract class aChainLink{
 	protected array $params;
 
 	/**
-	 * @var ?\Ds\Queue<array> $chain_container
+	 * @var ChainContainer $chain_container
 	 */
-	protected ?\Ds\Queue $chain_container = null;
+	protected ChainContainer $chain_container;
 	
 	/**
 	 * @var boolean
@@ -53,9 +53,9 @@ abstract class aChainLink{
 	/**
 	 * A chain of links that will be (depends on process) processed one after the other.
 	 * 
-	 * @param \Ds\Queue<array> $chain_container
+	 * @param array $chain_container
 	 */
-	public function set_chain_container(\Ds\Queue $chain_container):void{
+	public function set_chain_container(ChainContainer $chain_container):void{
 		$this->chain_container = $chain_container;
 	}
 	
@@ -98,8 +98,9 @@ abstract class aChainLink{
 	final public function nextLinkInchain():\Talis\Chain\aChainLink{
 	    \ZimLogger\MainZim::$CurrentLogger->debug('About to process: [' . get_class($this).']');
 		$FinalLink = $this->process();
+
 		//If the returned chain is not a new chain (road diversion) and there are more links in the current chain, go after it.
-		if($FinalLink == $this && $this->chain_container !== null && !$this->chain_container->isEmpty()){
+		if($FinalLink == $this && isset($this->chain_container) && !$this->chain_container->isEmpty()){
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
