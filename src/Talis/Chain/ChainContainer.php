@@ -31,7 +31,6 @@ class ChainContainer{
      */
     public function pop():array{
         $next_chainlink = array_shift($this->list_of_chain_links);
-        dbgr('POPING',$next_chainlink);
         return $next_chainlink;
     }
 
