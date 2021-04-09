@@ -29,7 +29,7 @@ class BodyFieldExist extends aDependency{
 		$response = new \Talis\Message\Response;
 		$response->setMessage("Mising field [{$this->params['field']}] in request body");
 		$response->markDependency();
-		$response->setStatus(new \Talis\Message\Status\Code500);
+		$response->setStatus(new \Talis\Message\Status\Code400);
 		$emitter->emit($response);
 	}		
 }

@@ -44,6 +44,13 @@ class ChainContainer{
     }
     
     /**
+     * Clears the chain
+     */
+    public function clear():void{
+        $this->list_of_chain_links=[];
+    }
+    
+    /**
      * @return bool
      */
     public function isEmpty():bool{

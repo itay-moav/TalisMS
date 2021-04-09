@@ -27,7 +27,7 @@ class BodyParamsFieldExist extends aDependency{
 		$response = new \Talis\Message\Response;
 		$response->setMessage("Mising param [{$this->params['field']}] part in request body->params[]");
 		$response->markDependency();
-		$response->setStatus(new \Talis\Message\Status\Code500);
+		$response->setStatus(new \Talis\Message\Status\Code400);
 		$emitter->emit($response);
 	}		
 }

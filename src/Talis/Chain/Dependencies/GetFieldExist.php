@@ -28,7 +28,7 @@ class GetFieldExist extends aDependency{
 		$response = new \Talis\Message\Response;
 		$response->markDependency();
 		$response->setMessage("Mising URI PARAM {$this->params['field']}");
-		$response->setStatus(new \Talis\Message\Status\Code500);
+		$response->setStatus(new \Talis\Message\Status\Code400);
 		$emitter->emit($response);
 	}		
 }

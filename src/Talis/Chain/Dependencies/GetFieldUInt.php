@@ -33,7 +33,7 @@ class GetFieldUInt extends aDependency{
 		$response->markDependency();
 		$field = $this->Request->get_param($this->params['field']);
 		$response->setMessage("GET PARAM {$this->params['field']} is not an unsigned int, it is: [{$field}]");
-		$response->setStatus(new \Talis\Message\Status\Code500);
+		$response->setStatus(new \Talis\Message\Status\Code400);
 		$emitter->emit($response);
 	}		
 }

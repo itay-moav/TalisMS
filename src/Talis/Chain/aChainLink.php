@@ -104,11 +104,27 @@ abstract class aChainLink{
 			$next_link_class = $this->chain_container->pop();
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
-			\ZimLogger\MainZim::$CurrentLogger->debug("STARTING NEXT CHAIN LINK WITH {$name}");
-			$next_link = new $name($this->Request,$this->Response,$params);
+			if(is_callable($name)){
+			    \ZimLogger\MainZim::$CurrentLogger->debug('STARTING NEXT CHAIN LINK WITH FUNCTION');
+			    \ZimLogger\MainZim::$CurrentLogger->debug($name);
+			    $next_link = new FunctionalChainlinkWrapper($name,$this->Request,$this->Response,$params);
+			    
+			} else {
+    			\ZimLogger\MainZim::$CurrentLogger->debug("STARTING NEXT CHAIN LINK WITH {$name}");
+    			$next_link = new $name($this->Request,$this->Response,$params);
+			}
+			
 			$next_link->set_chain_container($this->chain_container);
 			$FinalLink = $next_link->nextLinkInchain();
 		}
 		return $FinalLink;
 	}
+}
+
+function handleFunctionalChainlink($func,$Request,$Response,$params,$chain_container){
+    //function can only modify the response and request payloads
+    //return is debug only
+    $dbg = $func($Request,$Response,$params);
+    \ZimLogger\MainZim::$CurrentLogger->debug('Functional response ' . print_r($dbg,true));
+    
 }

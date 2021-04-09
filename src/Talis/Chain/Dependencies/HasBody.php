@@ -22,7 +22,7 @@ class HasBody extends aDependency{
 		$response = new \Talis\Message\Response;
 		$response->markDependency();
 		$response->setMessage("Missing body:{params:[...]} part of request");
-		$response->setStatus(new \Talis\Message\Status\Code500);
+		$response->setStatus(new \Talis\Message\Status\Code400);
 		$emitter->emit($response);
 	}		
 }
