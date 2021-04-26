@@ -11,6 +11,8 @@
  *
  */
 class Context{
+    public const NaN = 'NaN';
+    
     /**
      * 
      * @var array<mixed> of shared resources in the current process. 
