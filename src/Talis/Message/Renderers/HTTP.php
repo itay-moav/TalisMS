@@ -17,6 +17,7 @@ class HTTP implements \Talis\commons\iEmitter{
 		$explanation = $message->getStatus()->getMsg();
 		$header = "HTTP/1.1 {$stat} {$explanation}";
 		header($header);
+		header('Content-Type: application/json; charset=utf-8');
 		$all_other_headers = $message->getHeaders();
 		\ZimLogger\MainZim::$CurrentLogger->debug('SENDING HEADERS');
 		\ZimLogger\MainZim::$CurrentLogger->debug([$header] + $all_other_headers);
@@ -26,6 +27,9 @@ class HTTP implements \Talis\commons\iEmitter{
 		    }
 		}
 		$body = json_encode($message->getBody());
+		if($body === false){
+		    throw new \Exception('Could not json encode the payload');
+		}
 		\ZimLogger\MainZim::$CurrentLogger->debug('SENDING BODY');
 		\ZimLogger\MainZim::$CurrentLogger->debug($body);
 		echo $body;

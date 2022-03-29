@@ -13,7 +13,7 @@ class DefaultRouter extends aRouter{
      * array [route=>the path to the class, classname=>the name of the class]
      */
     public function generate_route():void{
-        if(count($this->request_parts) < 3){
+        if(count($this->request_parts) < 4){ //one root path + three parts to define the API 
             throw new \Talis\Exception\BadUri(print_r($this->request_parts,true));
         }
         
