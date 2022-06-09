@@ -5,4 +5,3 @@ parameters:
    ignoreErrors:
       - '#Class Talis\\Chain\\aChainLink referenced with incorrect case: Talis\\Chain\\AChainLink.#'
       - '#Method Talis\\Corwin::nextLinkInchain\(\) should return Talis\\commons\\iRenderable#'
-      - '#set_chain_container\(\) expects Ds\\Queue<array>#'

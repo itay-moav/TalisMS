@@ -49,11 +49,10 @@ abstract class aChainLink{
 		$this->Response = $Response;
 		$this->params   = $params;
 	}
-	
+
 	/**
 	 * A chain of links that will be (depends on process) processed one after the other.
-	 * 
-	 * @param array $chain_container
+	 * @param ChainContainer $chain_container
 	 */
 	public function set_chain_container(ChainContainer $chain_container):void{
 		$this->chain_container = $chain_container;
@@ -121,7 +120,15 @@ abstract class aChainLink{
 	}
 }
 
-function handleFunctionalChainlink($func,$Request,$Response,$params,$chain_container){
+/**
+ * 
+ * @param callable $func
+ * @param \Talis\Message\Request $Request
+ * @param \Talis\Message\Response $Response
+ * @param array<mixed> $params
+ * @param array<mixed> $chain_container
+ */
+function handleFunctionalChainlink($func,$Request,$Response,$params,$chain_container):void{
     //function can only modify the response and request payloads
     //return is debug only
     $dbg = $func($Request,$Response,$params);

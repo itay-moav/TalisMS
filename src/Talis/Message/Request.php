@@ -31,6 +31,10 @@ class Request{
 		$this->get_params = $get_params;
 	}
 	
+	/**
+	 * 
+	 * @return array<string,string>
+	 */
 	public function __serialize(): array{
 	    return [
 	        'headers'    => serialize($this->headers),
@@ -40,6 +44,10 @@ class Request{
 	    ];
 	}
 	
+	/**
+	 * 
+	 * @param array<string,string> $data
+	 */
 	public function __unserialize(array $data): void{
 	    $this->headers     = unserialize($data['headers']);
 	    $this->body        = unserialize($data['body']);
