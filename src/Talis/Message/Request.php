@@ -31,6 +31,22 @@ class Request{
 		$this->get_params = $get_params;
 	}
 	
+	public function __serialize(): array{
+	    return [
+	        'headers'    => serialize($this->headers),
+	        'body'       => serialize($this->body),
+	        'full_uri'   => urlencode($this->full_uri),
+	        'get_params' => serialize($this->get_params)
+	    ];
+	}
+	
+	public function __unserialize(array $data): void{
+	    $this->headers     = unserialize($data['headers']);
+	    $this->body        = unserialize($data['body']);
+	    $this->full_uri    = urldecode($data['full_uri']);
+	    $this->get_params  = unserialize($data['get_params']);
+	}
+	
 	/**
 	 * @return array<string>
 	 */
