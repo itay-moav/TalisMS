@@ -31,9 +31,8 @@ abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\
 		$response = new \Talis\Message\Response;
 		$body = new \stdClass;
 		$body->type = 'error';
-		$body->message = $this->format_human_message();
 		$response->setBody($body);
-		
+		$response->setMessage($this->format_human_message());
 		$status_class = "\Talis\Message\Status\Code{$this->http_code}";
 		$response->setStatus(new $status_class);
 		$response->markError();

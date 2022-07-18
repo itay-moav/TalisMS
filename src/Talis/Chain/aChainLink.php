@@ -86,6 +86,17 @@ abstract class aChainLink{
 	abstract public function process():aChainLink;
 	
 	/**
+	 * Clears the queu, returns the error
+	 * 
+	 * @param \Talis\Chain\aChainLink $NewLastChainLink
+	 * @return \Talis\Chain\aChainLink
+	 */
+	protected function bail_out(\Talis\Chain\Errors\aError $NewLastChainLink):\Talis\Chain\Errors\aError{
+	   $this->chain_container->clear();
+	   return $NewLastChainLink;
+	}
+	
+	/**
 	 * Do the filter chain
 	 * Pass the filtered get params and req body and next bl to the dependency chain
 	 * Sets the result as the response

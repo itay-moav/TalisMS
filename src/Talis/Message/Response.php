@@ -148,7 +148,8 @@ class Response{
 	 */
 	public function getBody():\stdClass{
 	    $body = new \stdClass;
-		$body->status  = $this->getStatus();
+	    $status = $this->getStatus();
+	    $body->status  = "{$status->getCode()} {$status->getMsg()}";
 		$body->type    = $this->type;
 		$body->message = $this->getMessage();
 		$body->payload = $this->getPayload();

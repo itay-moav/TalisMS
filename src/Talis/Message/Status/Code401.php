@@ -1,4 +1,9 @@
 <?php namespace Talis\Message\Status;
+/**
+ * User is not logged in
+ * @author itay
+ *
+ */
 class Code401 extends \Talis\Message\aStatus{
     /**
      * @var int

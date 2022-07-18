@@ -20,7 +20,7 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	 *                   dependency class name
 	 *                                param name
 	 *                                        param value         
-	 * @var array<array<string, array<string, string>>>
+	 * @var array<int,array<mixed>>
 	 */
 	protected array $dependencies = [];
 	

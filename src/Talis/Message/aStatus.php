@@ -16,10 +16,18 @@ abstract class aStatus{
      */
     protected string $dyn_error_msg = '';
 	
+    /**
+     * 
+     * @return int
+     */
 	public function getCode():int{
 		return $this->code;
 	}
 
+	/**
+	 * 
+	 * @return string
+	 */
 	public function getMsg():string{
 		return $this->msg;
 	}
