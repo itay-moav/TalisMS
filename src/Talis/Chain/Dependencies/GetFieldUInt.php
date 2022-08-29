@@ -12,7 +12,7 @@ class GetFieldUInt extends aDependency{
 	 * @see \Talis\Chain\Dependencies\ADependency::validate()
 	 */
 	protected function validate():bool{
-	    $field_to_validate = $this->Request->get_param($this->params['field']);
+	    $field_to_validate = $this->Request->get_param_exists($this->params['field']);
 	    if(is_numeric($field_to_validate)){//if numeric, cast to number var type.
 	        $field_to_validate = $field_to_validate *1;
 	    }
@@ -31,7 +31,7 @@ class GetFieldUInt extends aDependency{
 	public function render(\Talis\commons\iEmitter $emitter):void{
 		$response = new \Talis\Message\Response;
 		$response->markDependency();
-		$field = $this->Request->get_param($this->params['field']);
+		$field = $this->Request->get_param_exists($this->params['field']);
 		$response->setMessage("GET PARAM {$this->params['field']} is not an unsigned int, it is: [{$field}]");
 		$response->setStatus(new \Talis\Message\Status\Code400);
 		$emitter->emit($response);
