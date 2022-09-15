@@ -30,6 +30,10 @@ class Rest extends HTTP{
 	            $method = 'update';
 	            break;
 	            
+	        case 'PATCH':
+	            $method = 'partialupdate';
+	            break;
+	        
 	        case 'DELETE':
 	            $method = 'delete';
 	            break;
