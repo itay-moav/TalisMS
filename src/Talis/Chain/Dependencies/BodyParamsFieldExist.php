@@ -24,7 +24,7 @@ class BodyParamsFieldExist extends aDependency{
 		\ZimLogger\MainZim::$CurrentLogger->debug('RENDER input body');
 		\ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getBody());
 		$msg="Mising param [{$this->params['field']}] part in request body->params[]";
-		\ZimLogger\MainZim::$CurrentLogger->warning($msg);
+		\ZimLogger\MainZim::$CurrentLogger->warning($msg,true);
 		$response = new \Talis\Message\Response;
 		$response->setMessage($msg);
 		$response->markDependency();
