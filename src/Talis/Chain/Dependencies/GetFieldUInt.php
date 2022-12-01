@@ -1,7 +1,7 @@
 <?php namespace Talis\Chain\Dependencies;
 
 /**
- * Making sure that a get field exist in the request
+ * Making sure that a get field is anm integer
  * 
  * @author Itay Moav
  */
