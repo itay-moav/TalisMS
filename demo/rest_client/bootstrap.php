@@ -1,7 +1,6 @@
 <?php
 ini_set('error_reporting', E_ALL|E_STRICT);
 ini_set('log_errors', true);
-ini_set('include_path', PATH_SEPARATOR . '/usr/share/php/ZendFW2411');
 function autoload($class) {
 	$file_path = str_replace(['_','\\'],'/',$class) . '.php';
 	if(!include_once $file_path){
@@ -10,6 +9,9 @@ function autoload($class) {
 }
 spl_autoload_register('autoload');
 
+function get_client(){
+    //return Zend IHttpClient::factory($url . $uri);
+}
 /**
  * @param string $uri
  * @param stdClass $obj
@@ -33,7 +35,7 @@ function get_client($uri,stdClass $obj,$https=false){
 	 * INIT A NEW INSTALLATION ACTIVATION
 	 */
 	// initiate POST
-	$Client = ZendIHttpClient::factory($url . $uri);
+	$Client = get_client();
 	
 	// not relevant
 	$Client->setRawBody(json_encode($obj));
@@ -58,7 +60,8 @@ function get_client($uri,stdClass $obj,$https=false){
  *
  * @author Itay Moav
  */
-class ZendIHttpClient extends \Zend\Http\Client{
+/*TOBE RE IMPLEMENTED 
+class Zen dIHttpClient extends \Zen d\Http\Client{
 	static public function factory(string $url):ZendIHttpClient{
 		$client = new ZendIHttpClient ( $url, array (
 				'adapter' => 'Zend\Http\Client\Adapter\Curl',
@@ -67,7 +70,7 @@ class ZendIHttpClient extends \Zend\Http\Client{
 				'timeout' => 5,
 				'useragent' => 'LMS_LiveAccess' 
 		));
-		$client->setMethod(\Zend\HTTP\Request::METHOD_POST);
+		$client->setMethod(\Ze nd\HTTP\Request::METHOD_POST);
 		$client->setHeaders (['Content-type'=>'application/json'] );
 		return $client;
 	}
@@ -77,8 +80,9 @@ class ZendIHttpClient extends \Zend\Http\Client{
 	/**
 	 * Capture the headers for debug purposes later
 	 *
-	 * @see \Zend\Http\Client::prepareHeaders()
+	 * @see \Zen d\Http\Client::prepareHeaders()
 	 */
+/*
 	protected function prepareHeaders($body, $uri){
 		$this->my_headers = parent::prepareHeaders($body, $uri);
 		return $this->my_headers;
@@ -91,14 +95,15 @@ class ZendIHttpClient extends \Zend\Http\Client{
 	/**
 	 * @return string GET|POST|PUT|DELETE
 	 */
-	public function getCurrentMethod(){
+/*	public function getCurrentMethod(){
 		return $this->getRequest()->getMethod();
 	}
 	
 	/**
 	 * @return string getter for the POST/PUT raw data
 	 */
-	public function getRawRequestData(){
+/*	public function getRawRequestData(){
 		return $this->getRequest()->getContent();
 	}
 }
+*/
