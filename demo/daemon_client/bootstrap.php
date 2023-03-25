@@ -2,8 +2,7 @@
 require_once __DIR__ . '/../../config/environment/'.lifeCycle().'.php';
 
 ini_set('include_path', '.' .
-		PATH_SEPARATOR . '/usr/share/php/TalisMS001' .
-		PATH_SEPARATOR . '/usr/share/php/ZendFW2411'
+		PATH_SEPARATOR . '/usr/share/php/TalisMS001'
 );
 
 function autoload($class) {

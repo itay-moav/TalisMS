@@ -2,21 +2,21 @@
 
 /**
  * Responsebility:
- *  reports successfull resource creations (POSTs)
- *  NOTICE! if you want to return the new resource, you need to handle it in your chain links.
+ * 
+ *  Alerts the client that a create call is trying to create a duplicate resource, let's see how client can handle it
  *  
  * @author Itay Moav
- * @Date  2019-05-13
+ * @Date  2023-03-02
  */
-class ResourceCreated extends aChainLink implements \Talis\commons\iRenderable{
+class DuplicateResource extends aChainLink implements \Talis\commons\iRenderable{
     /**
      * {@inheritDoc}
      * @see \Talis\Chain\aChainLink::process()
      */
 	public function process():aChainLink{
-		$this->Response->setMessage('Resource created');
-		$this->Response->setStatus(new \Talis\Message\Status\Code201);
-		$this->Response->markResponse();
+		$this->Response->setMessage('duplicate resource');
+		$this->Response->setStatus(new \Talis\Message\Status\Code422);
+		$this->Response->markError();
 		return $this;
 	}
 	
@@ -26,7 +26,7 @@ class ResourceCreated extends aChainLink implements \Talis\commons\iRenderable{
 	 * @see \Talis\commons\iRenderable::render()
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
+	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getUri() . ' CHAIN ENDS ABROPTLY: Trying to create a duplicate resource');
 	    \ZimLogger\MainZim::$CurrentLogger->debug('RESPONSE: ');
 	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Response);
 		$emitter->emit($this->Response);

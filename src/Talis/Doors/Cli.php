@@ -33,26 +33,29 @@ class Cli{
      * @param bool $is_base64_encoded
      */
 	public function gogogo(string $url,?string $raw_request_body,bool $is_base64_encoded=false):void{
+	    $raw_request_body = $raw_request_body?:'';
 		try{
-			//decode
+		    \ZimLogger\MainZim::$CurrentLogger->debug('$raw_request_body');
+		    \ZimLogger\MainZim::$CurrentLogger->debug($raw_request_body);
+		    
+		    //decode
 		    if($is_base64_encoded && $raw_request_body){
-				$raw_request_body = base64_decode($raw_request_body);
-			}
-			\ZimLogger\MainZim::$CurrentLogger->debug('CLI JSON');
-			\ZimLogger\MainZim::$CurrentLogger->debug($raw_request_body);
-			
-			$decoded_request_body = json_decode($raw_request_body?:'');
-			\ZimLogger\MainZim::$CurrentLogger->debug('$decoded_request_body');
-			\ZimLogger\MainZim::$CurrentLogger->debug($decoded_request_body);
-
-			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
-			$request_parts = $this->get_uri($url);
-			(new \Talis\Corwin)->begin($request_parts,
-											 $decoded_request_body,
-											 $url)
-									 ->nextLinkInchain()
-					                 ->render(new \Talis\Message\Renderers\Cli)
-			;
+		        $raw_request_body = base64_decode($raw_request_body);
+		        \ZimLogger\MainZim::$CurrentLogger->debug('base64 decoded request_body');
+		        \ZimLogger\MainZim::$CurrentLogger->debug($raw_request_body);
+		    }
+		    
+		    $decoded_request_body = json_decode($raw_request_body?:'');
+		    \ZimLogger\MainZim::$CurrentLogger->debug('$decoded_request_body');
+		    \ZimLogger\MainZim::$CurrentLogger->debug($decoded_request_body);
+		    
+		    //Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
+		    $request_parts = $this->get_uri($url);
+		    (new \Talis\Corwin)->begin($request_parts,
+		        $decoded_request_body,
+		        $url)
+		        ->nextLinkInchain()
+		        ->render(new \Talis\Message\Renderers\Cli);
 
 		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
 		    \ZimLogger\MainZim::$CurrentLogger->fatal($e,true);
