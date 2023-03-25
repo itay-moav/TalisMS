@@ -1,6 +1,8 @@
 <?php namespace Talis\Chain;
 
 /**
+ * TODO: Move into the error chainlink folder
+ *
  * Responsebility:
  * 
  *  Alerts the client that a create call is trying to create a duplicate resource, let's see how client can handle it
