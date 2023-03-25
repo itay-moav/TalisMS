@@ -36,7 +36,7 @@ abstract class aChainLink{
 	/**
 	 * @var boolean
 	 */
-	protected bool $valid        		  = true;
+	protected bool $valid = true;
     
 	/**
 	 * 
@@ -128,6 +128,14 @@ abstract class aChainLink{
 			$FinalLink = $next_link->nextLinkInchain();
 		}
 		return $FinalLink;
+	}
+	
+	/**
+	 * 
+	 * @return \Talis\Message\Response
+	 */
+	public function getResponse():\Talis\Message\Response{
+	    return $this->Response;
 	}
 }
 

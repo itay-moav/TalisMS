@@ -14,6 +14,7 @@ abstract class a400Info extends \Talis\Chain\Errors\aError{
      *
      */
     public function render(\Talis\commons\iEmitter $emitter):void{
+        \ZimLogger\MainZim::$CurrentLogger->error('TOBEDELETED202323 should inherit aError');
         \ZimLogger\MainZim::$CurrentLogger->info('Following two entries are error prms and human message of the error',false);
         \ZimLogger\MainZim::$CurrentLogger->info($this->params,false);
         \ZimLogger\MainZim::$CurrentLogger->info($this->format_human_message(),true);
@@ -23,7 +24,7 @@ abstract class a400Info extends \Talis\Chain\Errors\aError{
         $body->type    = 'error';
         $body->message = $this->format_human_message();
         $response->setBody($body);
-        
+        $response->setMessage($this->format_human_message());
         $status_class = "\Talis\Message\Status\Code{$this->http_code}";
         $response->setStatus(new $status_class);
         $response->markError();

@@ -15,6 +15,7 @@ ini_set('display_errors',1);
 \define('FORCE_HTTPS',        1); //a value u send to the url function to force the use of https
 \define('DONT_FORCE_SCHEMA',  0); //If it is https it remains https, if it is http it remains http
 \define('PREVENT_FORCE_HTTPS',-1); //a value u send to the url function to force the use of http (prevent https)
+\define('SHOW_EXCEPTIONS',1);      //DEFINE THIS IF U WANT EXCEPTIONS TO RETURN FULL STACKS TO CLIENT
 
 \ini_set('include_path', '.' .
     PATH_SEPARATOR . APP_PATH .

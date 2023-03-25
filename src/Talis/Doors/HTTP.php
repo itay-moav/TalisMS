@@ -49,7 +49,13 @@ class HTTP
             $response = new \Talis\Message\Response();
             $response->markError();
             $response->setStatus(new \Talis\Message\Status\Code500());
-            $response->setMessage($e . '');
+            if(defined('SHOW_EXCEPTIONS')){
+                $response->setMessage($e . '');
+                $response->getPayload()->TalisErrorStack = $e->getTrace();
+            } else {
+                $response->setMessage('An error has occured. Snakes have been dispatched.');
+            }
+            
             (new \Talis\Message\Renderers\HTTP())->emit($response);
         }
     }

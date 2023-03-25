@@ -8,8 +8,16 @@
  *
  */
 abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\iRenderable{
-	protected int $http_code	 = 0;
+	/**
+	 * 
+	 * @var integer
+	 */
+    protected int $http_code	 = 0;
 	
+    /**
+     * 
+     * @return string
+     */
 	abstract protected function format_human_message():string;
 	
 	/**
@@ -27,15 +35,11 @@ abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\
 	    \ZimLogger\MainZim::$CurrentLogger->error('Following two entries are error prms and human message of the error',false);
 	    \ZimLogger\MainZim::$CurrentLogger->error($this->params,false);
 	    \ZimLogger\MainZim::$CurrentLogger->error($this->format_human_message(),true);
-		
-		$response = new \Talis\Message\Response;
-		$body = new \stdClass;
-		$body->type = 'error';
-		$response->setBody($body);
-		$response->setMessage($this->format_human_message());
+				
+		$this->Response->setMessage($this->format_human_message());
 		$status_class = "\Talis\Message\Status\Code{$this->http_code}";
-		$response->setStatus(new $status_class);
-		$response->markError();
-		$emitter->emit($response);
+		$this->Response->setStatus(new $status_class);
+		$this->Response->markError();
+		$emitter->emit($this->Response);		
 	}
 }

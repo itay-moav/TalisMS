@@ -6,7 +6,7 @@
  * @author Itay Moav
  * @date 2017-05-23
  */
-class ApiNotFound extends a400Info{
+class ApiNotFound extends aError{
 	protected int $http_code = 404;
 	
 	/**
