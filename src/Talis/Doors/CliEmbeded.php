@@ -31,7 +31,7 @@ class CliEmbeded{
 					           ->render(new \Talis\Message\Renderers\Cli)
 			;
 
-		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
+		}catch(\Throwable $e){ // TODO for now, all errors are Corwin, better handling later
 		    \ZimLogger\MainZim::$CurrentLogger->fatal($e,true);
 			$response = new \Talis\Message\Response;
 			$response->markError();

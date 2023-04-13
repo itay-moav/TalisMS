@@ -38,7 +38,7 @@ class Daemon{
     		    ->nextLinkInchain()
     		    ->render(new \Talis\Message\Renderers\HTTP);
 
-		}catch(\Exception $e){ // TODO for now, all errors are Corwin, better handling later
+		}catch(\Throwable $e){ // TODO for now, all errors are Corwin, better handling later
 		    \ZimLogger\MainZim::$CurrentLogger->fatal($e,true);
 			$response = new \Talis\Message\Response;
 			$response->markError();
