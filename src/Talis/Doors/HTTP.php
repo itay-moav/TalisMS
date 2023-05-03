@@ -53,7 +53,7 @@ class HTTP
                 $response->setMessage($e . '');
                 $response->getPayload()->TalisErrorStack = $e->getTrace();
             } else {
-                $response->setMessage('An error has occured. Snakes have been dispatched.');
+                $response->setMessage('An error has occured. Chaos Snakes have been dispatched.');
             }
             
             (new \Talis\Message\Renderers\HTTP())->emit($response);
