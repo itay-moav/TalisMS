@@ -93,7 +93,7 @@ abstract class aChainLink{
 	 */
 	protected function bail_out(\Talis\Chain\Errors\aError $NewLastChainLink):\Talis\Chain\Errors\aError{
 	   $this->chain_container->clear();
-	   return $NewLastChainLink;
+	   return $NewLastChainLink->process();
 	}
 	
 	/**

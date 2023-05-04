@@ -14,8 +14,9 @@ class Cli implements \Talis\commons\iEmitter{
      * @see \Talis\commons\iEmitter::emit()
      */
 	public function emit(\Talis\Message\Response $message):void{
-		//TODO move to exit status? $stat   = $message->getStatus()->getCode();
-		$body = json_encode($message->getBody());
+		$stat = $message->getStatus()->getCode();
+		$body = json_encode($message->getBody(),JSON_PRETTY_PRINT);
 		echo $body;
+		echo "\nFIN with [{$stat}]\n";
 	}
 }
