@@ -25,9 +25,9 @@ class ResourceDeleted extends aChainLink implements \Talis\commons\iRenderable{
 	 * @see \Talis\commons\iRenderable::render()
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
+	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getUri() . ' RESOURCE DELETED!');
 	    \ZimLogger\MainZim::$CurrentLogger->debug('RESPONSE: ');
 	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Response);
-		$emitter->emit($this->Response);
+	    $emitter->emit($this->Response);
 	}
 }
