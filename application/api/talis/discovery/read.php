@@ -27,11 +27,13 @@ class ScrapAPIs extends \Talis\Chain\aChainLink
 {
     public function process(): \Talis\Chain\aChainLink
     {
-        $apis = $this->getDirContents('/home/itay/dev-repositories/director_moav/TalisMS/application/api');
+        $api_path = APP_PATH . '/api';
+        $apis = $this->getDirContents($api_path);
         $filtered_apis = [];
         foreach($apis as $api){
             if(strpos($api,'.php')){
-                $filtered_apis[] = str_replace('.php','',explode('/../..',$api)[1]);
+                dbgn($api);
+                $filtered_apis[] = str_replace('.php','',explode($api_path,$api)[1]);
             }
         }
         
@@ -50,7 +52,7 @@ class ScrapAPIs extends \Talis\Chain\aChainLink
         $files =  array_diff(scandir($dir), ['..', '.']);
         
         foreach($files as $value){
-            dbgn($value);
+            //dbgn($value);
             if(!is_dir("{$dir}/{$value}")){
                 $results[] = "{$dir}/{$value}";
             } elseif(is_dir("{$dir}/{$value}")) {
