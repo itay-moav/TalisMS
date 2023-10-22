@@ -39,6 +39,8 @@ class HTTP
     {
         \ZimLogger\MainZim::$CurrentLogger->debug("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nREQUEST LOG STARTS HERE!");
         $this->root_uri = $root_uri;
+        dbgn("ROOT URI [{$this->root_uri}]");
+        
         try {
             // Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
             (new \Talis\Corwin())->begin($this->get_uri_from_server(), $this->get_request_body(), $this->full_uri)
