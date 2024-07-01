@@ -37,7 +37,7 @@ class HTTP
      */
     public function gogogo(string $root_uri):void
     {
-        \ZimLogger\MainZim::$CurrentLogger->debug("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nREQUEST LOG STARTS HERE!");
+        \Talis\Corwin::logger()->debug("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nREQUEST LOG STARTS HERE!");
         $this->root_uri = $root_uri;
         dbgn("ROOT URI [{$this->root_uri}]");
         
@@ -47,7 +47,7 @@ class HTTP
                 ->nextLinkInchain()
                 ->render(new \Talis\Message\Renderers\HTTP());
         } catch (\Throwable $e) { // TODO for now, all errors are Corwin, better handling later
-            \ZimLogger\MainZim::$CurrentLogger->fatal($e,true);
+            \Talis\Corwin::logger()->fatal($e,true);
             $response = new \Talis\Message\Response();
             $response->markError();
             $response->setStatus(new \Talis\Message\Status\Code500());
@@ -84,8 +84,8 @@ class HTTP
     protected function get_request_body(): ?\stdClass
     {
         $json_request_body = file_get_contents('php://input');
-        \ZimLogger\MainZim::$CurrentLogger->debug('RAW INPUT FROM CLIENT');
-        \ZimLogger\MainZim::$CurrentLogger->debug($json_request_body);
+        \Talis\Corwin::logger()->debug('RAW INPUT FROM CLIENT');
+        \Talis\Corwin::logger()->debug($json_request_body);
         return json_decode($json_request_body?:'');
     }
 }

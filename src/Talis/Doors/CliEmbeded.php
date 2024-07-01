@@ -21,8 +21,8 @@ class CliEmbeded{
      */
 	public function gogogo(string $url,\stdClass $body):void{
 		try{
-			\ZimLogger\MainZim::$CurrentLogger->debug('EMBEDED CLI BODY');
-			\ZimLogger\MainZim::$CurrentLogger->debug($body);
+			\Talis\Corwin::logger()->debug('EMBEDED CLI BODY');
+			\Talis\Corwin::logger()->debug($body);
 
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($url);
@@ -32,7 +32,7 @@ class CliEmbeded{
 			;
 
 		}catch(\Throwable $e){ // TODO for now, all errors are Corwin, better handling later
-		    \ZimLogger\MainZim::$CurrentLogger->fatal($e,true);
+		    \Talis\Corwin::logger()->fatal($e,true);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);

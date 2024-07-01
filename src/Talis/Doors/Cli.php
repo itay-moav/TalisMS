@@ -35,19 +35,19 @@ class Cli{
 	public function gogogo(string $url,?string $raw_request_body,bool $is_base64_encoded=false):void{
 	    $raw_request_body = $raw_request_body?:'';
 		try{
-		    \ZimLogger\MainZim::$CurrentLogger->debug('$raw_request_body');
-		    \ZimLogger\MainZim::$CurrentLogger->debug($raw_request_body);
+		    \Talis\Corwin::logger()->debug('$raw_request_body');
+		    \Talis\Corwin::logger()->debug($raw_request_body);
 		    
 		    //decode
 		    if($is_base64_encoded && $raw_request_body){
 		        $raw_request_body = base64_decode($raw_request_body);
-		        \ZimLogger\MainZim::$CurrentLogger->debug('base64 decoded request_body');
-		        \ZimLogger\MainZim::$CurrentLogger->debug($raw_request_body);
+		        \Talis\Corwin::logger()->debug('base64 decoded request_body');
+		        \Talis\Corwin::logger()->debug($raw_request_body);
 		    }
 		    
 		    $decoded_request_body = json_decode($raw_request_body?:'');
-		    \ZimLogger\MainZim::$CurrentLogger->debug('$decoded_request_body');
-		    \ZimLogger\MainZim::$CurrentLogger->debug($decoded_request_body);
+		    \Talis\Corwin::logger()->debug('$decoded_request_body');
+		    \Talis\Corwin::logger()->debug($decoded_request_body);
 		    
 		    //Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 		    $request_parts = $this->get_uri($url);
@@ -58,7 +58,7 @@ class Cli{
 		        ->render(new \Talis\Message\Renderers\Cli);
 
 		}catch(\Throwable $e){ // TODO for now, all errors are Corwin, better handling later
-		    \ZimLogger\MainZim::$CurrentLogger->fatal($e,true);
+		    \Talis\Corwin::logger()->fatal($e,true);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);

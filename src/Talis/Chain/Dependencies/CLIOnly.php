@@ -13,8 +13,8 @@ class CLIOnly extends aDependency{
     protected function validate():bool{
         $valid = isset($_SERVER['PHP_SELF']) && $_SERVER['PHP_SELF'] === './lord_commander';
         
-        \ZimLogger\MainZim::$CurrentLogger->debug('validaror ' . self::class);
-        \ZimLogger\MainZim::$CurrentLogger->debug("Am I using CLI door? [{$valid}]");
+        \Talis\Corwin::logger()->debug('validaror ' . self::class);
+        \Talis\Corwin::logger()->debug("Am I using CLI door? [{$valid}]");
         
         return $valid;
     }

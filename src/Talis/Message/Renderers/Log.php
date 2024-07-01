@@ -17,10 +17,10 @@ class Log implements \Talis\commons\iEmitter{
 	public function emit(\Talis\Message\Response $message):void{
 		$body = json_encode($message->getBody());
 		if($message->getResponseType() != \Talis\Message\Response::RESPONSE_TYPE__RESPONSE){
-		    \ZimLogger\MainZim::$CurrentLogger->fatal("CHAIN BROKE {$body}",true);
+		    \Talis\Corwin::logger()->fatal("CHAIN BROKE {$body}",true);
 		} else {
-		    \ZimLogger\MainZim::$CurrentLogger->debug('END OF PROCESS');
-		    \ZimLogger\MainZim::$CurrentLogger->debug($body);
+		    \Talis\Corwin::logger()->debug('END OF PROCESS');
+		    \Talis\Corwin::logger()->debug($body);
 		}
 	}
 }

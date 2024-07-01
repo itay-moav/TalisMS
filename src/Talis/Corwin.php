@@ -16,7 +16,28 @@ class Corwin{
      * @var string
      */
     static public string $APP_PATH;
+
+	/**
+	 * Logger used for all Talis lib log calls.
+	 * 
+	 * @var \ZimLogger\Handlers\aLogHandler
+	 */
+	static private \ZimLogger\Handlers\aLogHandler $talis_logger;
     
+	/**
+	 * @param \ZimLogger\Handlers\aLogHandler $logger
+	 */
+	static public function set_logger(\ZimLogger\Handlers\aLogHandler $logger):void{
+		self::$talis_logger = $logger;
+	}
+
+	/**
+	 * @return \ZimLogger\Handlers\aLogHandler
+	 */
+	static public function logger():\ZimLogger\Handlers\aLogHandler{
+		return self::$talis_logger;
+	}
+
 	/**
 	 * I am setting this up in the specific apps using Talis. 
 	 * I usually would like to use  it to login someone or check generic roles etc
@@ -117,8 +138,8 @@ class Corwin{
 	 * @param string $full_uri
 	 */
 	private function build_request(string $full_uri):void{
-	    \ZimLogger\MainZim::$CurrentLogger->debug('BUILDING REQUEST WITH BODY');
-	    \ZimLogger\MainZim::$CurrentLogger->debug($this->req_body);
+	    self::logger()->debug('BUILDING REQUEST WITH BODY');
+	    self::logger()->debug($this->req_body);
 		$this->Request = new \Talis\Message\Request($full_uri,$this->extra_params,$this->req_body);
 	}
 }

@@ -26,22 +26,24 @@ spl_autoload_register(getAutoloader(),true);
 //COMPOSER
 require_once __DIR__ . '/../vendor/autoload.php';
 
-//Initializations of some Talis core values.
-\Talis\Corwin::$APP_PATH = APP_PATH;
+//Instantiate the logger. This just sets the main/defaul logger, u can use other instances throughout.
+//U can overwrite this one too later on
+\ZimLogger\MainZim::setGlobalLogger(
+    'talisms_test',
+    'Stdio',
+    4,
+    '/some/path/to/write/log',
+    false
+);
 
 //Shortcut functions for usage of default logger dbg,dbgn,dbgr,info,warning,error,fatal
 \ZimLogger\MainZim::include_shortcuts();
 
+// necessary for including the API classes, for example (in Corwin)
+\Talis\Corwin::$APP_PATH = APP_PATH;
 
-//Instantiate the logger. This just sets the main/defaul logger, u can use other instances throughout.
-//U can overwrite this one too later on
-\ZimLogger\MainZim::setGlobalLogger(
-		'talisms_test',
-		'Stdio',
-		4,
-		'/some/path/to/write/log',
-		false
-);
+//Sets the logger used inside Talis, if need a separate logger just for Talis lib errors, this is where u overwrite it
+\Talis\Corwin::set_logger(\ZimLogger\MainZim::$GlobalLogger);
 
 //TODO Move this to another bootstrap with an example
 //\Talis\Corwin::$registered_router = 'Some Router Class Name to override defaults'; 

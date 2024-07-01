@@ -18,8 +18,8 @@ class GetFieldUInt extends aDependency{
 	    }
 	    $valid = is_integer($field_to_validate) && $field_to_validate >= 0;	    
 		
-	    \ZimLogger\MainZim::$CurrentLogger->debug('validaror ' . self::class);
-		\ZimLogger\MainZim::$CurrentLogger->debug('params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
+	    \Talis\Corwin::logger()->debug('validaror ' . self::class);
+		\Talis\Corwin::logger()->debug('params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
 		
 		return $valid;
 	}

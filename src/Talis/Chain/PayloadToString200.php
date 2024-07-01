@@ -31,15 +31,15 @@ class PayloadToString200 extends aChainLink implements \Talis\commons\iRenderabl
 	public function render(\Talis\commons\iEmitter $emitter):void{
 	    $res = $this->Response->getPayload() . '';
 	    
-	    \ZimLogger\MainZim::$CurrentLogger->debug('PAYLOAD RESPONSE STRINGIFIED');
-	    \ZimLogger\MainZim::$CurrentLogger->debug($res);
+	    \Talis\Corwin::logger()->debug('PAYLOAD RESPONSE STRINGIFIED');
+	    \Talis\Corwin::logger()->debug($res);
 
 	    header('HTTP/1.1 200 Ok');
 	    $all_other_headers = $this->Response->getHeaders();
 	    if($all_other_headers){
 	    
-	        \ZimLogger\MainZim::$CurrentLogger->debug('SENDING HEADERS');
-	        \ZimLogger\MainZim::$CurrentLogger->debug($all_other_headers);
+	        \Talis\Corwin::logger()->debug('SENDING HEADERS');
+	        \Talis\Corwin::logger()->debug($all_other_headers);
 	        
 	        foreach($all_other_headers as $other_header){
 	            header($other_header);

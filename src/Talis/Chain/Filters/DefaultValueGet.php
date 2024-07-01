@@ -19,7 +19,7 @@ class DefaultValueGet extends aFilter{
 	    
 	    $this->Request = new \Talis\Message\Request($Request->getUri(), $all_get_params, $Request->getBody());
 	    
-	    \ZimLogger\MainZim::$CurrentLogger->debug('FILTERED REQUEST');
-	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Request);
+	    \Talis\Corwin::logger()->debug('FILTERED REQUEST');
+	    \Talis\Corwin::logger()->debug($this->Request);
 	}
 }
