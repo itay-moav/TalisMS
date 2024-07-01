@@ -22,9 +22,9 @@ class DoneSuccessfull extends aChainLink implements \Talis\commons\iRenderable{
 	 * @see \Talis\commons\iRenderable::render()
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
-	    \ZimLogger\MainZim::$CurrentLogger->debug('RESPONSE: ');
-	    \ZimLogger\MainZim::$CurrentLogger->debug($this->Response);
+	    \Talis\Corwin::logger()->debug($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
+	    \Talis\Corwin::logger()->debug('RESPONSE: ');
+	    \Talis\Corwin::logger()->debug($this->Response);
 		$emitter->emit($this->Response);
 	}
 }

@@ -13,8 +13,8 @@ class GetFieldExist extends aDependency{
 	protected function validate():bool{
 		$valid = isset($this->Request->getAllGetParams()[$this->params['field']]);
 		
-		\ZimLogger\MainZim::$CurrentLogger->debug('validaror ' . self::class);
-		\ZimLogger\MainZim::$CurrentLogger->debug('params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
+		\Talis\Corwin::logger()->debug('validaror ' . self::class);
+		\Talis\Corwin::logger()->debug('params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
 		
 		return $valid;
 	}

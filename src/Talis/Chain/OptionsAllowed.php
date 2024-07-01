@@ -33,7 +33,7 @@ class OptionsAllowed extends aChainLink implements \Talis\commons\iRenderable{
 	 * @see \Talis\commons\iRenderable::render()
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-		\ZimLogger\MainZim::$CurrentLogger->debug($this->Request->getUri() . ' FINISHED CHAIN WITH optional SUCCESS');
+		\Talis\Corwin::logger()->debug($this->Request->getUri() . ' FINISHED CHAIN WITH optional SUCCESS');
 		$this->Response->setMessage('Allowed Options');
 		$this->Response->setStatus(new \Talis\Message\Status\Code204);
 		$this->Response->markResponse();

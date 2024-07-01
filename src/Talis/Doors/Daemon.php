@@ -29,8 +29,8 @@ class Daemon{
 		try{
 			//decode
 			$decoded_request = json_decode(base64_decode($raw_request));
-			\ZimLogger\MainZim::$CurrentLogger->debug('MESSAGE RECEIVED');
-			\ZimLogger\MainZim::$CurrentLogger->debug($decoded_request);
+			\Talis\Corwin::logger()->debug('MESSAGE RECEIVED');
+			\Talis\Corwin::logger()->debug($decoded_request);
 			
 			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($decoded_request->url);
@@ -39,7 +39,7 @@ class Daemon{
     		    ->render(new \Talis\Message\Renderers\HTTP);
 
 		}catch(\Throwable $e){ // TODO for now, all errors are Corwin, better handling later
-		    \ZimLogger\MainZim::$CurrentLogger->fatal($e,true);
+		    \Talis\Corwin::logger()->fatal($e,true);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);

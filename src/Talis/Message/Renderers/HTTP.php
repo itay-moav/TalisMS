@@ -19,8 +19,8 @@ class HTTP implements \Talis\commons\iEmitter{
 		header($header);
 		header('Content-Type: application/json; charset=utf-8');
 		$all_other_headers = $message->getHeaders();
-		\ZimLogger\MainZim::$CurrentLogger->debug('SENDING HEADERS');
-		\ZimLogger\MainZim::$CurrentLogger->debug([$header] + $all_other_headers);
+		\Talis\Corwin::logger()->debug('SENDING HEADERS');
+		\Talis\Corwin::logger()->debug([$header] + $all_other_headers);
 		if($all_other_headers){
 		    foreach($all_other_headers as $other_header){
 		        header($other_header);
@@ -30,8 +30,8 @@ class HTTP implements \Talis\commons\iEmitter{
 		if($body === false){
 		    throw new \Exception('Could not json encode the payload');
 		}
-		\ZimLogger\MainZim::$CurrentLogger->debug('SENDING BODY');
-		\ZimLogger\MainZim::$CurrentLogger->debug($body);
+		\Talis\Corwin::logger()->debug('SENDING BODY');
+		\Talis\Corwin::logger()->debug($body);
 		echo $body;
 	}
 }
