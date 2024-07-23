@@ -9,7 +9,7 @@
 	],
 	"require": {
 		"php": ">=8.3.0",
-		"director-moav/zimlogger": "^v2.0.1"
+		"director-moav/zimlogger": "v2.0.1"
 	},
 	"autoload": {
 		"psr-0": {
