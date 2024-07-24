@@ -20,21 +20,21 @@ class Corwin{
 	/**
 	 * Logger used for all Talis lib log calls.
 	 * 
-	 * @var \ZimLogger\Handlers\aLogHandler
+	 * @var \Talis\commons\iLogger
 	 */
-	static private \ZimLogger\Handlers\aLogHandler $talis_logger;
+	static private \Talis\commons\iLogger $talis_logger;
     
 	/**
 	 * @param \ZimLogger\Handlers\aLogHandler $logger
 	 */
-	static public function set_logger(\ZimLogger\Handlers\aLogHandler $logger):void{
+	static public function set_logger(\Talis\commons\iLogger $logger):void{
 		self::$talis_logger = $logger;
 	}
 
 	/**
 	 * @return \ZimLogger\Handlers\aLogHandler
 	 */
-	static public function logger():\ZimLogger\Handlers\aLogHandler{
+	static public function logger():\Talis\commons\iLogger{
 		return self::$talis_logger;
 	}
 
