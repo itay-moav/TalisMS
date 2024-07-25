@@ -9,7 +9,7 @@
  * @author Itay Moav
  * @Date  2017-05-19
  */
-class Corwin{
+class TalisMain{
     
     /**
      * instantiate this in the app bootstrap
@@ -25,14 +25,14 @@ class Corwin{
 	static private \Talis\commons\iLogger $talis_logger;
     
 	/**
-	 * @param \ZimLogger\Handlers\aLogHandler $logger
+	 * @param \Talis\commons\iLogger $logger
 	 */
 	static public function set_logger(\Talis\commons\iLogger $logger):void{
 		self::$talis_logger = $logger;
 	}
 
 	/**
-	 * @return \ZimLogger\Handlers\aLogHandler
+	 * @return \Talis\commons\iLogger
 	 */
 	static public function logger():\Talis\commons\iLogger{
 		return self::$talis_logger;
@@ -99,9 +99,9 @@ class Corwin{
 	 * @param array<string> $request_parts
 	 * @param \stdClass $request_body
 	 * @param string $full_uri
-	 * @return \Talis\Corwin
+	 * @return \Talis\TalisMain
 	 */
-	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri):\Talis\Corwin{
+	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri):\Talis\TalisMain{
 		$this->req_body = $request_body;
 		self::$Context = new \Talis\Context;
 		$Response = new \Talis\Message\Response;

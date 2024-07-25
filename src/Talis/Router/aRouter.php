@@ -24,8 +24,8 @@ abstract class aRouter{
      * @param array<string> $request_parts
      */
     public function __construct(array $request_parts){
-        \Talis\Corwin::logger()->debug('request_parts');
-        \Talis\Corwin::logger()->debug($request_parts);
+        \Talis\TalisMain::logger()->debug('request_parts');
+        \Talis\TalisMain::logger()->debug($request_parts);
         $this->request_parts = $request_parts;
     }
     

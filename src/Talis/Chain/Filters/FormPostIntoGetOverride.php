@@ -11,8 +11,8 @@ class FormPostIntoGetOverride extends aFilter{
      * @see \Talis\Chain\Filters\aFilter::filter()
      */
     public function filter(\Talis\Message\Request $Request):void{
-        \Talis\Corwin::logger()->debug('POST');
-        \Talis\Corwin::logger()->debug($_POST);
+        \Talis\TalisMain::logger()->debug('POST');
+        \Talis\TalisMain::logger()->debug($_POST);
         
         $all_get_params = $this->Request->getAllGetParams();
         $new_all_get_params = array_merge($all_get_params,$_POST);

@@ -21,18 +21,18 @@ class CliEmbeded{
      */
 	public function gogogo(string $url,\stdClass $body):void{
 		try{
-			\Talis\Corwin::logger()->debug('EMBEDED CLI BODY');
-			\Talis\Corwin::logger()->debug($body);
+			\Talis\TalisMain::logger()->debug('EMBEDED CLI BODY');
+			\Talis\TalisMain::logger()->debug($body);
 
-			//Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
+			//TalisMain is the first step in the general chain. It is NOT tailored specificly for the http request.
 			$request_parts = $this->get_uri($url);
-			(new \Talis\Corwin)->begin($request_parts,$body,$url)
+			(new \Talis\TalisMain)->begin($request_parts,$body,$url)
 							   ->nextLinkInchain()
 					           ->render(new \Talis\Message\Renderers\Cli)
 			;
 
-		}catch(\Throwable $e){ // TODO for now, all errors are Corwin, better handling later
-		    \Talis\Corwin::logger()->fatal($e,true);
+		}catch(\Throwable $e){ // TODO for now, all errors are TalisMain, better handling later
+		    \Talis\TalisMain::logger()->fatal($e,true);
 			$response = new \Talis\Message\Response;
 			$response->markError();
 			$response->setStatus(new \Talis\Message\Status\Code500);

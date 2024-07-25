@@ -13,8 +13,8 @@ class CLIOnly extends aDependency{
     protected function validate():bool{
         $valid = isset($_SERVER['PHP_SELF']) && $_SERVER['PHP_SELF'] === './lord_commander';
         
-        \Talis\Corwin::logger()->debug('validaror ' . self::class);
-        \Talis\Corwin::logger()->debug("Am I using CLI door? [{$valid}]");
+        \Talis\TalisMain::logger()->debug('validaror ' . self::class);
+        \Talis\TalisMain::logger()->debug("Am I using CLI door? [{$valid}]");
         
         return $valid;
     }

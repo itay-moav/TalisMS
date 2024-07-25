@@ -10,7 +10,7 @@ class AddGetQueryStringOverriding extends aFilter{
         $new_all_get_params = array_merge($all_get_params,$_GET);
         $this->Request = new \Talis\Message\Request($Request->getUri(), $new_all_get_params, $Request->getBody());
     
-	    \Talis\Corwin::logger()->debug('FILTERED REQUEST');
-	    \Talis\Corwin::logger()->debug($this->Request);
+	    \Talis\TalisMain::logger()->debug('FILTERED REQUEST');
+	    \Talis\TalisMain::logger()->debug($this->Request);
 	}
 }

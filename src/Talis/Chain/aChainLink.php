@@ -106,7 +106,7 @@ abstract class aChainLink{
 	 * @see \Talis\Chain\AChainLink::nextLinkInchain()
 	 */
 	final public function nextLinkInchain():\Talis\Chain\aChainLink{
-	    \Talis\Corwin::logger()->debug('About to process: [' . get_class($this).']');
+	    \Talis\TalisMain::logger()->debug('About to process: [' . get_class($this).']');
 		$FinalLink = $this->process();
 
 		//If the returned chain is not a new chain (road diversion) and there are more links in the current chain, go after it.
@@ -115,12 +115,12 @@ abstract class aChainLink{
 			$name   = $next_link_class[0];
 			$params = $next_link_class[1];
 			if(is_callable($name)){
-			    \Talis\Corwin::logger()->debug('STARTING NEXT CHAIN LINK WITH FUNCTION');
-			    \Talis\Corwin::logger()->debug($name);
+			    \Talis\TalisMain::logger()->debug('STARTING NEXT CHAIN LINK WITH FUNCTION');
+			    \Talis\TalisMain::logger()->debug($name);
 			    $next_link = new FunctionalChainlinkWrapper($name,$this->Request,$this->Response,$params);
 			    
 			} else {
-    			\Talis\Corwin::logger()->debug("STARTING NEXT CHAIN LINK WITH {$name}");
+    			\Talis\TalisMain::logger()->debug("STARTING NEXT CHAIN LINK WITH {$name}");
     			$next_link = new $name($this->Request,$this->Response,$params);
 			}
 			
@@ -151,6 +151,6 @@ function handleFunctionalChainlink($func,$Request,$Response,$params,$chain_conta
     //function can only modify the response and request payloads
     //return is debug only
     $dbg = $func($Request,$Response,$params);
-    \Talis\Corwin::logger()->debug('Functional response ' . print_r($dbg,true));
+    \Talis\TalisMain::logger()->debug('Functional response ' . print_r($dbg,true));
     
 }

@@ -32,8 +32,8 @@ abstract class aError extends \Talis\Chain\aChainLink implements \Talis\commons\
 	 *  
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-	    \Talis\Corwin::logger()->error($this->params,false);
-	    \Talis\Corwin::logger()->error($this->format_human_message(),true);
+	    \Talis\TalisMain::logger()->error($this->params,false);
+	    \Talis\TalisMain::logger()->error($this->format_human_message(),true);
 				
 		$this->Response->setMessage($this->format_human_message());
 		$status_class = "\Talis\Message\Status\Code{$this->http_code}";

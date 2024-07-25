@@ -19,7 +19,7 @@ class DefaultValueGet extends aFilter{
 	    
 	    $this->Request = new \Talis\Message\Request($Request->getUri(), $all_get_params, $Request->getBody());
 	    
-	    \Talis\Corwin::logger()->debug('FILTERED REQUEST');
-	    \Talis\Corwin::logger()->debug($this->Request);
+	    \Talis\TalisMain::logger()->debug('FILTERED REQUEST');
+	    \Talis\TalisMain::logger()->debug($this->Request);
 	}
 }

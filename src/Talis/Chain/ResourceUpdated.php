@@ -25,9 +25,9 @@ class ResourceUpdated extends aChainLink implements \Talis\commons\iRenderable{
 	 * @see \Talis\commons\iRenderable::render()
 	 */
 	public function render(\Talis\commons\iEmitter $emitter):void{
-	    \Talis\Corwin::logger()->debug($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
-	    \Talis\Corwin::logger()->debug('RESPONSE: ');
-	    \Talis\Corwin::logger()->debug($this->Response);
+	    \Talis\TalisMain::logger()->debug($this->Request->getUri() . ' FINISHED CHAIN WITH SUCCESS');
+	    \Talis\TalisMain::logger()->debug('RESPONSE: ');
+	    \Talis\TalisMain::logger()->debug($this->Response);
 		$emitter->emit($this->Response);
 	}
 }

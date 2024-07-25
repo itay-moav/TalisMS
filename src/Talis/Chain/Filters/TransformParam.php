@@ -12,8 +12,8 @@ class TransformParam extends aFilter{
     public function filter(\Talis\Message\Request $Request):void{
         $params = $Request->getBody()->params;
 
-        \Talis\Corwin::logger()->debug('input params for filter TransformParam');
-		\Talis\Corwin::logger()->debug($params);
+        \Talis\TalisMain::logger()->debug('input params for filter TransformParam');
+		\Talis\TalisMain::logger()->debug($params);
 		
 		if(isset($params->{$this->params[0]}) && $params->{$this->params[0]} == $this->params[1]){
 			$params->{$this->params[0]} = $this->params[2];

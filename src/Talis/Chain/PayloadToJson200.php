@@ -25,16 +25,16 @@ class PayloadToJson200 extends aChainLink implements \Talis\commons\iRenderable{
 	public function render(\Talis\commons\iEmitter $emitter):void{
 	    $res = json_encode($this->Response->getPayload());
 	    
-	    \Talis\Corwin::logger()->debug('JSON RESPONSE');
-	    \Talis\Corwin::logger()->debug($res);
+	    \Talis\TalisMain::logger()->debug('JSON RESPONSE');
+	    \Talis\TalisMain::logger()->debug($res);
 	    
 	    header('HTTP/1.1 200 Ok');
 	    header('Content-Type: application/json');
 	    $all_other_headers = $this->Response->getHeaders();
 	    if($all_other_headers){
 
-	        \Talis\Corwin::logger()->debug('SENDING HEADERS');
-	        \Talis\Corwin::logger()->debug($all_other_headers);
+	        \Talis\TalisMain::logger()->debug('SENDING HEADERS');
+	        \Talis\TalisMain::logger()->debug($all_other_headers);
 	        
 	        foreach($all_other_headers as $other_header){
 	            header($other_header);

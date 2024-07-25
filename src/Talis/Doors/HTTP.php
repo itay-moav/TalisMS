@@ -37,17 +37,17 @@ class HTTP
      */
     public function gogogo(string $root_uri):void
     {
-        \Talis\Corwin::logger()->debug("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nREQUEST LOG STARTS HERE!");
+        \Talis\TalisMain::logger()->debug("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nREQUEST LOG STARTS HERE!");
         $this->root_uri = $root_uri;
         dbgn("ROOT URI [{$this->root_uri}]");
         
         try {
-            // Corwin is the first step in the general chain. It is NOT tailored specificly for the http request.
-            (new \Talis\Corwin())->begin($this->get_uri_from_server(), $this->get_request_body(), $this->full_uri)
+            // TalisMain is the first step in the general chain. It is NOT tailored specificly for the http request.
+            (new \Talis\TalisMain())->begin($this->get_uri_from_server(), $this->get_request_body(), $this->full_uri)
                 ->nextLinkInchain()
                 ->render(new \Talis\Message\Renderers\HTTP());
-        } catch (\Throwable $e) { // TODO for now, all errors are Corwin, better handling later
-            \Talis\Corwin::logger()->fatal($e,true);
+        } catch (\Throwable $e) { // TODO for now, all errors are TalisMain, better handling later
+            \Talis\TalisMain::logger()->fatal($e,true);
             $response = new \Talis\Message\Response();
             $response->markError();
             $response->setStatus(new \Talis\Message\Status\Code500());
@@ -84,8 +84,8 @@ class HTTP
     protected function get_request_body(): ?\stdClass
     {
         $json_request_body = file_get_contents('php://input');
-        \Talis\Corwin::logger()->debug('RAW INPUT FROM CLIENT');
-        \Talis\Corwin::logger()->debug($json_request_body);
+        \Talis\TalisMain::logger()->debug('RAW INPUT FROM CLIENT');
+        \Talis\TalisMain::logger()->debug($json_request_body);
         return json_decode($json_request_body?:'');
     }
 }

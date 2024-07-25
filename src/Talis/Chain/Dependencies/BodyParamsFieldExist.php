@@ -21,10 +21,10 @@ class BodyParamsFieldExist extends aDependency{
 	
 	public function render(\Talis\commons\iEmitter $emitter):void{
 		
-		\Talis\Corwin::logger()->debug('RENDER input body');
-		\Talis\Corwin::logger()->debug($this->Request->getBody());
+		\Talis\TalisMain::logger()->debug('RENDER input body');
+		\Talis\TalisMain::logger()->debug($this->Request->getBody());
 		$msg="Mising param [{$this->params['field']}] part in request body->params[]";
-		\Talis\Corwin::logger()->warning($msg,true);
+		\Talis\TalisMain::logger()->warning($msg,true);
 		$response = new \Talis\Message\Response;
 		$response->setMessage($msg);
 		$response->markDependency();

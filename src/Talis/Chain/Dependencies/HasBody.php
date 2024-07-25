@@ -16,8 +16,8 @@ class HasBody extends aDependency{
 	
 	public function render(\Talis\commons\iEmitter $emitter):void{
 		
-		\Talis\Corwin::logger()->debug('RENDER input body');
-		\Talis\Corwin::logger()->debug($this->Request->getBody());
+		\Talis\TalisMain::logger()->debug('RENDER input body');
+		\Talis\TalisMain::logger()->debug($this->Request->getBody());
 		
 		$response = new \Talis\Message\Response;
 		$response->markDependency();

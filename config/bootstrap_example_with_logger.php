@@ -39,14 +39,14 @@ require_once __DIR__ . '/../vendor/autoload.php';
 //Shortcut functions for usage of default logger dbg,dbgn,dbgr,info,warning,error,fatal
 \ZimLogger\MainZim::include_shortcuts();
 
-// necessary for including the API classes, for example (in Corwin)
-\Talis\Corwin::$APP_PATH = APP_PATH;
+// necessary for including the API classes, for example (in TalisMain)
+\Talis\TalisMain::$APP_PATH = APP_PATH;
 
 //Sets the logger used inside Talis, if need a separate logger just for Talis lib errors, this is where u overwrite it
-\Talis\Corwin::set_logger(new ZimLoggerWrapper(\ZimLogger\MainZim::$GlobalLogger));
+\Talis\TalisMain::set_logger(new ZimLoggerWrapper(\ZimLogger\MainZim::$GlobalLogger));
 
 //TODO Move this to another bootstrap with an example
-//\Talis\Corwin::$registered_router = 'Some Router Class Name to override defaults'; 
+//\Talis\TalisMain::$registered_router = 'Some Router Class Name to override defaults'; 
 
 
 

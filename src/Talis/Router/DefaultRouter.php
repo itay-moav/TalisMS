@@ -18,10 +18,10 @@ class DefaultRouter extends aRouter{
         }
         
         $this->route= [
-            'route'      => \Talis\Corwin::$APP_PATH . "/api/{$this->request_parts[1]}/{$this->request_parts[2]}/{$this->request_parts[3]}.php",
+            'route'      => \Talis\TalisMain::$APP_PATH . "/api/{$this->request_parts[1]}/{$this->request_parts[2]}/{$this->request_parts[3]}.php",
             'classname'  => "\Api\\{$this->request_parts[1]}{$this->request_parts[2]}{$this->request_parts[3]}"
         ];
-        \Talis\Corwin::logger()->debug("Doing route [{$this->route['route']}]");
+        \Talis\TalisMain::logger()->debug("Doing route [{$this->route['route']}]");
     }
     
     /**
@@ -37,8 +37,8 @@ class DefaultRouter extends aRouter{
 
         if(count($_GET)>0){
             $extra_params = array_merge($extra_params,$_GET);
-            \Talis\Corwin::logger()->debug('extra with HTTP GET params');
-            \Talis\Corwin::logger()->debug($extra_params);
+            \Talis\TalisMain::logger()->debug('extra with HTTP GET params');
+            \Talis\TalisMain::logger()->debug($extra_params);
         }
         return $extra_params;
     }
@@ -54,7 +54,7 @@ class DefaultRouter extends aRouter{
     public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response): \Talis\Chain\aChainLink
     {
         $full_path_route = $this->route['route'];
-        \Talis\Corwin::logger()->debug("TRYING TO INCLUDE: {$full_path_route}");
+        \Talis\TalisMain::logger()->debug("TRYING TO INCLUDE: {$full_path_route}");
         if(file_exists($full_path_route)){
             require_once $full_path_route;
         } else {            

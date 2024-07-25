@@ -4,4 +4,4 @@ parameters:
       - src
    ignoreErrors:
       - '#Class Talis\\Chain\\aChainLink referenced with incorrect case: Talis\\Chain\\AChainLink.#'
-      - '#Method Talis\\Corwin::nextLinkInchain\(\) should return Talis\\commons\\iRenderable#'
+      - '#Method Talis\\TalisMain::nextLinkInchain\(\) should return Talis\\commons\\iRenderable#'
