@@ -4,7 +4,10 @@ class TalisPingRead extends \Talis\Chain\aFilteredValidatedChainLink{
     /**
      * If I got here, it means the dependencies where satisified.
      * The next link is where we route depending on the Action value
-     *
+     * 
+     * Notice last element in the chain must implement  \Talis\commons\iRenderable
+     * otherwise the response can not be rendered and it will error out after the last chainlink is processed
+     * 
      * @return array with single or more BL aChainLink objects
      */
     protected function get_next_bl():array{
@@ -16,7 +19,9 @@ class TalisPingRead extends \Talis\Chain\aFilteredValidatedChainLink{
 
 
 
-
+/**
+ * Return basic response to confirm chain operation and input capture
+ */
 class Pong extends \Talis\Chain\aChainLink implements \Talis\commons\iRenderable{
     public function process():\Talis\Chain\aChainLink{
         $this->Response->setMessage('PONG ... PING PONG!');

@@ -4,6 +4,8 @@
 /**
  * Responsebility: 
  *    Wraps functional chainlinks for easier use
+ * 
+ * Useful for quick logic injection without needing to define a full class
  *    
  * @author Itay Moav
  * @Date  2021-04-08

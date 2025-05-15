@@ -1,7 +1,19 @@
 <?php namespace Talis\Chain;
 
 /**
- * Manages chainlinks 
+ * Manages chainlinks
+ * 
+ * Each chain link is stored as an array of either a classname (which must inherit from aChainLink) 
+ * or a function that returns a function that accepts \Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params
+ * example: [[ClassName::class, [param1, param2, ...],[createFunc(), [param1, param2, ...]]
+ * 
+ * function createFunc():callable{
+ *      return function (\Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params){
+ *          // do something with Request and params and adds output into Response->getPayload()->someVar=???
+ *      }
+ * }
+ * 
+ * The container pushes/pops chain links to be processed in sequence implementing the Chain pattern.
  * 
  * push
  * pop

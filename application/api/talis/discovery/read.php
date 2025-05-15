@@ -9,6 +9,9 @@
 class TalisDiscoveryRead extends \Talis\Chain\aFilteredValidatedChainLink{
     
     /**
+     * Recursively reads all PHP files in the API directory to build the API discovery list
+     * Notice last element in the chain must implement  \Talis\commons\iRenderable
+     * otherwise the response can not be rendered and it will error out after the last chainlink is processed
      */
     protected function get_next_bl():array{
         return [
@@ -19,7 +22,7 @@ class TalisDiscoveryRead extends \Talis\Chain\aFilteredValidatedChainLink{
 }
 
 /**
- * Go over the folders and list the items
+ * Recursively reads all PHP files in the API directory to build the API discovery list
  * @author itay
  *
  */

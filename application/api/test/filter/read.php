@@ -2,6 +2,10 @@
 
 /**
  * Responsebility: Parses the user input to identify the API class to instantiate
+ * 
+ * Notice last element in the chain must implement  \Talis\commons\iRenderable
+ * otherwise the response can not be rendered and it will error out after the last chainlink is processed
+ * 
  * @author Itay Moav
  * @Date  2017-05-19
  */

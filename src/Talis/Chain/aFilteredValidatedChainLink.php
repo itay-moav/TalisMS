@@ -2,9 +2,11 @@
 
 /**
  * Responsebility: 
- *    (JUST) Manages the filters and then the dependency chain a request has.
+ *    Manages the filters and then the dependency chain a request has.
  *    Last block in the chain (can also be the only one) would be the 
  *    concrete BL object /array of objects for this request.
+ * 	  Merges filters, dependencies, and BL handlers into a single execution chain
+ *    where the order is Filters first, then validator then the bl Chain Links
  *    
  * @author Itay Moav
  * @Date  2017-05-19
@@ -26,6 +28,8 @@ abstract class aFilteredValidatedChainLink extends aChainLink{
 	
 	/**
 	 * builds the chain from the filter+dependencies+bls
+	 *  Merges filters, dependencies, and BL handlers into a single execution chain
+ 	 *  where the order is Filters first, then validator then the bl Chain Links
 	 */
 	final protected function load_chain_container():void{
 	    $this->set_chain_container(new ChainContainer(array_merge($this->filters,$this->dependencies,$this->get_next_bl())));
