@@ -6,6 +6,14 @@
  *    Wraps functional chainlinks for easier use
  * 
  * Useful for quick logic injection without needing to define a full class
+ * Instead of creating a class the user can do:
+ * [[ClassName::class, [param1, param2, ...],[createFunc(), [param1, param2, ...]]
+ * 
+ * function createFunc():callable{
+ *      return function (\Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params){
+ *          // do something with Request and params and adds output into Response->getPayload()->someVar=???
+ *      }
+ * }
  *    
  * @author Itay Moav
  * @Date  2021-04-08
