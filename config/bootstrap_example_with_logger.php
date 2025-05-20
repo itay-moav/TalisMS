@@ -1,54 +1,10 @@
 <?php
 
+
+
+
 //HEre you put constants and ini settings
 require_once __DIR__ . '/config.php';
-
-
-//HANDLE AUTOLOADING FOR CODE UNDER APPLICATION FOLDER
-/**
- *
- * @return callable
- */
-function getAutoloader(){
-    /**
-     * @param string $class
-     * @throws \Talis\Exception\ClassNotFound
-     */
-    return function (string $class):void {
-        $file_path = str_replace('\\','/',$class) . '.php';
-        require_once $file_path;
-    };
-}
-
-spl_autoload_register(getAutoloader(),true);
-
-
-//COMPOSER
-require_once __DIR__ . '/../vendor/autoload.php';
-
-//Instantiate the logger. This just sets the main/defaul logger, u can use other instances throughout.
-//U can overwrite this one too later on
-\ZimLogger\MainZim::setGlobalLogger(
-    'talisms_test',
-    'Stdio',
-    4,
-    '/some/path/to/write/log',
-    false
-);
-
-//Shortcut functions for usage of default logger dbg,dbgn,dbgr,info,warning,error,fatal
-\ZimLogger\MainZim::include_shortcuts();
-
-// necessary for including the API classes, for example (in TalisMain)
-\Talis\TalisMain::$APP_PATH = APP_PATH;
-
-//Sets the logger used inside Talis, if need a separate logger just for Talis lib errors, this is where u overwrite it
-\Talis\TalisMain::set_logger(new ZimLoggerWrapper(\ZimLogger\MainZim::$GlobalLogger));
-
-//TODO Move this to another bootstrap with an example
-//\Talis\TalisMain::$registered_router = 'Some Router Class Name to override defaults'; 
-
-
 
 class ZimLoggerWrapper implements \Talis\commons\iLogger{
     
@@ -107,3 +63,48 @@ class ZimLoggerWrapper implements \Talis\commons\iLogger{
         $this->logger->debug($inp,$full_stack);
     }   
 }
+
+
+//HANDLE AUTOLOADING FOR CODE UNDER APPLICATION FOLDER
+/**
+ *
+ * @return callable
+ */
+function getAutoloader(){
+    /**
+     * @param string $class
+     * @throws \Talis\Exception\ClassNotFound
+     */
+    return function (string $class):void {
+        $file_path = str_replace('\\','/',$class) . '.php';
+        require_once $file_path;
+    };
+}
+
+spl_autoload_register(getAutoloader(),true);
+
+
+//COMPOSER
+require_once __DIR__ . '/../vendor/autoload.php';
+
+//Instantiate the logger. This just sets the main/defaul logger, u can use other instances throughout.
+//U can overwrite this one too later on
+\ZimLogger\MainZim::setGlobalLogger(
+    'talisms_test',
+    'Stdio',
+    4,
+    '/some/path/to/write/log',
+    false
+);
+
+//Shortcut functions for usage of default logger dbg,dbgn,dbgr,info,warning,error,fatal
+\ZimLogger\MainZim::include_shortcuts();
+
+// necessary for including the API classes, for example (in TalisMain)
+\Talis\TalisMain::$APP_PATH = APP_PATH;
+
+//Sets the logger used inside Talis, if need a separate logger just for Talis lib errors, this is where u overwrite it
+\Talis\TalisMain::set_logger(new ZimLoggerWrapper(\ZimLogger\MainZim::$GlobalLogger));
+
+//TODO Move this to another bootstrap with an example
+//\Talis\TalisMain::$registered_router = 'Some Router Class Name to override defaults'; 

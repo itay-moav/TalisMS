@@ -1,4 +1,8 @@
 <?php namespace Api;
+/**
+ * Default installation with standalone will pop this up with http://localhost:8001/api/talis/ping/
+ * in the browser
+ */
 class TalisPingRead extends \Talis\Chain\aFilteredValidatedChainLink{
     
     /**
