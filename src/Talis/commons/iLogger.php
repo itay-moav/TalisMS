@@ -1,111 +1,42 @@
-<?php namespace Talis\commons;
-/**
- * 
- * @author itay
- * @date 2024-07-24
- * 
- * The library files has various log calles to emit debug/info/warning/error/fatal messages.
- * You can send those log messages anywere you want and use which ever logger mechanizem you want.
- * All you need to do is write a thin wrapper around the logger you will use which implements 
- * the following interface.
- * 
- * Below the interface I provide a default dev/null logger which u can use if u prefer not to have a logger
- * IT IS NOT set as the default, YOU must do it in the bootstrap file (see example in /TalisMS/config/
- *
- */
-interface iLogger{
-   
-    /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     */
-    public function debug(mixed $inp):void;
-    
-    /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     * @param bool $full_stack : A boolean flag to tell the logger (if it has this capability, otherwise just send false) to add
-     *                           some default stuff to the log entry (can be trace, some stats, SESSION etc)
-     */
-    public function info(mixed $inp,bool $full_stack):void;
-    
-    /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     * @param bool $full_stack : A boolean flag to tell the logger (if it has this capability, otherwise just send false) to add
-     *                           some default stuff to the log entry (can be trace, some stats, SESSION etc)
-     */
-    public function warning(mixed $inp,bool $full_stack):void;
-    
-    /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     * @param bool $full_stack : A boolean flag to tell the logger (if it has this capability, otherwise just send false) to add
-     *                           some default stuff to the log entry (can be trace, some stats, SESSION etc)
-     */
-    public function error(mixed $inp,bool $full_stack):void;
-    
-    /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     * @param bool $full_stack : A boolean flag to tell the logger (if it has this capability, otherwise just send false) to add
-     *                           some default stuff to the log entry (can be trace, some stats, SESSION etc)
-     */
-    public function fatal(mixed $inp,bool $full_stack):void;   
-}
+<?php
 
+declare(strict_types=1);
 
+namespace Talis\commons;
 
 /**
- * A bullshit logger you can use if u do not want a logger.
- * Add it in the bootstrap (see the example in the config/bootsrap)
+ * The library emits debug/info/warning/error/fatal log calls through this
+ * interface. Write a thin wrapper around whichever logger you use, implement
+ * this, and set it with Talis\TalisMain::setLogger().
  */
-class NullLogger implements iLogger{
+interface iLogger
+{
     /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
+     * @param mixed $inp the thing to log; make sure your logger can handle its type
      */
-    public function debug(mixed $inp):void{
-        //boo
-    }
-    
+    public function debug(mixed $inp): void;
+
     /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     * @param bool $full_stack : A boolean flag to tell the logger (if it has this capability, otherwise just send false) to add
-     *                           some default stuff to the log entry (can be trace, some stats, SESSION etc)
+     * @param mixed $inp the thing to log; make sure your logger can handle its type
+     * @param bool $full_stack whether to add extra context (trace, stats, session, ...) if the logger supports it
      */
-    public function info(mixed $inp,bool $full_stack):void{
-        //boo
-    }
-    
+    public function info(mixed $inp, bool $full_stack): void;
+
     /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     * @param bool $full_stack : A boolean flag to tell the logger (if it has this capability, otherwise just send false) to add
-     *                           some default stuff to the log entry (can be trace, some stats, SESSION etc)
+     * @param mixed $inp the thing to log; make sure your logger can handle its type
+     * @param bool $full_stack whether to add extra context (trace, stats, session, ...) if the logger supports it
      */
-    public function warning(mixed $inp,bool $full_stack):void{
-        //boo
-    }
-    
+    public function warning(mixed $inp, bool $full_stack): void;
+
     /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     * @param bool $full_stack : A boolean flag to tell the logger (if it has this capability, otherwise just send false) to add
-     *                           some default stuff to the log entry (can be trace, some stats, SESSION etc)
+     * @param mixed $inp the thing to log; make sure your logger can handle its type
+     * @param bool $full_stack whether to add extra context (trace, stats, session, ...) if the logger supports it
      */
-    public function error(mixed $inp,bool $full_stack):void{
-        //boo
-    }
-    
+    public function error(mixed $inp, bool $full_stack): void;
+
     /**
-     *
-     * @param mixed $inp : The piece you want to send the log. Make sure it isa datatype your logger can handle
-     * @param bool $full_stack : A boolean flag to tell the logger (if it has this capability, otherwise just send false) to add
-     *                           some default stuff to the log entry (can be trace, some stats, SESSION etc)
+     * @param mixed $inp the thing to log; make sure your logger can handle its type
+     * @param bool $full_stack whether to add extra context (trace, stats, session, ...) if the logger supports it
      */
-    public function fatal(mixed $inp,bool $full_stack):void{
-        //boo
-    }   
+    public function fatal(mixed $inp, bool $full_stack): void;
 }

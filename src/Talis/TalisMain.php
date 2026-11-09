@@ -18,24 +18,19 @@ class TalisMain{
     static public string $APP_PATH;
 
 	/**
-	 * Logger used for all Talis lib log calls.
-	 * 
-	 * @var \Talis\commons\iLogger
+	 * Logger used for all Talis lib log calls. Null until setLogger() is
+	 * called; logger() then falls back to a cached NullLogger.
+	 *
+	 * @var ?\Talis\commons\iLogger
 	 */
-	static private \Talis\commons\iLogger $talis_logger;
-    
-	/**
-	 * @param \Talis\commons\iLogger $logger
-	 */
-	static public function set_logger(\Talis\commons\iLogger $logger):void{
-		self::$talis_logger = $logger;
+	static private ?\Talis\commons\iLogger $logger = null;
+
+	static public function setLogger(\Talis\commons\iLogger $logger):void{
+		self::$logger = $logger;
 	}
 
-	/**
-	 * @return \Talis\commons\iLogger
-	 */
 	static public function logger():\Talis\commons\iLogger{
-		return self::$talis_logger;
+		return self::$logger ??= new \Talis\commons\NullLogger();
 	}
 
 	/**

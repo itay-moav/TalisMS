@@ -1,11 +1,13 @@
-<?php namespace Talis\commons;
-interface iFilter{
-	/**
-	 * gets as input a message. MODIFIES THE ACTUAL MESSAGE which is pased by reference.
-	 * returns NOTHING!
-	 * BE AWARE THIS IS AGAINST THE CURRENT buzz to go fully immutable!
-	 *  
-	 * @param \Talis\Message\Request $Request
-	 */
-	public function filter(\Talis\Message\Request $Request):void;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\commons;
+
+interface iFilter
+{
+    /**
+     * Modifies the given Request in place (it is passed by reference); returns nothing.
+     */
+    public function filter(\Talis\Message\Request $Request): void;
 }

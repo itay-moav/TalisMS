@@ -1,36 +1,43 @@
-<?php namespace Talis;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis;
+
 /**
- * The context object purpose is to be shared via 
- * and entire process and hold information/resources/settings common to it all.
- * As opposed to Response/Request this is not a Message
- * that can be transfered over to another system (i.e. not serilizable /JSONable).
- * The contex is private to the process.
- * 
- * The context is being held in a static variable in 
- * @author itay
- *
+ * Shared state for the current process: resources, settings, anything that
+ * is not part of the Request/Response and so is not sent to another system.
  */
-class Context{
-    public const NaN = 'NaN';
-    
+class Context
+{
     /**
-     * 
-     * @var array<mixed> of shared resources in the current process. 
+     * @var array<string, mixed>
      */
-	private array $resources = [];
-	
-	/**
-	 * getter/setter for resources array.
-	 * 
-	 * @param string $resource_name
-	 * @param mixed $resource
-	 * @return mixed
-	 */
-	public function resource(string $resource_name,$resource=null){
-	    if($resource){
-	        $this->resources[$resource_name] = $resource;
-	    }
-	    return $this->resources[$resource_name];
-	}
-		
+    private array $resources = [];
+
+    /**
+     * Returns the stored value, or $default when has($name) is false.
+     * A stored falsy value (0, '', false, null, ...) is returned as is.
+     */
+    public function get(string $name, mixed $default = null): mixed
+    {
+        if (!$this->has($name)) {
+            return $default;
+        }
+
+        return $this->resources[$name];
+    }
+
+    /**
+     * Stores a value, falsy ones included. Overwrites any existing value.
+     */
+    public function set(string $name, mixed $value): void
+    {
+        $this->resources[$name] = $value;
+    }
+
+    public function has(string $name): bool
+    {
+        return array_key_exists($name, $this->resources);
+    }
 }

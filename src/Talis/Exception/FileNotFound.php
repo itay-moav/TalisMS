@@ -1,12 +1,16 @@
-<?php namespace Talis\Exception;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Exception;
+
 /**
- * Could not find class for inclusion
+ * The requested file does not exist.
  */
-class FileNotFound extends \Exception{
-    /**
-     * @param string $file
-     */
-	public function __construct(string $file){
-		parent::__construct("[{$file}] not found!");
-	}
+class FileNotFound extends \Exception
+{
+    public function __construct(string $file, ?\Throwable $previous = null)
+    {
+        parent::__construct("File [{$file}] not found", 0, $previous);
+    }
 }
