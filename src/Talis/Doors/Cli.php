@@ -1,80 +1,74 @@
-<?php namespace Talis\Doors;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Doors;
+
+use Talis\commons\iEmitter;
+use Talis\Message\Response;
+use Talis\Message\ResponseType;
+use Talis\TalisMain;
 
 /**
- * SERVES cli originating messages
- * 
- * Main entry point for the request chain
- * Translate the input into the initial request object
- * and moves it along
- * 
- * Will assume a two or three parameters sent to the cli door
- * url json_decoded_stdclass 
- * OR
- * url base64_encoded(json_string_encoded(stdclass)) is_base64_encoded
- * 
- * examples:
- * 
- * path/to/lord_commander /test/ping/read "{n:1,l:2}";
- * OR
- * path/to/lord_commander /test/ping/read "{n:1,l:2} yes";
- * 
- * Loads the right controller and action.
- * Renders the $Result of the action
- * Can handle page caching.
- * Error handling
- *  
+ * Door for command line calls: a URL and an optional JSON body,
+ * which may be base64 encoded.
+ *
+ * Examples:
+ *   lord_commander /test/ping/read '{"params":{"n":1}}'
+ *   lord_commander /test/ping/read <base64 of the JSON> 1
+ *
+ * gogogo() returns an exit code and never ends the process itself.
  */
-class Cli{
+class Cli extends aDoor
+{
+    /**
+     * The final Response is a normal (non error) response.
+     */
+    public const int EXIT_OK = 0;
 
     /**
-     * Starts the chain reaction. builds request/check dependencies/run main logic
-     * @param string $url
-     * @param ?string $raw_request_body
-     * @param bool $is_base64_encoded
+     * Error or dependency response, bad input or an exception.
      */
-	public function gogogo(string $url,?string $raw_request_body,bool $is_base64_encoded=false):void{
-	    $raw_request_body = $raw_request_body?:'';
-		try{
-		    \Talis\TalisMain::logger()->debug('$raw_request_body');
-		    \Talis\TalisMain::logger()->debug($raw_request_body);
-		    
-		    //decode
-		    if($is_base64_encoded && $raw_request_body){
-		        $raw_request_body = base64_decode($raw_request_body);
-		        \Talis\TalisMain::logger()->debug('base64 decoded request_body');
-		        \Talis\TalisMain::logger()->debug($raw_request_body);
-		    }
-		    
-		    $decoded_request_body = json_decode($raw_request_body?:'');
-		    \Talis\TalisMain::logger()->debug('$decoded_request_body');
-		    \Talis\TalisMain::logger()->debug($decoded_request_body);
-		    
-		    //TalisMain is the first step in the general chain. It is NOT tailored specificly for the http request.
-		    $request_parts = $this->get_uri($url);
-		    (new \Talis\TalisMain)->begin($request_parts,
-		        $decoded_request_body,
-		        $url)
-		        ->nextLinkInchain()
-		        ->render(new \Talis\Message\Renderers\Cli);
+    public const int EXIT_ERROR = 1;
 
-		}catch(\Throwable $e){ // TODO for now, all errors are TalisMain, better handling later
-		    \Talis\TalisMain::logger()->fatal($e,true);
-			$response = new \Talis\Message\Response;
-			$response->markError();
-			$response->setStatus(new \Talis\Message\Status\Code500);
-			$response->setMessage($e.'');
-			(new \Talis\Message\Renderers\Cli)->emit($response);
-			exit(-1);
-		}
-	}
+    public function __construct(iEmitter $emitter = new \Talis\Message\Renderers\Cli())
+    {
+        parent::__construct($emitter);
+    }
 
-	/**
-	 * Parses the server input to generate raw uri parts
-	 * @param string $uri
-	 * @return array<string>
-	 */
-	private function get_uri(string $uri):array{
-		return explode('/',$uri);
-	}
+    public function gogogo(string $url, ?string $rawBody = null, bool $isBase64 = false): int
+    {
+        TalisMain::logger()->debug("Cli url [{$url}]");
+        TalisMain::logger()->debug($rawBody);
+
+        try {
+            $body = $this->decodeBody($rawBody, $isBase64);
+        } catch (\JsonException | \UnexpectedValueException $e) {
+            return $this->exitCode($this->badInput('Invalid request body: ' . $e->getMessage()));
+        }
+        return $this->exitCode($this->dispatch($this->uriParts($url), $body, $url));
+    }
+
+    /**
+     * @throws \JsonException|\UnexpectedValueException on bad base64 or a body that is not a JSON object
+     */
+    protected function decodeBody(?string $rawBody, bool $isBase64): ?\stdClass
+    {
+        if ($rawBody === null || $rawBody === '') {
+            return null;
+        }
+
+        if ($isBase64) {
+            $rawBody = base64_decode($rawBody, true);
+            if ($rawBody === false) {
+                throw new \UnexpectedValueException('Body is not valid base64');
+            }
+        }
+        return $this->decodeJsonObject($rawBody);
+    }
+
+    protected function exitCode(Response $Response): int
+    {
+        return $Response->getResponseType() === ResponseType::Response ? self::EXIT_OK : self::EXIT_ERROR;
+    }
 }
-

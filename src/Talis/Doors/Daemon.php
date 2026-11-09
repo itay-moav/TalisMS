@@ -1,59 +1,49 @@
-<?php namespace Talis\Doors;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Doors;
+
+use Talis\commons\iEmitter;
+use Talis\Message\Response;
+use Talis\TalisMain;
 
 /**
- * SERVES ActiveMQ originating messages
- * 
- * Main entry point for the request chain
- * Translate the input into the initial request object
- * and moves it along
- * 
- * Will assume a string (base64 encoded):
- * {"url":"[version][action][subaction][type]",      #for example 1/event/repeat/create|update|read|delete
- *  "params": {}
- * }     
- * 
- * 
- * Loads the right controller and action.
- * Renders the $Result of the action
- * Can handle page caching.
- * Error handling
- *  
+ * Door for queued messages, such as spool files read by SpoolWorker.
+ * Takes the raw JSON of one message:
+ *   {"url": "/event/repeat/create", "params": {...}}
+ * The url picks the route. The rest of the object, without url, is the
+ * Request body.
  */
-class Daemon{
-	
-	/**
-	 * Starts the chain reaction. builds request/check dependencies/run main logic
-	 */
-	public function gogogo(string $raw_request):void{
-		
-		try{
-			//decode
-			$decoded_request = json_decode(base64_decode($raw_request));
-			\Talis\TalisMain::logger()->debug('MESSAGE RECEIVED');
-			\Talis\TalisMain::logger()->debug($decoded_request);
-			
-			//TalisMain is the first step in the general chain. It is NOT tailored specificly for the http request.
-			$request_parts = $this->get_uri($decoded_request->url);
-		    (new \Talis\TalisMain)->begin($request_parts,$decoded_request->params,$decoded_request->url)
-    		    ->nextLinkInchain()
-    		    ->render(new \Talis\Message\Renderers\HTTP);
+class Daemon extends aDoor
+{
+    public function __construct(iEmitter $emitter = new \Talis\Message\Renderers\Log())
+    {
+        parent::__construct($emitter);
+    }
 
-		}catch(\Throwable $e){ // TODO for now, all errors are TalisMain, better handling later
-		    \Talis\TalisMain::logger()->fatal($e,true);
-			$response = new \Talis\Message\Response;
-			$response->markError();
-			$response->setStatus(new \Talis\Message\Status\Code500);
-			$response->setMessage($e.'');
-			(new \Talis\Message\Renderers\HTTP)->emit($response);
-		}
-	}
-	
-	/**
-	 * Parses the server input to generate raw uri parts
-	 * @return array<string>
-	 */
-	private function get_uri(string $uri):array{
-		return explode('/',$uri);
-	}
+    public function gogogo(string $rawJson): Response
+    {
+        TalisMain::logger()->debug('Spool message received');
+        TalisMain::logger()->debug($rawJson);
+
+        try {
+            $message = $this->decodeJsonObject($rawJson);
+        } catch (\JsonException | \UnexpectedValueException $e) {
+            return $this->badInput('Invalid JSON message: ' . $e->getMessage());
+        }
+
+        if ($message === null) {
+            return $this->badInput('Message is empty');
+        }
+
+        $url = $message->url ?? null;
+        if (!is_string($url) || $url === '') {
+            return $this->badInput('Message has no url');
+        }
+
+        $body = clone $message;
+        unset($body->url);
+        return $this->dispatch($this->uriParts($url), $body, $url);
+    }
 }
-

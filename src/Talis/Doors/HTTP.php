@@ -1,91 +1,128 @@
-<?php namespace Talis\Doors;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Doors;
+
+use Talis\commons\iEmitter;
+use Talis\Message\Response;
+use Talis\Message\Status\Code500;
+use Talis\TalisMain;
 
 /**
- * Main entry point for the request chain
- * Translate the input into the initial request object
- * and moves it along
+ * Door for web requests. The URI path after the root URI must hold the
+ * three route parts, for example /event/repeat/read.
  *
- * Will assume 3 levels [action][subaction][type] for example event/repeat/create|update|read|delete
- *
- * Loads the right controller and action.
- * Renders the $Result of the action
- * Can handle page caching.
- * Error handling
+ * Form posts (urlencoded or multipart) are not JSON decoded: the body is
+ * null and the data stays in $_POST. Any other non-empty body must be a
+ * JSON object, or the request gets a 400.
  */
-class HTTP
+class HTTP extends aDoor
 {
+    /**
+     * The request URI after the root URI is removed, query string included.
+     */
+    protected string $fullUri = '';
 
     /**
-     *
-     * @var string $full_uri
+     * The sub folder the door is served from, e.g. '/talisroot' for
+     * example.com/talisroot. '' when served from the domain root.
      */
-    protected string $full_uri;
-    /**
-     * @var string $root_uri The relative subfolder to the domain. 
-     * 
-     * If your system door is accessible at example.com/talisroot then the root uri is /talisroot
-     */
-    protected string $root_uri;
+    protected string $rootUri = '';
 
     /**
-     * Starts the chain reaction.
-     * builds request/check dependencies/run main logic
-     *
-     * @param string $root_uri
-     *            The relative subfolder to the domain. If your system door is accessible at example.com/talisroot then the root uri is /talisroot
-     *            if it is just example.com, then it is ''
+     * @param bool $showExceptions put the exception text and stack in 500 responses
      */
-    public function gogogo(string $root_uri):void
+    public function __construct(iEmitter $emitter = new \Talis\Message\Renderers\HTTP(), protected readonly bool $showExceptions = false)
     {
-        \Talis\TalisMain::logger()->debug("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nREQUEST LOG STARTS HERE!");
-        $this->root_uri = $root_uri;
-        dbgn("ROOT URI [{$this->root_uri}]");
-        
+        parent::__construct($emitter);
+    }
+
+    public function gogogo(string $rootUri): Response
+    {
+        TalisMain::logger()->debug('Request log starts here');
+        $this->rootUri = $rootUri;
+        TalisMain::logger()->debug("Root URI [{$rootUri}]");
+
+        $requestParts = $this->getUriFromServer();
         try {
-            // TalisMain is the first step in the general chain. It is NOT tailored specificly for the http request.
-            (new \Talis\TalisMain())->begin($this->get_uri_from_server(), $this->get_request_body(), $this->full_uri)
-                ->nextLinkInchain()
-                ->render(new \Talis\Message\Renderers\HTTP());
-        } catch (\Throwable $e) { // TODO for now, all errors are TalisMain, better handling later
-            \Talis\TalisMain::logger()->fatal($e,true);
-            $response = new \Talis\Message\Response();
-            $response->markError();
-            $response->setStatus(new \Talis\Message\Status\Code500());
-            if(defined('SHOW_EXCEPTIONS')){
-                $response->setMessage($e . '');
-                $response->getPayload()->TalisErrorStack = $e->getTrace();
-            } else {
-                $response->setMessage('An error has occured. Chaos Snakes have been dispatched.');
-            }
-            
-            (new \Talis\Message\Renderers\HTTP())->emit($response);
+            $body = $this->getRequestBody();
+        } catch (\JsonException | \UnexpectedValueException $e) {
+            return $this->badInput('Invalid JSON body: ' . $e->getMessage());
         }
+        return $this->dispatch($requestParts, $body, $this->fullUri);
     }
 
     /**
-     * Parses the server input to generate raw uri parts
-     * @return array<string>
-     */
-    protected function get_uri_from_server(): array
-    {
-        $this->full_uri = $this->root_uri ? explode($this->root_uri, $_SERVER['REQUEST_URI'])[1] : $_SERVER['REQUEST_URI'];//@phpstan-ignore-line
-
-        // remove ? and after if exists
-        $without_question = rtrim(explode('?', $this->full_uri)[0], '/');
-        $request_parts = explode('/', $without_question);
-        return $request_parts;
-    }
-
-    /**
-     * Parses the http input stream to get the body and decode into stdClass
+     * Strips the root URI (only when the URI starts with it) and splits the path.
      *
-     * @return ?\stdClass
+     * @return list<string>
      */
-    protected function get_request_body(): ?\stdClass
+    protected function getUriFromServer(): array
     {
-        $json_request_body = file_get_contents('php://input');
-        \Talis\TalisMain::logger()->debug('RAW INPUT FROM CLIENT');
-        \Talis\TalisMain::logger()->debug($json_request_body);
-        return json_decode($json_request_body?:'');
+        $uri = $this->serverValue('REQUEST_URI', '/');
+        if ($this->rootUri !== '' && str_starts_with($uri, $this->rootUri)) {
+            $uri = substr($uri, strlen($this->rootUri));
+        }
+        $this->fullUri = $uri;
+        return $this->uriParts($uri);
+    }
+
+    /**
+     * @throws \JsonException|\UnexpectedValueException on a body that is not a JSON object
+     */
+    protected function getRequestBody(): ?\stdClass
+    {
+        if ($this->isFormContentType()) {
+            return null;
+        }
+
+        $raw = $this->readInput();
+        TalisMain::logger()->debug('Raw input from client');
+        TalisMain::logger()->debug($raw);
+        return $this->decodeJsonObject($raw);
+    }
+
+    /**
+     * Seam for tests: the raw request body.
+     */
+    protected function readInput(): string
+    {
+        return (string) file_get_contents('php://input');
+    }
+
+    protected function isFormContentType(): bool
+    {
+        $contentType = strtolower($this->serverValue('CONTENT_TYPE', ''));
+        return str_starts_with($contentType, 'application/x-www-form-urlencoded')
+            || str_starts_with($contentType, 'multipart/form-data');
+    }
+
+    /**
+     * $_SERVER[$key] when it is a string, else $default.
+     */
+    protected function serverValue(string $key, string $default): string
+    {
+        $value = $_SERVER[$key] ?? null;
+        return is_string($value) ? $value : $default;
+    }
+
+    /**
+     * Hides the exception unless showExceptions is on.
+     */
+    #[\Override]
+    protected function exceptionResponse(\Throwable $e): Response
+    {
+        if (!$this->showExceptions) {
+            return $this->errorResponse(new Code500(), 'An error has occurred.');
+        }
+
+        $Response = parent::exceptionResponse($e);
+        $stack = array_map(
+            static fn (string $line): string => mb_scrub($line, 'UTF-8'),
+            explode("\n", $e->getTraceAsString()),
+        );
+        $Response->setPayload((object) ['TalisErrorStack' => $stack]);
+        return $Response;
     }
 }
