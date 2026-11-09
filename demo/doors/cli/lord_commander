@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Cli door entry point.
+ *
+ * Usage: lord_commander <url> [json] [is_base64]
+ *   url        the route, e.g. /demo/user/read/id/1
+ *   json       a JSON object body, plain or base64
+ *   is_base64  any 3rd argument at all means json is base64
+ */
+
+require __DIR__ . '/../../config/bootstrap.php';
+
+$url = $argv[1] ?? '';
+$rawBody = $argv[2] ?? null;
+$isBase64 = isset($argv[3]);
+
+exit((new \Talis\Doors\Cli())->gogogo($url, $rawBody, $isBase64));

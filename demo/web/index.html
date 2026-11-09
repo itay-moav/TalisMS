@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talis demo: users</title>
+<style>
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+    max-width: 640px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    color: #1f2933;
+  }
+  h1 { font-size: 1.4rem; margin-bottom: .2rem; }
+  p.lead { color: #52606d; margin-top: 0; }
+  table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  th, td { text-align: left; padding: .45rem .3rem; border-bottom: 1px solid #e4e7eb; }
+  th { color: #52606d; font-weight: 600; }
+  input[type="text"], input[type="email"] {
+    padding: .35rem .5rem;
+    border: 1px solid #cbd2d9;
+    border-radius: 4px;
+    font: inherit;
+  }
+  button {
+    padding: .35rem .8rem;
+    border: 0;
+    border-radius: 4px;
+    background: #2563eb;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+  }
+  button.secondary { background: #9aa5b1; }
+  button.danger { background: #d64545; }
+  button + button { margin-left: .3rem; }
+  form#create-form {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  #message {
+    margin-top: .8rem;
+    min-height: 1.4rem;
+    font-size: .95rem;
+  }
+  #message.error { color: #d64545; }
+  #message.ok { color: #1f8a4c; }
+</style>
+</head>
+<body>
+
+<h1>Talis demo: users</h1>
+<p class="lead">
+  Create, read, update and delete through the Rest door at
+  <code>/api/demo/user</code>. Plain <code>fetch</code>, no build step.
+</p>
+
+<table>
+  <thead><tr><th>Id</th><th>Name</th><th>Email</th><th></th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<h2 style="font-size:1.1rem">Add a user</h2>
+<form id="create-form">
+  <input id="create-name" type="text" placeholder="Name" required>
+  <input id="create-email" type="email" placeholder="Email" required>
+  <button type="submit">Create</button>
+</form>
+
+<p id="message"></p>
+
+<script>
+(function () {
+  'use strict';
+
+  var rowsEl = document.getElementById('rows');
+  var messageEl = document.getElementById('message');
+  var createForm = document.getElementById('create-form');
+
+  function showMessage(text, isError) {
+    messageEl.textContent = text || '';
+    messageEl.className = text ? (isError ? 'error' : 'ok') : '';
+  }
+
+  // Every Talis response body is {status, type, message, payload}.
+  function call(method, path, params) {
+    var options = { method: method };
+    if (params) {
+      options.headers = { 'Content-Type': 'application/json' };
+      options.body = JSON.stringify({ params: params });
+    }
+    return fetch('/api' + path, options).then(function (res) {
+      return res.text().then(function (text) {
+        var body = null;
+        try {
+          body = text ? JSON.parse(text) : null;
+        } catch (e) {
+          body = null;
+        }
+        return { ok: res.ok, body: body };
+      });
+    });
+  }
+
+  function renderRow(user) {
+    var tr = document.createElement('tr');
+
+    var tdId = document.createElement('td');
+    tdId.textContent = String(user.id);
+    tr.appendChild(tdId);
+
+    var tdName = document.createElement('td');
+    var tdEmail = document.createElement('td');
+    var tdActions = document.createElement('td');
+
+    function showView() {
+      tdName.textContent = user.name;
+      tdEmail.textContent = user.email;
+
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'secondary';
+      editBtn.textContent = 'Edit';
+      editBtn.addEventListener('click', showEdit);
+
+      var deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'danger';
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.addEventListener('click', function () {
+        if (!window.confirm('Delete ' + user.name + '?')) {
+          return;
+        }
+        call('DELETE', '/demo/user/id/' + user.id).then(function (result) {
+          if (!result.ok) {
+            showMessage((result.body && result.body.message) || 'Delete failed', true);
+            return;
+          }
+          showMessage('Deleted ' + user.name, false);
+          load();
+        });
+      });
+
+      tdActions.innerHTML = '';
+      tdActions.appendChild(editBtn);
+      tdActions.appendChild(deleteBtn);
+    }
+
+    function showEdit() {
+      var nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.value = user.name;
+
+      var emailInput = document.createElement('input');
+      emailInput.type = 'email';
+      emailInput.value = user.email;
+
+      tdName.innerHTML = '';
+      tdName.appendChild(nameInput);
+      tdEmail.innerHTML = '';
+      tdEmail.appendChild(emailInput);
+
+      var saveBtn = document.createElement('button');
+      saveBtn.type = 'button';
+      saveBtn.textContent = 'Save';
+      saveBtn.addEventListener('click', function () {
+        call('PUT', '/demo/user/id/' + user.id, { name: nameInput.value, email: emailInput.value }).then(function (result) {
+          if (!result.ok) {
+            showMessage((result.body && result.body.message) || 'Update failed', true);
+            return;
+          }
+          showMessage('Updated ' + nameInput.value, false);
+          load();
+        });
+      });
+
+      var cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.className = 'secondary';
+      cancelBtn.textContent = 'Cancel';
+      cancelBtn.addEventListener('click', showView);
+
+      tdActions.innerHTML = '';
+      tdActions.appendChild(saveBtn);
+      tdActions.appendChild(cancelBtn);
+    }
+
+    tr.appendChild(tdName);
+    tr.appendChild(tdEmail);
+    tr.appendChild(tdActions);
+    showView();
+    return tr;
+  }
+
+  function load() {
+    call('GET', '/demo/user').then(function (result) {
+      if (!result.ok) {
+        showMessage((result.body && result.body.message) || 'Could not load users', true);
+        return;
+      }
+      var users = (result.body && result.body.payload && result.body.payload.users) || [];
+      rowsEl.innerHTML = '';
+      users.forEach(function (user) {
+        rowsEl.appendChild(renderRow(user));
+      });
+    });
+  }
+
+  createForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    var name = document.getElementById('create-name').value.trim();
+    var email = document.getElementById('create-email').value.trim();
+    call('POST', '/demo/user', { name: name, email: email }).then(function (result) {
+      if (!result.ok) {
+        showMessage((result.body && result.body.message) || 'Create failed', true);
+        return;
+      }
+      createForm.reset();
+      showMessage('Created ' + name, false);
+      load();
+    });
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
