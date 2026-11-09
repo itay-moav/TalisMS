@@ -1,7 +1,9 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+
 parameters:
-   level: 8
-   paths:
-      - src
-   ignoreErrors:
-      - '#Class Talis\\Chain\\aChainLink referenced with incorrect case: Talis\\Chain\\AChainLink.#'
-      - '#Method Talis\\TalisMain::nextLinkInchain\(\) should return Talis\\commons\\iRenderable#'
+    level: max
+    paths:
+        - src
+        - tests
+        - demo

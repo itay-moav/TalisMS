@@ -8,3 +8,7 @@ vendor
 composer.lock
 
 DOCS/local/
+
+var/
+demo/var/
+.phpunit.result.cache
