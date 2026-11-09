@@ -12,6 +12,7 @@ use Talis\Tests\Fixtures\Chain\RecordingFilter;
 
 final class aFilterTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         Recorder::reset();

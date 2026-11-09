@@ -9,7 +9,9 @@ namespace Talis\Message\Status;
  */
 class Code401 extends \Talis\Message\aStatus
 {
+    #[\Override]
     protected int $code = 401;
 
+    #[\Override]
     protected string $msg = 'Unauthorized';
 }

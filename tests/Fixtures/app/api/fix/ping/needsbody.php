@@ -13,6 +13,7 @@ use Talis\Chain\DoneSuccessful;
  */
 final class FixPingNeedsbody extends aFilteredValidatedChainLink
 {
+    #[\Override]
     protected array $dependencies = [[HasBody::class, []]];
 
     #[\Override]

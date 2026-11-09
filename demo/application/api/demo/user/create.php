@@ -17,6 +17,7 @@ use Talis\Message\Request;
  */
 final class DemoUserCreate extends aFilteredValidatedChainLink
 {
+    #[\Override]
     protected array $dependencies = [
         [BodyParamsFieldExist::class, ['field' => 'name']],
         [BodyParamsFieldExist::class, ['field' => 'email']],

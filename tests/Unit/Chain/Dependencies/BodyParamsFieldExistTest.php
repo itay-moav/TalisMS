@@ -15,6 +15,7 @@ use Talis\Tests\Support\SpyLogger;
 
 final class BodyParamsFieldExistTest extends TestCase
 {
+    #[\Override]
     protected function tearDown(): void
     {
         TalisMain::setLogger(new \Talis\commons\NullLogger());

@@ -8,8 +8,10 @@ use Talis\Chain\aFilteredValidatedChainLink;
 
 final class EmptyHead extends aFilteredValidatedChainLink
 {
+    #[\Override]
     protected array $filters = [];
 
+    #[\Override]
     protected array $dependencies = [];
 
     #[\Override]

@@ -13,6 +13,7 @@ use Talis\Tests\Support\SpyLogger;
 
 final class ChainContainerTest extends TestCase
 {
+    #[\Override]
     protected function tearDown(): void
     {
         TalisMain::setLogger(new \Talis\commons\NullLogger());

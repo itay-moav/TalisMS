@@ -36,6 +36,7 @@ abstract class DoorTestCase extends TestCase
      */
     private array $savedPost = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->savedServer = $_SERVER;
@@ -52,6 +53,7 @@ abstract class DoorTestCase extends TestCase
         $this->emitter = new SpyEmitter();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $_SERVER = $this->savedServer;

@@ -14,6 +14,7 @@ use Talis\Message\Status\Code409;
  */
 final class CustomBuildStatusError extends aError
 {
+    #[\Override]
     protected int $httpCode = 0;
 
     #[\Override]

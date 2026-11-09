@@ -9,6 +9,7 @@ namespace Talis\Chain\Errors;
  */
 class AccessForbidden extends aError
 {
+    #[\Override]
     protected int $httpCode = 403;
 
     #[\Override]

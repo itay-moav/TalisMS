@@ -14,6 +14,7 @@ use Talis\Tests\Fixtures\Chain\Recorder;
 
 final class DefaultValueGetTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         Recorder::reset();

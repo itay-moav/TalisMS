@@ -19,6 +19,7 @@ use Talis\Tests\Fixtures\Chain\Recorder;
 
 final class aFilteredValidatedChainLinkTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         Recorder::reset();

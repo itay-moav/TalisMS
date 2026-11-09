@@ -15,11 +15,13 @@ use Talis\Tests\Support\SpyLogger;
 
 final class HTTPTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->resetLogger();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->resetLogger();

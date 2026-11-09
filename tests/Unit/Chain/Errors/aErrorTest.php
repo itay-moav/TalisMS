@@ -21,6 +21,7 @@ use Talis\Tests\Support\SpyLogger;
 
 final class aErrorTest extends TestCase
 {
+    #[\Override]
     protected function tearDown(): void
     {
         TalisMain::setLogger(new \Talis\commons\NullLogger());

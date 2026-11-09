@@ -6,7 +6,9 @@ namespace Talis\Message\Status;
 
 class Code409 extends \Talis\Message\aStatus
 {
+    #[\Override]
     protected int $code = 409;
 
+    #[\Override]
     protected string $msg = 'Conflict';
 }

@@ -13,12 +13,14 @@ use Talis\Tests\Fixtures\Chain\Recorder;
 
 final class AddGetQueryStringOverridingTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         Recorder::reset();
         ProbeLink::$last = null;
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $_GET = [];

@@ -45,8 +45,10 @@ final class StatusCodesTest extends TestCase
     public function testGetCodeAndGetMsgReturnSubclassValues(): void
     {
         $status = new class extends aStatus {
+            #[\Override]
             protected int $code = 418;
 
+            #[\Override]
             protected string $msg = 'Teapot';
         };
 

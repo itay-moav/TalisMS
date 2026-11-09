@@ -9,6 +9,7 @@ namespace Talis\Chain\Errors;
  */
 class BLLinkMissingInChain extends aError
 {
+    #[\Override]
     protected int $httpCode = 500;
 
     #[\Override]

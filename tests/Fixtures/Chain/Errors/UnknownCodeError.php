@@ -11,6 +11,7 @@ use Talis\Chain\Errors\aError;
  */
 final class UnknownCodeError extends aError
 {
+    #[\Override]
     protected int $httpCode = 799;
 
     #[\Override]

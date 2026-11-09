@@ -11,6 +11,7 @@ use Talis\Chain\Errors\aError;
  */
 final class UserNotFound extends aError
 {
+    #[\Override]
     protected int $httpCode = 404;
 
     #[\Override]

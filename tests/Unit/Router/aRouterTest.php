@@ -17,11 +17,13 @@ final class aRouterTest extends TestCase
      */
     private array $savedGet = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->savedGet = $_GET;
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $_GET = $this->savedGet;

@@ -9,6 +9,7 @@ namespace Talis\Chain\Errors;
  */
 class Unauthenticated extends aError
 {
+    #[\Override]
     protected int $httpCode = 401;
 
     #[\Override]

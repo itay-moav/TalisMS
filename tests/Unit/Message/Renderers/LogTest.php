@@ -13,11 +13,13 @@ use Talis\Tests\Support\SpyLogger;
 
 final class LogTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->resetLogger();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->resetLogger();

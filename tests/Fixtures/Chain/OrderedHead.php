@@ -9,8 +9,10 @@ use Talis\Chain\DoneSuccessful;
 
 final class OrderedHead extends aFilteredValidatedChainLink
 {
+    #[\Override]
     protected array $filters = [[RecordingFilter::class, []]];
 
+    #[\Override]
     protected array $dependencies = [[PassingDependency::class, []]];
 
     #[\Override]

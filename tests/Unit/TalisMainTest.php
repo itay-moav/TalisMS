@@ -25,6 +25,7 @@ final class TalisMainTest extends TestCase
      */
     private array $savedGet = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->savedGet = $_GET;
@@ -32,6 +33,7 @@ final class TalisMainTest extends TestCase
         $this->resetStatics();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $_GET = $this->savedGet;

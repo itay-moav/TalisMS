@@ -14,11 +14,13 @@ use Talis\TalisMain;
 
 final class DefaultRouterTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         TalisMain::$appPath = dirname(__DIR__, 2) . '/Fixtures/app';
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         TalisMain::$appPath = '';

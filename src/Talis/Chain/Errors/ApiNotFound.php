@@ -9,6 +9,7 @@ namespace Talis\Chain\Errors;
  */
 class ApiNotFound extends aError
 {
+    #[\Override]
     protected int $httpCode = 404;
 
     #[\Override]

@@ -13,18 +13,21 @@ final class UserStoreTest extends TestCase
 
     private string $file = '';
 
+    #[\Override]
     public static function setUpBeforeClass(): void
     {
         // The demo classes are loaded by the demo bootstrap; here we only need the store.
         require_once __DIR__ . '/../../../demo/application/model/User/UserStore.php';
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dir = sys_get_temp_dir() . '/talis-userstore-' . bin2hex(random_bytes(6));
         $this->file = $this->dir . '/data/users.json';
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         if (is_file($this->file)) {

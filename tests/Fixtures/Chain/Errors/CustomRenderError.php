@@ -14,6 +14,7 @@ use Talis\Message\Status\Code422;
  */
 final class CustomRenderError extends aError
 {
+    #[\Override]
     protected int $httpCode = 0;
 
     #[\Override]

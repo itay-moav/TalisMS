@@ -16,6 +16,7 @@ use Talis\Tests\Fixtures\Chain\Recorder;
 
 final class aDependencyTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         Recorder::reset();

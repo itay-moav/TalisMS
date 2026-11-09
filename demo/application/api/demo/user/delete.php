@@ -14,6 +14,7 @@ use Talis\Chain\ResourceDeleted;
  */
 final class DemoUserDelete extends aFilteredValidatedChainLink
 {
+    #[\Override]
     protected array $dependencies = [
         [GetFieldUInt::class, ['field' => 'id']],
     ];

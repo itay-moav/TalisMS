@@ -18,6 +18,7 @@ final class DemoUserRead extends aFilteredValidatedChainLink
 {
     // Lets a plain HTML form POST the id (id=5) to /http/demo/user/read:
     // the filter copies $_POST into the GET params before ReadUser runs.
+    #[\Override]
     protected array $filters = [
         [FormPostIntoGetOverride::class, []],
     ];

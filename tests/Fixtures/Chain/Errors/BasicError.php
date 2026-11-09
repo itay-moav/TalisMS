@@ -11,6 +11,7 @@ use Talis\Chain\Errors\aError;
  */
 final class BasicError extends aError
 {
+    #[\Override]
     protected int $httpCode = 404;
 
     #[\Override]

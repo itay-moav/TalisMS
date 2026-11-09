@@ -17,6 +17,7 @@ use Talis\Message\Request;
  */
 final class DemoUserUpdate extends aFilteredValidatedChainLink
 {
+    #[\Override]
     protected array $dependencies = [
         [GetFieldUInt::class, ['field' => 'id']],
         [HasBody::class, []],

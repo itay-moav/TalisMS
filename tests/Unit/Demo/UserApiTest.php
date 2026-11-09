@@ -40,6 +40,7 @@ final class UserApiTest extends TestCase
 
     private SpyEmitter $emitter;
 
+    #[\Override]
     public static function setUpBeforeClass(): void
     {
         if (!defined('DEMO_VAR')) {
@@ -54,6 +55,7 @@ final class UserApiTest extends TestCase
         self::$initFunc = TalisMain::$registeredInitFunc;
     }
 
+    #[\Override]
     public static function tearDownAfterClass(): void
     {
         putenv('TALIS_DEMO_VAR');
@@ -62,6 +64,7 @@ final class UserApiTest extends TestCase
         }
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         $var = self::demoVar();
@@ -85,6 +88,7 @@ final class UserApiTest extends TestCase
         $this->emitter = new SpyEmitter();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $_GET = $this->savedGet;

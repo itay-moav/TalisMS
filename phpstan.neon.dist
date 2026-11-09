@@ -10,3 +10,5 @@ parameters:
     # Defines the demo constants (DEMO_ROOT, DEMO_VAR) so phpstan knows them.
     bootstrapFiles:
         - demo/config/config.php
+    # Enforces the "#[\Override] on every override" rule.
+    checkMissingOverrideMethodAttribute: true
