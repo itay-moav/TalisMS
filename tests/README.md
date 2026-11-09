@@ -8,6 +8,7 @@
 ## Commands
 
 - `composer test` — run all tests.
+- `vendor/bin/phpunit --filter testName` — run a single test.
 - `vendor/bin/phpunit tests/Unit` — run only the Unit suite.
 - `vendor/bin/phpunit tests/Integration` — run only the Integration suite.
 - `composer stan` — run phpstan (level max) over `src`, `tests` and `demo`.
@@ -15,4 +16,4 @@
 
 ## Coverage ignores
 
-None yet.
+None. `src/` has no `@codeCoverageIgnore`; hard spots (`header()`, `exit`, signals, file moves, reading the request body) go through small overridable methods that the tests replace.
