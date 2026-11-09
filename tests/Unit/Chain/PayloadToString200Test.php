@@ -1,0 +1,115 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Tests\Unit\Chain;
+
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use PHPUnit\Framework\TestCase;
+use Talis\Chain\PayloadToString200;
+use Talis\Message\Request;
+use Talis\Message\Response;
+use Talis\Message\ResponseType;
+use Talis\Tests\Fixtures\Chain\CapturingString200;
+use Talis\Tests\Fixtures\Chain\StringableThing;
+use Talis\Tests\Support\SpyEmitter;
+
+final class PayloadToString200Test extends TestCase
+{
+    private function renderPayload(mixed $payload): string
+    {
+        $Response = new Response();
+        if ($payload !== null) {
+            $Response->setPayload($payload);
+        }
+        $link = new CapturingString200(new Request('/x'), $Response);
+
+        ob_start();
+        $link->render(new SpyEmitter());
+        return (string) ob_get_clean();
+    }
+
+    public function testProcessSets200(): void
+    {
+        $Response = new Response();
+        $Response->markError();
+        $link = new PayloadToString200(new Request('/x'), $Response);
+
+        self::assertSame($link, $link->process());
+        self::assertSame(200, $Response->getStatus()->getCode());
+        self::assertSame(ResponseType::Response, $Response->getResponseType());
+    }
+
+    public function testRenderEchoesStringPayload(): void
+    {
+        self::assertSame('hi', $this->renderPayload('hi'));
+    }
+
+    public function testRenderEchoesIntPayload(): void
+    {
+        self::assertSame('5', $this->renderPayload(5));
+    }
+
+    public function testRenderEchoesStringable(): void
+    {
+        self::assertSame('stringable', $this->renderPayload(new StringableThing()));
+    }
+
+    public function testRenderEncodesObjectPayloadAsJson(): void
+    {
+        self::assertSame('{"a":1}', $this->renderPayload((object) ['a' => 1]));
+    }
+
+    public function testRenderEncodesEmptyPayloadAsJson(): void
+    {
+        self::assertSame('{}', $this->renderPayload(null));
+    }
+
+    public function testRenderSendsHeaders(): void
+    {
+        $Response = new Response();
+        $Response->setPayload('x');
+        $Response->setHeader('X-A: 1');
+        $link = new CapturingString200(new Request('/x'), $Response);
+
+        ob_start();
+        $link->render(new SpyEmitter());
+        ob_end_clean();
+
+        self::assertSame(['HTTP/1.1 200 Ok', 'X-A: 1'], $link->headers);
+    }
+
+    public function testRenderInvalidUtf8ArrayThrows(): void
+    {
+        $Response = new Response();
+        $Response->setPayload(["\xB1"]);
+        $link = new CapturingString200(new Request('/x'), $Response);
+
+        ob_start();
+        try {
+            $link->render(new SpyEmitter());
+            self::fail('Expected a JsonException');
+        } catch (\JsonException) {
+            // expected
+        } finally {
+            $output = ob_get_clean();
+        }
+
+        self::assertSame([], $link->headers);
+        self::assertSame('', $output);
+    }
+
+    #[RunInSeparateProcess]
+    public function testSendHeaderCallsHeader(): void
+    {
+        $Response = new Response();
+        $Response->setPayload('plain');
+        $link = new PayloadToString200(new Request('/x'), $Response);
+
+        ob_start();
+        $link->render(new SpyEmitter());
+        $output = ob_get_clean();
+
+        self::assertSame('plain', $output);
+    }
+}

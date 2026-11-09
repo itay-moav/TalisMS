@@ -1,47 +1,39 @@
-<?php namespace Talis\Chain;
+<?php
 
+declare(strict_types=1);
+
+namespace Talis\Chain;
+
+use Talis\Message\Request;
+use Talis\Message\Response;
 
 /**
- * Responsebility: 
- *    Wraps functional chainlinks for easier use
- * 
- * Useful for quick logic injection without needing to define a full class
- * Instead of creating a class the user can do:
- * [[ClassName::class, [param1, param2, ...],[createFunc(), [param1, param2, ...]]
- * 
- * function createFunc():callable{
- *      return function (\Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params){
- *          // do something with Request and params and adds output into Response->getPayload()->someVar=???
- *      }
- * }
- *    
+ * Runs a plain function as a chain link, so quick logic needs no class.
+ *
+ * Chain entry example: [function (Request $Request, Response $Response, array $params): void {...}, [params]]
+ * The function may declare only (Request, Response). Its return value is ignored.
+ *
  * @author Itay Moav
  * @Date  2021-04-08
  */
-class FunctionalChainlinkWrapper extends aChainLink{
-    
+class FunctionalChainlinkWrapper extends aChainLink
+{
+    private readonly \Closure $wrappedFunction;
+
     /**
-     * @var callable function to run in process
+     * @param callable(Request, Response, array<mixed>): mixed $wrappedFunction
+     * @param array<mixed> $params
      */
-    private $wrappedFunction;
-    
-	/**
-	 * @param callable $wrappedFunction
-	 * @param \Talis\Message\Request $Request
-	 * @param \Talis\Message\Response $Response
-	 * @param array<mixed> $params
-	 */
-    public function __construct(callable $wrappedFunction,\Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params){
-	    parent::__construct($Request,$Response,$params);
-	    $this->wrappedFunction = $wrappedFunction;
-	}
-	
-    /**
-     * @return aChainLink
-     */
-	public function process():aChainLink{
-	    $func = $this->wrappedFunction;
-	    $func($this->Request,$this->Response,$this->params);
-	    return $this;
-	}
+    public function __construct(callable $wrappedFunction, Request $Request, Response $Response, array $params = [])
+    {
+        parent::__construct($Request, $Response, $params);
+        $this->wrappedFunction = $wrappedFunction(...);
+    }
+
+    #[\Override]
+    public function process(): aChainLink
+    {
+        ($this->wrappedFunction)($this->Request, $this->Response, $this->params);
+        return $this;
+    }
 }

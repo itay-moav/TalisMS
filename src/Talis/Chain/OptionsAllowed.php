@@ -1,42 +1,40 @@
-<?php namespace Talis\Chain;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Chain;
 
 /**
- * Responsebility:
- *  Response for an OPTIONS request
- *  You must specify in a the chain params a string of `allowed` request methods. 
- *  
+ * Answers an OPTIONS request with a 204 and an Allow header.
+ * Override allowed() to list the methods the resource takes.
+ *
  * @author Itay Moav
  * @Date  2019-06-06
  */
-class OptionsAllowed extends aChainLink implements \Talis\commons\iRenderable{
-    
+class OptionsAllowed extends aChainLink implements \Talis\commons\iRenderable
+{
     /**
-     * can be GET,POST,OPTIONS,DELETE,FETCH,PATCH etc 
-     * @return string "...OPTIONS, DELETE, FETCH..."
+     * The Allow header value, for example "GET, POST, OPTIONS".
      */
-    protected function allowed():string{
+    protected function allowed(): string
+    {
         return 'OPTIONS';
     }
-    
-    /**
-     * {@inheritDoc}
-     * @see \Talis\Chain\aChainLink::process()
-     */
-    final public function process():aChainLink{
+
+    #[\Override]
+    final public function process(): aChainLink
+    {
         $this->Response->setHeader('Allow: ' . $this->allowed());
-		return $this;
-	}
-	
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * @see \Talis\commons\iRenderable::render()
-	 */
-	public function render(\Talis\commons\iEmitter $emitter):void{
-		\Talis\TalisMain::logger()->debug($this->Request->getUri() . ' FINISHED CHAIN WITH optional SUCCESS');
-		$this->Response->setMessage('Allowed Options');
-		$this->Response->setStatus(new \Talis\Message\Status\Code204);
-		$this->Response->markResponse();
-		$emitter->emit($this->Response);
-	}
+        return $this;
+    }
+
+    #[\Override]
+    public function render(\Talis\commons\iEmitter $emitter): void
+    {
+        \Talis\TalisMain::logger()->debug($this->Request->getUri() . ' FINISHED CHAIN WITH optional SUCCESS');
+        $this->Response->setMessage('Allowed Options');
+        $this->Response->setStatus(new \Talis\Message\Status\Code204());
+        $this->Response->markResponse();
+        $emitter->emit($this->Response);
+    }
 }

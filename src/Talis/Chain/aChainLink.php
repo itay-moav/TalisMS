@@ -1,156 +1,144 @@
-<?php namespace Talis\Chain;
+<?php
 
+declare(strict_types=1);
+
+namespace Talis\Chain;
+
+use Talis\Exception\InvalidChainEntry;
+use Talis\Message\Request;
+use Talis\Message\Response;
 
 /**
- * Responsebility: 
- *    (JUST) Manages the filters and then the dependency chain a request has.
- *    Last block in the chain (can also be the only one) would be the 
- *    concrete BL object for this request.
- *    
+ * One step of a request chain.
+ *
+ * nextLinkInChain() runs this link, then the entries waiting in the shared
+ * container, one after the other. The last link that runs is returned and
+ * is usually the one that renders the Response.
+ *
  * @author Itay Moav
  * @Date  2017-05-19
  */
-abstract class aChainLink{
-	
-	/**
-	 * @var \Talis\Message\Request $Request
-	 */
-    protected \Talis\Message\Request $Request;
-	
-	/**
-	 * @var \Talis\Message\Response $Response
-	 */
-    protected \Talis\Message\Response $Response;
-	
-	/**
-	 * Extra params some classes need
-	 * @var array<mixed>
-	 */
-	protected array $params;
+abstract class aChainLink
+{
+    protected ChainContainer $chainContainer;
 
-	/**
-	 * @var ChainContainer $chain_container
-	 */
-	protected ChainContainer $chain_container;
-	
-	/**
-	 * @var boolean
-	 */
-	protected bool $valid = true;
-    
-	/**
-	 * 
-	 * @param \Talis\Message\Request $Request
-	 * @param \Talis\Message\Response $Response
-	 * @param array<mixed> $params
-	 */
-	public function __construct(\Talis\Message\Request $Request,\Talis\Message\Response $Response,array $params=[]){
-		$this->Request  = $Request;
-		$this->Response = $Response;
-		$this->params   = $params;
-	}
+    /**
+     * @param array<mixed> $params extra params some links need
+     */
+    public function __construct(
+        protected Request $Request,
+        protected Response $Response,
+        protected array $params = [],
+    ) {
+        $this->chainContainer = new ChainContainer();
+    }
 
-	/**
-	 * A chain of links that will be (depends on process) processed one after the other.
-	 * @param ChainContainer $chain_container
-	 */
-	public function set_chain_container(ChainContainer $chain_container):void{
-		$this->chain_container = $chain_container;
-	}
-	
-	/**
-	 * 
-	 * @param string $classname
-	 * @param array<mixed> $params
-	 * @return \Talis\Chain\aChainLink
-	 */
-	public function append_chainlink(string $classname,array $params=[]):\Talis\Chain\aChainLink{
-	    $this->chain_container->push([$classname,$params]);
-	    return $this;
-	}
-	
-	/**
-	 * Returns a copy of the response object
-	 * @return \Talis\Message\Response
-	 */
-	public function clone_response():\Talis\Message\Response{
-	    return clone $this->Response;
-	}
-	
-	/**
-	 * Actual logic should happen here.
-	 * 99.999999999% it should return itself!
-	 * 
-	 * @return aChainLink
-	 */
-	abstract public function process():aChainLink;
-	
-	/**
-	 * Clears the queu, returns the error
-	 * 
-	 * @param \Talis\Chain\aChainLink $NewLastChainLink
-	 * @return \Talis\Chain\aChainLink
-	 */
-	protected function bail_out(\Talis\Chain\Errors\aError $NewLastChainLink):\Talis\Chain\Errors\aError{
-	   $this->chain_container->clear();
-	   return $NewLastChainLink->process();
-	}
-	
-	/**
-	 * Do the filter chain
-	 * Pass the filtered get params and req body and next bl to the dependency chain
-	 * Sets the result as the response
-	 * 
-	 * @return \Talis\Chain\aChainLink
-	 * 
-	 * @see \Talis\Chain\AChainLink::nextLinkInchain()
-	 */
-	final public function nextLinkInchain():\Talis\Chain\aChainLink{
-	    \Talis\TalisMain::logger()->debug('About to process: [' . get_class($this).']');
-		$FinalLink = $this->process();
+    public function setChainContainer(ChainContainer $chainContainer): void
+    {
+        $this->chainContainer = $chainContainer;
+    }
 
-		//If the returned chain is not a new chain (road diversion) and there are more links in the current chain, go after it.
-		if($FinalLink == $this && isset($this->chain_container) && !$this->chain_container->isEmpty()){
-			$next_link_class = $this->chain_container->pop();
-			$name   = $next_link_class[0];
-			$params = $next_link_class[1];
-			if(is_callable($name)){
-			    \Talis\TalisMain::logger()->debug('STARTING NEXT CHAIN LINK WITH FUNCTION');
-			    \Talis\TalisMain::logger()->debug($name);
-			    $next_link = new FunctionalChainlinkWrapper($name,$this->Request,$this->Response,$params);
-			    
-			} else {
-    			\Talis\TalisMain::logger()->debug("STARTING NEXT CHAIN LINK WITH {$name}");
-    			$next_link = new $name($this->Request,$this->Response,$params);
-			}
-			
-			$next_link->set_chain_container($this->chain_container);
-			$FinalLink = $next_link->nextLinkInchain();
-		}
-		return $FinalLink;
-	}
-	
-	/**
-	 * 
-	 * @return \Talis\Message\Response
-	 */
-	public function getResponse():\Talis\Message\Response{
-	    return $this->Response;
-	}
-}
+    /**
+     * Adds a link at the end of the chain.
+     *
+     * @param class-string<aChainLink>|callable(Request, Response, array<mixed>): mixed $link
+     * @param array<mixed> $params
+     */
+    public function appendChainLink(string|callable $link, array $params = []): static
+    {
+        $this->chainContainer->push([$link, $params]);
+        return $this;
+    }
 
-/**
- * 
- * @param callable $func
- * @param \Talis\Message\Request $Request
- * @param \Talis\Message\Response $Response
- * @param array<mixed> $params
- * @param array<mixed> $chain_container
- */
-function handleFunctionalChainlink($func,$Request,$Response,$params,$chain_container):void{
-    //function can only modify the response and request payloads
-    //return is debug only
-    $dbg = $func($Request,$Response,$params);
-    \Talis\TalisMain::logger()->debug('Functional response ' . print_r($dbg,true));
-    
+    public function cloneResponse(): Response
+    {
+        return clone $this->Response;
+    }
+
+    /**
+     * The link's logic. Return $this to let the chain go on.
+     * Return another link to stop the chain and make that link the last one.
+     */
+    abstract public function process(): aChainLink;
+
+    /**
+     * Drops the rest of the chain and ends it with $NewLastChainLink
+     * (an error, or a success link such as DoneSuccessful).
+     */
+    protected function bailOut(aChainLink&\Talis\commons\iRenderable $NewLastChainLink): aChainLink
+    {
+        $this->chainContainer->clear();
+        return $NewLastChainLink->process();
+    }
+
+    /**
+     * Runs this link and then every link left in the container.
+     * Stops early when a link returns anything other than itself.
+     */
+    final public function nextLinkInChain(): aChainLink
+    {
+        $current = $this;
+        while (true) {
+            \Talis\TalisMain::logger()->debug('About to process: [' . $current::class . ']');
+            $result = $current->process();
+            if ($result !== $current || $current->chainContainer->isEmpty()) {
+                return $result;
+            }
+
+            $next = $current->buildLink($current->chainContainer->pop());
+            $next->setChainContainer($current->chainContainer);
+            $current = $next;
+        }
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->Response;
+    }
+
+    /**
+     * Reads a param that must be a string.
+     *
+     * @throws InvalidChainEntry when it is missing or not a string
+     */
+    protected function paramString(string|int $key): string
+    {
+        $value = $this->params[$key] ?? null;
+        if (!is_string($value)) {
+            throw new InvalidChainEntry('Param [' . $key . '] for [' . static::class . '] is missing or not a string');
+        }
+        return $value;
+    }
+
+    /**
+     * Builds the next link from one container entry, using this link's
+     * Request (a filter may have replaced it) and Response.
+     * The checks guard against bad chain config at runtime.
+     *
+     * @param array<mixed> $entry
+     */
+    private function buildLink(array $entry): aChainLink
+    {
+        if (!array_key_exists(0, $entry) || !array_key_exists(1, $entry) || !is_array($entry[1])) {
+            throw new InvalidChainEntry('expected [class or callable, params array]');
+        }
+
+        [$target, $params] = $entry;
+
+        if (is_string($target) && is_a($target, aChainLink::class, true)) {
+            if ((new \ReflectionClass($target))->isAbstract()) {
+                throw new InvalidChainEntry("[{$target}] is abstract");
+            }
+            \Talis\TalisMain::logger()->debug("STARTING NEXT CHAIN LINK WITH {$target}");
+            return new $target($this->Request, $this->Response, $params);
+        }
+
+        if (is_callable($target)) {
+            \Talis\TalisMain::logger()->debug('STARTING NEXT CHAIN LINK WITH FUNCTION');
+            return new FunctionalChainlinkWrapper($target, $this->Request, $this->Response, $params);
+        }
+
+        $what = is_string($target) ? "[{$target}]" : get_debug_type($target);
+        throw new InvalidChainEntry("{$what} is not an aChainLink class or a callable");
+    }
 }
