@@ -1,12 +1,13 @@
-<?php namespace Talis\commons;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\commons;
+
 /**
- * A link of chainlinks must end with a chainlink that implements this
- * interface.
- * This is to assure Response is properly emmited.
- * 
- * @author itay
- *
+ * The last link of a chain implements this, so the Response gets sent.
  */
-interface iRenderable{
-	public function render(\Talis\commons\iEmitter $emitter):void;
+interface iRenderable
+{
+    public function render(\Talis\commons\iEmitter $emitter): void;
 }

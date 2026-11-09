@@ -1,8 +1,13 @@
-<?php namespace Talis\commons;
-interface iEmitter{
-	/**
-	 * Emits the input message according to the proper protocol
-	 * @param \Talis\Message\Response $message
-	 */
-	public function emit(\Talis\Message\Response $message):void;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\commons;
+
+/**
+ * Sends a Response out in one format (HTTP, CLI text, log).
+ */
+interface iEmitter
+{
+    public function emit(\Talis\Message\Response $message): void;
 }

@@ -1,43 +1,22 @@
-<?php namespace Talis\Message;
-abstract class aStatus{
-    
-    /**
-     * @var int
-     */
-    protected int $code;
-    
-    /**
-     * @var string
-     */
-    protected string $msg;
-    
-    /**
-     * @var string
-     */
-    protected string $dyn_error_msg = '';
-	
-    /**
-     * 
-     * @return int
-     */
-	public function getCode():int{
-		return $this->code;
-	}
+<?php
 
-	/**
-	 * 
-	 * @return string
-	 */
-	public function getMsg():string{
-		return $this->msg;
-	}
-	
-	/**
-	 * @param string $msg
-	 * @return string
-	 */
-	public function dynamic_message(string $msg):string{
-		$this->dyn_error_msg = $msg;
-		return $this->dyn_error_msg;
-	}
+declare(strict_types=1);
+
+namespace Talis\Message;
+
+abstract class aStatus
+{
+    protected int $code;
+
+    protected string $msg;
+
+    public function getCode(): int
+    {
+        return $this->code;
+    }
+
+    public function getMsg(): string
+    {
+        return $this->msg;
+    }
 }

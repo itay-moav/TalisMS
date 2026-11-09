@@ -1,17 +1,15 @@
-<?php namespace Talis\Message\Status;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Message\Status;
+
 /**
- * User is not logged in
- * @author itay
- *
+ * The user is not logged in.
  */
-class Code401 extends \Talis\Message\aStatus{
-    /**
-     * @var int
-     */
+class Code401 extends \Talis\Message\aStatus
+{
     protected int $code = 401;
-    
-    /**
-     * @var string
-     */
+
     protected string $msg = 'Unauthorized';
 }
