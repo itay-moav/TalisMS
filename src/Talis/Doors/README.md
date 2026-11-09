@@ -96,3 +96,31 @@ Takes the raw JSON of one queued message (no base64):
 Request body. An empty message, bad JSON or a missing url gives a 400.
 `gogogo()` returns the `Response`, so the caller can tell success from
 failure.
+
+## SpoolWorker
+
+A long-running worker that feeds spool files to the Daemon door:
+
+```php
+(new \Talis\Doors\SpoolWorker('/var/spool/myapp'))->run();      // loop
+(new \Talis\Doors\SpoolWorker('/var/spool/myapp'))->runOnce();  // one pass
+```
+
+It uses four folders under the spool folder, created when missing:
+
+- `incoming/`: producers drop `*.json` files here. Write `x.json.tmp`
+  first and rename it to `x.json`; only `*.json` is picked up, so a
+  half-written file is never read.
+- `processing/`: a file is claimed by moving it here with `rename()`.
+  This is atomic on one filesystem, so many workers can share a spool.
+- `done/`: the final response type was a normal response.
+- `failed/`: an error or dependency response, bad JSON, an unreadable
+  file or an exception.
+
+Files are taken in name order and keep their name in `done/` and
+`failed/`. `run()` sleeps `idleSleepMs` (default 1000) only after a pass
+with no work. SIGTERM and SIGINT (with pcntl) finish the current file and
+then stop the loop. `run()` does no daemonizing; run it under systemd or
+supervisord. If `processing/` holds files when `run()` starts, an earlier
+run died mid-file: a warning is logged and the files are left for you to
+check and move by hand.
