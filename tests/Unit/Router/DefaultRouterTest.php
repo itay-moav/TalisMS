@@ -69,6 +69,14 @@ final class DefaultRouterTest extends TestCase
         $router->generateRoute();
     }
 
+    public function testSegmentWithTrailingNewlineIsBadUri(): void
+    {
+        $router = new DefaultRouter(['', 'fix', 'ping', "ping\n"], []);
+
+        $this->expectException(BadUri::class);
+        $router->generateRoute();
+    }
+
     public function testValidSegmentsAccepted(): void
     {
         $router = new DefaultRouter(['', 'Ab_1', 'c', 'D9'], []);

@@ -38,4 +38,18 @@ final class CLIOnlyTest extends TestCase
         self::assertSame(403, $emitted->getStatus()->getCode());
         self::assertSame('Accessible only from the command line (cli)', $emitted->getMessage());
     }
+
+    public function testValidateLogsValidatorDebugLine(): void
+    {
+        $logger = new \Talis\Tests\Support\SpyLogger();
+        \Talis\TalisMain::setLogger($logger);
+        try {
+            $dependency = new CLIOnly(new Request('/x'), new Response());
+            (new \ReflectionMethod($dependency, 'validate'))->invoke($dependency);
+        } finally {
+            \Talis\TalisMain::setLogger(new \Talis\commons\NullLogger());
+        }
+
+        self::assertContains(['level' => 'debug', 'inp' => 'validator ' . CLIOnly::class, 'full_stack' => null], $logger->calls);
+    }
 }

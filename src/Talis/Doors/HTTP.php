@@ -54,18 +54,25 @@ class HTTP extends aDoor
     }
 
     /**
-     * Strips the root URI (only when the URI starts with it) and splits the path.
+     * Strips the root URI and splits the path. The root is stripped only when
+     * it is a whole path part: '/api' strips '/api/x' but not '/apiary/x'.
      *
      * @return list<string>
      */
     protected function getUriFromServer(): array
     {
         $uri = $this->serverValue('REQUEST_URI', '/');
-        if ($this->rootUri !== '' && str_starts_with($uri, $this->rootUri)) {
+        if ($this->rootUri !== '' && $this->startsWithRoot($uri)) {
             $uri = substr($uri, strlen($this->rootUri));
         }
         $this->fullUri = $uri;
         return $this->uriParts($uri);
+    }
+
+    private function startsWithRoot(string $uri): bool
+    {
+        $root = $this->rootUri;
+        return $uri === $root || str_starts_with($uri, $root . '/') || str_starts_with($uri, $root . '?');
     }
 
     /**

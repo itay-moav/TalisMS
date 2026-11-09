@@ -68,6 +68,58 @@ final class HTTPTest extends DoorTestCase
         self::assertSame(ResponseType::Error, $Response->getResponseType());
     }
 
+    public function testRootUriMustEndAtASegmentBoundary(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/apiary/x/y';
+        $door = $this->door();
+
+        $door->gogogo('/api');
+
+        self::assertSame(['', 'apiary', 'x', 'y'], $door->seenParts);
+        self::assertSame('/apiary/x/y', $door->seenUri);
+    }
+
+    public function testRootUriLookalikeIs404(): void
+    {
+        // a plain prefix strip would leave 'ary/fix/ping/echo' and route to fix/ping/echo
+        $_SERVER['REQUEST_URI'] = '/apiary/fix/ping/echo';
+
+        $Response = $this->door()->gogogo('/api');
+
+        self::assertSame(404, self::code($Response));
+    }
+
+    public function testRootUriAloneIsStripped(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/api';
+        $door = $this->door();
+
+        $Response = $door->gogogo('/api');
+
+        self::assertSame('', $door->seenUri);
+        self::assertSame(404, self::code($Response));
+    }
+
+    public function testRootUriFollowedByQueryStringIsStripped(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/api?a=1';
+        $door = $this->door();
+
+        $door->gogogo('/api');
+
+        self::assertSame('?a=1', $door->seenUri);
+        self::assertSame([''], $door->seenParts);
+    }
+
+    public function testRootUriWithRouteStillRoutes(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/api/fix/ping/echo';
+
+        $Response = $this->door()->gogogo('/api');
+
+        self::assertSame(200, self::code($Response));
+    }
+
     public function testEmptyRootUriUsesWholeUri(): void
     {
         $_SERVER['REQUEST_URI'] = '/api/x/y/z';

@@ -103,4 +103,18 @@ final class GetFieldUIntTest extends TestCase
         self::assertSame(400, $emitted->getStatus()->getCode());
         self::assertSame('GET param [id] is not an unsigned int, it is: [array]', $emitted->getMessage());
     }
+
+    public function testValidateLogsValidatorDebugLine(): void
+    {
+        $logger = new \Talis\Tests\Support\SpyLogger();
+        \Talis\TalisMain::setLogger($logger);
+        try {
+            $dependency = new GetFieldUInt(new Request('/x', ['id' => '1']), new Response(), ['field' => 'id']);
+            (new \ReflectionMethod($dependency, 'validate'))->invoke($dependency);
+        } finally {
+            \Talis\TalisMain::setLogger(new \Talis\commons\NullLogger());
+        }
+
+        self::assertContains(['level' => 'debug', 'inp' => 'validator ' . GetFieldUInt::class, 'full_stack' => null], $logger->calls);
+    }
 }

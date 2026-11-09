@@ -15,7 +15,7 @@ class GetFieldExist extends aDependency
         $field = $this->paramString('field');
         $valid = isset($this->Request->getAllGetParams()[$field]);
 
-        \Talis\TalisMain::logger()->debug('validaror ' . self::class);
+        \Talis\TalisMain::logger()->debug('validator ' . self::class);
         \Talis\TalisMain::logger()->debug("params: [{$field}] is valid? [{$valid}]");
 
         return $valid;

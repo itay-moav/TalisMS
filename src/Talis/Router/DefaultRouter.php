@@ -20,8 +20,9 @@ class DefaultRouter extends aRouter
 {
     /**
      * Allowed chars in the three route segments. Blocks '..' and the like.
+     * D makes $ match only at the very end, so a trailing newline fails.
      */
-    private const string SEGMENT_PATTERN = '/^[A-Za-z0-9_]+$/';
+    private const string SEGMENT_PATTERN = '/^[A-Za-z0-9_]+$/D';
 
     /**
      * @var array{file: string, className: string}

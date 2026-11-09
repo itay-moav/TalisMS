@@ -155,6 +155,51 @@ final class UserStoreTest extends TestCase
         self::assertSame($bytes, file_get_contents($this->file));
     }
 
+    public function testShortWriteThrows(): void
+    {
+        (new UserStore($this->file))->create('Ann', 'ann@example.com');
+        $store = new class ($this->file) extends UserStore {
+            #[\Override]
+            protected function writeAll($handle, string $bytes): bool
+            {
+                fwrite($handle, substr($bytes, 0, 5));
+                return false;
+            }
+        };
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Could not write all data to {$this->file}. The file may be cut short.");
+        $store->create('Bob', 'bob@example.com');
+    }
+
+    public function testWriteAllWritesAndFlushes(): void
+    {
+        mkdir($this->dir . '/data', 0777, true);
+        $handle = fopen($this->file, 'w+');
+        self::assertIsResource($handle);
+        $store = new UserStore($this->file);
+
+        $written = (new \ReflectionMethod($store, 'writeAll'))->invoke($store, $handle, 'abc');
+        fclose($handle);
+
+        self::assertTrue($written);
+        self::assertSame('abc', file_get_contents($this->file));
+    }
+
+    public function testWriteAllFailsOnReadOnlyHandle(): void
+    {
+        mkdir($this->dir . '/data', 0777, true);
+        file_put_contents($this->file, '');
+        $handle = fopen($this->file, 'r');
+        self::assertIsResource($handle);
+        $store = new UserStore($this->file);
+
+        $written = @(new \ReflectionMethod($store, 'writeAll'))->invoke($store, $handle, 'abc');
+        fclose($handle);
+
+        self::assertFalse($written);
+    }
+
     public function testUnicodeRoundTrip(): void
     {
         $store = new UserStore($this->file);

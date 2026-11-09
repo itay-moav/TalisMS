@@ -116,6 +116,7 @@ s/DoneSuccessfull/DoneSuccessful/g
 s/AccessForbbiden/AccessForbidden/g
 s/CliEmbeded/CliEmbedded/g
 s/Dependencies\\ADependency([^A-Za-z0-9_]|$)/Dependencies\\aDependency\1/g
+s/(^|[^A-Za-z0-9_\\])ADependency([^A-Za-z0-9_]|$)/\1aDependency\2/g
 s/Response::RESPONSE_TYPE__RESPONSE/ResponseType::Response/g
 s/Response::RESPONSE_TYPE__DEPENDENCY/ResponseType::Dependency/g
 s/Response::RESPONSE_TYPE__ERROR/ResponseType::Error/g
@@ -224,6 +225,7 @@ Check each of these in your app.
 - **`nextLinkInChain()`** on `TalisMain` returns `aChainLink&iRenderable`. It throws `\Talis\Exception\LastLinkNotRenderable` if the last link cannot render (v4 had a `TypeError`).
 - **Bad chain entries** throw `\Talis\Exception\InvalidChainEntry` (an entry that is not a callable or an `aChainLink` class, an abstract class, or a missing or non-string link param).
 - **Routes.** `DefaultRouter` checks the first three URL segments against `^[A-Za-z0-9_]+$`. A segment with `-`, `.`, `%` and so on is now a 404. The extra key/value segments after them are not checked. The loaded class must extend `aChainLink`, or the route is a 404.
+- **Root URI.** `HTTP` and `Rest` strip the root URI only when it is a whole path part: with root `/api`, `/api` and `/api/x/y/z` are stripped, but `/apiary/x/y` is left as is (and ends as a 404). v4 stripped any matching prefix.
 - **Filters.** `AddGetQueryStringOverriding` and `FormPostIntoGetOverride` merge with `array_replace`, so numeric keys and array values are kept. The superglobal still wins.
 - **`CLIOnly`** passes for any CLI SAPI, not only `./lord_commander`.
 - **`registeredInitFunc`** must be a `\Closure` or null. A string or array callable must become a closure, for example `foo(...)`.

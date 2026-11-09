@@ -58,7 +58,8 @@ class TalisMain
     }
 
     /**
-     * Builds the Request and the chain head. A bad route gives an ApiNotFound head.
+     * Builds the Request and the chain head. A BadUri from the router or the
+     * init func gives an ApiNotFound head, so the client gets a 404.
      *
      * @param list<string> $requestParts the URI path split on '/'
      */
@@ -67,22 +68,34 @@ class TalisMain
         self::$context = new \Talis\Context();
         $Response = new \Talis\Message\Response();
 
-        $router = new self::$registeredRouter($requestParts);
+        try {
+            $router = new self::$registeredRouter($requestParts);
+            $getParams = $router->generateQuery();
+        } catch (\Talis\Exception\BadUri $e) {
+            // no GET params yet, so the 404 gets a Request without them
+            return $this->notFound(new \Talis\Message\Request($fullUri, [], $requestBody), $Response, $e);
+        }
+
         self::logger()->debug('BUILDING REQUEST WITH BODY');
         self::logger()->debug($requestBody);
-        $this->Request = new \Talis\Message\Request($fullUri, $router->generateQuery(), $requestBody);
+        $this->Request = new \Talis\Message\Request($fullUri, $getParams, $requestBody);
 
         try {
             $router->generateRoute();
             $this->requestChainHead = $router->getChainHead($this->Request, $Response);
+            if (self::$registeredInitFunc !== null) {
+                (self::$registeredInitFunc)($this->Request);
+            }
         } catch (\Talis\Exception\BadUri $e) {
-            $this->requestChainHead = new Chain\Errors\ApiNotFound($this->Request, $Response, [$e->getMessage()]);
-            return $this;
+            return $this->notFound($this->Request, $Response, $e);
         }
+        return $this;
+    }
 
-        if (self::$registeredInitFunc !== null) {
-            (self::$registeredInitFunc)($this->Request);
-        }
+    private function notFound(\Talis\Message\Request $Request, \Talis\Message\Response $Response, \Talis\Exception\BadUri $e): static
+    {
+        $this->Request = $Request;
+        $this->requestChainHead = new Chain\Errors\ApiNotFound($Request, $Response, [$e->getMessage()]);
         return $this;
     }
 

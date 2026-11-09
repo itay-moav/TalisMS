@@ -144,6 +144,12 @@ final class DemoThroughEveryDoorTest extends TestCase
         $readUser = $this->asUser($read['body']['payload']);
         self::assertSame(self::UNICODE_NAME, $readUser['name']);
 
+        $updated = $this->runLordCommander($varDir, "/demo/user/update/id/{$id}", ['name' => 'Ann Smith']);
+        self::assertSame(0, $updated['exitCode']);
+        self::assertSame('204 No Content', $updated['body']['status']);
+        $afterUpdate = $this->runLordCommander($varDir, "/demo/user/read/id/{$id}");
+        self::assertSame('Ann Smith', $this->asUser($afterUpdate['body']['payload'])['name']);
+
         $deleted = $this->runLordCommander($varDir, "/demo/user/delete/id/{$id}");
         self::assertSame(0, $deleted['exitCode']);
 
@@ -189,6 +195,12 @@ final class DemoThroughEveryDoorTest extends TestCase
 
             $read = $door->gogogo("/demo/user/read/id/{$id}", new \stdClass());
             self::assertSame(200, $read->getStatus()->getCode());
+            self::assertSame(self::UNICODE_NAME, $this->asUser($read->getPayload())['name']);
+
+            $updated = $door->gogogo("/demo/user/update/id/{$id}", (object) ['params' => (object) ['name' => 'Ann Smith']]);
+            self::assertSame(204, $updated->getStatus()->getCode());
+            $afterUpdate = $door->gogogo("/demo/user/read/id/{$id}", new \stdClass());
+            self::assertSame('Ann Smith', $this->asUser($afterUpdate->getPayload())['name']);
 
             $deleted = $door->gogogo("/demo/user/delete/id/{$id}", new \stdClass());
             self::assertSame(204, $deleted->getStatus()->getCode());
@@ -196,6 +208,15 @@ final class DemoThroughEveryDoorTest extends TestCase
             $gone = $door->gogogo("/demo/user/read/id/{$id}", new \stdClass());
             self::assertSame(404, $gone->getStatus()->getCode());
             self::assertSame($gone, $emitter->last());
+
+            $missingField = $door->gogogo('/demo/user/create', (object) ['params' => (object) ['name' => 'Ann']]);
+            self::assertSame(400, $missingField->getStatus()->getCode());
+
+            $badEmail = $door->gogogo('/demo/user/create', (object) ['params' => (object) ['name' => 'Ann', 'email' => 'not-an-email']]);
+            self::assertSame(422, $badEmail->getStatus()->getCode());
+
+            $unknownId = $door->gogogo('/demo/user/read/id/999999', new \stdClass());
+            self::assertSame(404, $unknownId->getStatus()->getCode());
         } finally {
             \Talis\TalisMain::$appPath = $savedAppPath;
             \Talis\TalisMain::setLogger($savedLogger);
@@ -220,12 +241,28 @@ final class DemoThroughEveryDoorTest extends TestCase
         $oneUser = $this->asUser($this->userDataFile($varDir)['1'] ?? null);
         self::assertSame(self::UNICODE_NAME, $oneUser['name']);
 
-        $this->dropSpoolMessage($spool, '2.json', ['url' => '/demo/user/delete/id/1', 'params' => []]);
+        // A read has no reply channel here: a 200 moves the file to done/.
+        $this->dropSpoolMessage($spool, '2.json', ['url' => '/demo/user/read/id/1', 'params' => []]);
+        $this->dropSpoolMessage($spool, '3.json', ['url' => '/demo/user/update/id/1', 'params' => ['name' => 'Ann Smith']]);
 
         $secondPass = $this->runWorkerOnce($varDir);
         self::assertSame(0, $secondPass['exitCode']);
-        self::assertSame("Handled 1 file(s)\n", $secondPass['stdout']);
+        self::assertSame("Handled 2 file(s)\n", $secondPass['stdout']);
         self::assertFileExists($spool . '/done/2.json');
+        self::assertFileExists($spool . '/done/3.json');
+        self::assertFileDoesNotExist($spool . '/failed/2.json');
+        self::assertFileDoesNotExist($spool . '/failed/3.json');
+
+        $updatedUser = $this->asUser($this->userDataFile($varDir)['1'] ?? null);
+        self::assertSame('Ann Smith', $updatedUser['name']);
+        self::assertSame('unal@example.com', $updatedUser['email']);
+
+        $this->dropSpoolMessage($spool, '4.json', ['url' => '/demo/user/delete/id/1', 'params' => []]);
+
+        $thirdPass = $this->runWorkerOnce($varDir);
+        self::assertSame(0, $thirdPass['exitCode']);
+        self::assertSame("Handled 1 file(s)\n", $thirdPass['stdout']);
+        self::assertFileExists($spool . '/done/4.json');
 
         self::assertSame([], $this->userDataFile($varDir));
     }

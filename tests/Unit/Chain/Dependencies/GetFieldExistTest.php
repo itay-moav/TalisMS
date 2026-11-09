@@ -42,4 +42,18 @@ final class GetFieldExistTest extends TestCase
         self::assertSame(400, $emitted->getStatus()->getCode());
         self::assertSame('Missing URI param [id]', $emitted->getMessage());
     }
+
+    public function testValidateLogsValidatorDebugLine(): void
+    {
+        $logger = new \Talis\Tests\Support\SpyLogger();
+        \Talis\TalisMain::setLogger($logger);
+        try {
+            $dependency = new GetFieldExist(new Request('/x', ['id' => '1']), new Response(), ['field' => 'id']);
+            (new \ReflectionMethod($dependency, 'validate'))->invoke($dependency);
+        } finally {
+            \Talis\TalisMain::setLogger(new \Talis\commons\NullLogger());
+        }
+
+        self::assertContains(['level' => 'debug', 'inp' => 'validator ' . GetFieldExist::class, 'full_stack' => null], $logger->calls);
+    }
 }

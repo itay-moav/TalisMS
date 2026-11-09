@@ -14,8 +14,10 @@ namespace Demo\User;
  *
  * @phpstan-type User array{id: int, name: string, email: string}
  * @phpstan-type Data array{next_id: int, users: array<int, User>}
+ *
+ * Not final only so a test can fake a failed write (see writeAll()).
  */
-final class UserStore
+class UserStore
 {
     private const int JSON_FLAGS = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR;
 
@@ -113,12 +115,23 @@ final class UserStore
             $json = json_encode(['next_id' => $data['next_id'], 'users' => (object) $data['users']], self::JSON_FLAGS);
             ftruncate($handle, 0);
             rewind($handle);
-            fwrite($handle, $json . "\n");
-            fflush($handle);
+            if (!$this->writeAll($handle, $json . "\n")) {
+                throw new \RuntimeException("Could not write all data to {$this->filePath}. The file may be cut short.");
+            }
             return $result;
         } finally {
             $this->close($handle);
         }
+    }
+
+    /**
+     * Writes all the bytes and flushes them. False on a short write or a failed flush.
+     *
+     * @param resource $handle
+     */
+    protected function writeAll($handle, string $bytes): bool
+    {
+        return fwrite($handle, $bytes) === strlen($bytes) && fflush($handle);
     }
 
     /**

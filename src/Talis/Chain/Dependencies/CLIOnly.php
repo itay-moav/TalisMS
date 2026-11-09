@@ -15,7 +15,7 @@ class CLIOnly extends aDependency
     {
         $valid = $this->sapi() === 'cli';
 
-        \Talis\TalisMain::logger()->debug('validaror ' . self::class);
+        \Talis\TalisMain::logger()->debug('validator ' . self::class);
         \Talis\TalisMain::logger()->debug("Am I using CLI door? [{$valid}]");
 
         return $valid;

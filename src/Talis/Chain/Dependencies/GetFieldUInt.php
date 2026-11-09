@@ -17,7 +17,7 @@ class GetFieldUInt extends aDependency
 
         $valid = is_string($value) && preg_match('/^[0-9]+$/D', $value) === 1;
 
-        \Talis\TalisMain::logger()->debug('validaror ' . self::class);
+        \Talis\TalisMain::logger()->debug('validator ' . self::class);
         \Talis\TalisMain::logger()->debug("params: [{$field}] is valid? [{$valid}]");
 
         return $valid;

@@ -12,6 +12,9 @@ use Talis\Exception\LastLinkNotRenderable;
 use Talis\Message\Request;
 use Talis\Router\DefaultRouter;
 use Talis\TalisMain;
+use Talis\Exception\BadUri;
+use Talis\Tests\Fixtures\Router\BadUriInConstructorRouter;
+use Talis\Tests\Fixtures\Router\BadUriInQueryRouter;
 use Talis\Tests\Fixtures\Router\FixedHead;
 use Talis\Tests\Fixtures\Router\FixedRouter;
 use Talis\Tests\Support\SpyEmitter;
@@ -60,6 +63,13 @@ final class TalisMainTest extends TestCase
     private static function parts(string $uri): array
     {
         return explode('/', $uri);
+    }
+
+    private static function requestOf(\Talis\Chain\aChainLink $link): Request
+    {
+        $Request = (new \ReflectionProperty(\Talis\Chain\aChainLink::class, 'Request'))->getValue($link);
+        self::assertInstanceOf(Request::class, $Request);
+        return $Request;
     }
 
     public function testLoggerFallbackIsCached(): void
@@ -186,6 +196,50 @@ final class TalisMainTest extends TestCase
         $link = (new TalisMain())->begin(['', 'any'], null, '/any')->nextLinkInChain();
 
         self::assertInstanceOf(FixedHead::class, $link);
+    }
+
+    public function testBadUriFromRouterConstructorGivesApiNotFound(): void
+    {
+        TalisMain::$registeredRouter = BadUriInConstructorRouter::class;
+
+        $link = (new TalisMain())->begin(['', 'any'], null, '/any')->nextLinkInChain();
+
+        self::assertInstanceOf(ApiNotFound::class, $link);
+        self::assertSame('/any', self::requestOf($link)->getUri());
+        $link->render(new SpyEmitter());
+        self::assertSame(404, $link->getResponse()->getStatus()->getCode());
+        self::assertStringContainsString('[/any]', $link->getResponse()->getMessage());
+    }
+
+    public function testBadUriFromGenerateQueryGivesApiNotFound(): void
+    {
+        TalisMain::$registeredRouter = BadUriInQueryRouter::class;
+        $body = (object) ['a' => 1];
+
+        $link = (new TalisMain())->begin(['', 'any'], $body, '/any')->nextLinkInChain();
+
+        self::assertInstanceOf(ApiNotFound::class, $link);
+        self::assertSame([], self::requestOf($link)->getAllGetParams());
+        self::assertSame($body, self::requestOf($link)->getBody());
+        $link->render(new SpyEmitter());
+        self::assertSame(404, $link->getResponse()->getStatus()->getCode());
+        self::assertStringContainsString('[/any]', $link->getResponse()->getMessage());
+    }
+
+    public function testBadUriFromInitFuncGivesApiNotFound(): void
+    {
+        $this->useFixtureApp();
+        TalisMain::$registeredInitFunc = static function (): void {
+            throw new BadUri('rejected in init');
+        };
+
+        $link = (new TalisMain())->begin(self::parts(self::GOOD_URI), null, self::GOOD_URI)->nextLinkInChain();
+
+        self::assertInstanceOf(ApiNotFound::class, $link);
+        self::assertSame(self::GOOD_URI, self::requestOf($link)->getUri());
+        $link->render(new SpyEmitter());
+        self::assertSame(404, $link->getResponse()->getStatus()->getCode());
+        self::assertStringContainsString('[/fix/ping/read]', $link->getResponse()->getMessage());
     }
 
     public function testExceptionFromInitFuncPropagates(): void
