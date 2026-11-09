@@ -1,1 +1,0 @@
-php -S localhost:8002 main_router.php
