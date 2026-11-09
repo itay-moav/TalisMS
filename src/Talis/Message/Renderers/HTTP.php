@@ -1,37 +1,50 @@
-<?php namespace Talis\Message\Renderers;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Message\Renderers;
+
 /**
- * This is what we know as VIEW, it does the actual echo.
- * This one is for REST responses (aka headers+JSON)
- * 
- * @author Itay Moav
- * @date 2017-05-30
+ * Sends a Response as HTTP: status line, headers, then a JSON body.
  */
-class HTTP implements \Talis\commons\iEmitter{
+class HTTP implements \Talis\commons\iEmitter
+{
     /**
-     * Formats and echoes the results headers and then body
-     * {@inheritDoc}
-     * @see \Talis\commons\iEmitter::emit()
+     * @var \Closure(string): void
      */
-	public function emit(\Talis\Message\Response $message):void{
-		$stat   = $message->getStatus()->getCode();
-		$explanation = $message->getStatus()->getMsg();
-		$header = "HTTP/1.1 {$stat} {$explanation}";
-		header($header);
-		header('Content-Type: application/json; charset=utf-8');
-		$all_other_headers = $message->getHeaders();
-		\Talis\TalisMain::logger()->debug('SENDING HEADERS');
-		\Talis\TalisMain::logger()->debug([$header] + $all_other_headers);
-		if($all_other_headers){
-		    foreach($all_other_headers as $other_header){
-		        header($other_header);
-		    }
-		}
-		$body = json_encode($message->getBody());
-		if($body === false){
-		    throw new \Exception('Could not json encode the payload');
-		}
-		\Talis\TalisMain::logger()->debug('SENDING BODY');
-		\Talis\TalisMain::logger()->debug($body);
-		echo $body;
-	}
+    private readonly \Closure $sendHeader;
+
+    /**
+     * @param (\Closure(string): void)|null $sendHeader defaults to header()
+     */
+    public function __construct(?\Closure $sendHeader = null)
+    {
+        $this->sendHeader = $sendHeader ?? header(...);
+    }
+
+    #[\Override]
+    public function emit(\Talis\Message\Response $message): void
+    {
+        // Encode first: if this throws, no header or output has been sent.
+        $body = json_encode($message->getBody(), JSON_THROW_ON_ERROR);
+
+        $status = $message->getStatus();
+        $headers = [
+            "HTTP/1.1 {$status->getCode()} {$status->getMsg()}",
+            'Content-Type: application/json; charset=utf-8',
+            ...$message->getHeaders(),
+        ];
+
+        \Talis\TalisMain::logger()->debug('SENDING HEADERS');
+        \Talis\TalisMain::logger()->debug($headers);
+
+        foreach ($headers as $header) {
+            ($this->sendHeader)($header);
+        }
+
+        \Talis\TalisMain::logger()->debug('SENDING BODY');
+        \Talis\TalisMain::logger()->debug($body);
+
+        echo $body;
+    }
 }

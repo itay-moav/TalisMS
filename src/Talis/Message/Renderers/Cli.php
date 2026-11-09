@@ -1,22 +1,23 @@
-<?php namespace Talis\Message\Renderers;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Message\Renderers;
+
 /**
- * This is what we know as VIEW, it does the actual echo.
- * This one is for Cli responses (aka emit text + exit(status)
- * 
- * @author Itay Moav
- * @date 2017-06-07
+ * Sends a Response as plain text for a CLI run: pretty JSON then a FIN line.
  */
-class Cli implements \Talis\commons\iEmitter{
-    /**
-     * Formats and echoes the results headers and then body
-     * 
-     * {@inheritDoc}
-     * @see \Talis\commons\iEmitter::emit()
-     */
-	public function emit(\Talis\Message\Response $message):void{
-		$stat = $message->getStatus()->getCode();
-		$body = json_encode($message->getBody(),JSON_PRETTY_PRINT);
-		echo $body;
-		echo "\nFIN with [{$stat}]\n";
-	}
+class Cli implements \Talis\commons\iEmitter
+{
+    #[\Override]
+    public function emit(\Talis\Message\Response $message): void
+    {
+        $stat = $message->getStatus()->getCode();
+
+        // Encode first: if this throws, nothing has been echoed.
+        $body = json_encode($message->getBody(), JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
+
+        echo $body;
+        echo "\nFIN with [{$stat}]\n";
+    }
 }
