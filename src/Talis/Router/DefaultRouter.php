@@ -1,65 +1,86 @@
-<?php namespace Talis\Router;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Router;
+
+use Talis\Chain\aChainLink;
+use Talis\Exception\BadUri;
+use Talis\Message\Request;
+use Talis\Message\Response;
+use Talis\TalisMain;
 
 /**
+ * Routes /a/b/c[/key/value...] to the class Api\abc in <appPath>/api/a/b/c.php.
+ * Path parts after the third one are read as key/value GET params.
+ *
  * @author itay
  */
-class DefaultRouter extends aRouter{
+class DefaultRouter extends aRouter
+{
     /**
-     * Generates the API class name. This will be the name
-     * of the class to start the chain, business wise
-     *
-     * ASSUMES CONVENTION OF 3 LEVELS URL [action][subaction][type]
-     *
-     * array [route=>the path to the class, classname=>the name of the class]
+     * Allowed chars in the three route segments. Blocks '..' and the like.
      */
-    public function generate_route():void{
-        if(count($this->request_parts) < 4){ //one root path + three parts to define the API 
-            throw new \Talis\Exception\BadUri(print_r($this->request_parts,true));
-        }
-        
-        $this->route= [
-            'route'      => \Talis\TalisMain::$APP_PATH . "/api/{$this->request_parts[1]}/{$this->request_parts[2]}/{$this->request_parts[3]}.php",
-            'classname'  => "\Api\\{$this->request_parts[1]}{$this->request_parts[2]}{$this->request_parts[3]}"
-        ];
-        \Talis\TalisMain::logger()->debug("Doing route [{$this->route['route']}]");
-    }
-    
-    /**
-     * Return would be GET params from butified urls
-     * @return array<string>
-     */
-    public function generate_query():array{
-        $c = count($this->request_parts);
-        $extra_params = [];
-        for($i=4; $i<$c;$i+=2){
-            $extra_params[$this->request_parts[$i]] = ($this->request_parts[$i+1]??'');
-        }
-
-        if(count($_GET)>0){
-            $extra_params = array_merge($extra_params,$_GET);
-            \Talis\TalisMain::logger()->debug('extra with HTTP GET params');
-            \Talis\TalisMain::logger()->debug($extra_params);
-        }
-        return $extra_params;
-    }
+    private const string SEGMENT_PATTERN = '/^[A-Za-z0-9_]+$/';
 
     /**
-     * Instantiate the first step in the chain, The API class that we got from the route.
-     * Or, an error response, if API does not exist
-     *
-     * @throws \Talis\Exception\BadUri
-     * {@inheritDoc}
-     * @see \Talis\Router\aRouter::get_chainhead()
+     * @var array{file: string, className: string}
      */
-    public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response): \Talis\Chain\aChainLink
+    protected array $route = ['file' => '', 'className' => ''];
+
+    #[\Override]
+    public function generateRoute(): void
     {
-        $full_path_route = $this->route['route'];
-        \Talis\TalisMain::logger()->debug("TRYING TO INCLUDE: {$full_path_route}");
-        if(file_exists($full_path_route)){
-            require_once $full_path_route;
-        } else {            
-            throw new \Talis\Exception\BadUri($full_path_route);
+        if (count($this->requestParts) < 4) { // one root part + three parts for the API
+            throw new BadUri(implode('/', $this->requestParts));
         }
-        return new $this->route['classname']($Request, $Response);
+
+        [, $p1, $p2, $p3] = $this->requestParts;
+        foreach ([$p1, $p2, $p3] as $segment) {
+            if (preg_match(self::SEGMENT_PATTERN, $segment) !== 1) {
+                throw new BadUri($segment);
+            }
+        }
+
+        $this->route = [
+            'file' => TalisMain::$appPath . "/api/{$p1}/{$p2}/{$p3}.php",
+            'className' => "Api\\{$p1}{$p2}{$p3}",
+        ];
+        TalisMain::logger()->debug("Doing route [{$this->route['file']}]");
+    }
+
+    #[\Override]
+    public function generateQuery(): array
+    {
+        $count = count($this->requestParts);
+        $params = [];
+        for ($i = 4; $i < $count; $i += 2) {
+            $params[$this->requestParts[$i]] = $this->requestParts[$i + 1] ?? '';
+        }
+
+        if ($this->getParams !== []) {
+            // array_replace keeps numeric keys; query-string values win
+            $params = array_replace($params, $this->getParams);
+            TalisMain::logger()->debug('extra with HTTP GET params');
+            TalisMain::logger()->debug($params);
+        }
+        return $params;
+    }
+
+    #[\Override]
+    public function getChainHead(Request $Request, Response $Response): aChainLink
+    {
+        $file = $this->route['file'];
+        TalisMain::logger()->debug("TRYING TO INCLUDE: {$file}");
+        if (!file_exists($file)) {
+            throw new BadUri($file);
+        }
+        require_once $file;
+
+        $className = $this->route['className'];
+        if (!class_exists($className, false) || !is_subclass_of($className, aChainLink::class)) {
+            throw new BadUri($className);
+        }
+        return new $className($Request, $Response);
     }
 }

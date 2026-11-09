@@ -1,57 +1,53 @@
-<?php namespace Talis\Router;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Router;
 
 /**
- * Define the router methods
- * 
+ * Turns the request parts into the chain head and the GET params.
+ *
  * @author itay
  * @date 2019-07-16
  */
-abstract class aRouter{
+abstract class aRouter
+{
     /**
-     * Original request parts broken down by the respective doors of this request
-     * @var array<string>
+     * Query-string params, from the constructor or $_GET.
+     *
+     * @var array<array-key, mixed>
      */
-    protected array $request_parts;
-    
+    protected array $getParams;
+
     /**
-     * Holds data about the initial API class, path and class name, usually
-     * 
-     * @var array<string, string>
+     * @param list<string> $requestParts the URI path split on '/'
+     * @param array<array-key, mixed>|null $getParams null means read $_GET
      */
-    protected array $route;
-    
-    /**
-     * @param array<string> $request_parts
-     */
-    public function __construct(array $request_parts){
+    public function __construct(protected array $requestParts, ?array $getParams = null)
+    {
+        $this->getParams = $getParams ?? $_GET;
         \Talis\TalisMain::logger()->debug('request_parts');
-        \Talis\TalisMain::logger()->debug($request_parts);
-        $this->request_parts = $request_parts;
+        \Talis\TalisMain::logger()->debug($requestParts);
     }
-    
+
     /**
-     * Generates the API class name. This will be the name
-     * of the class to start the chain, business wise
-     *
-     * ASSUMES CONVENTION OF 3 LEVELS URL [action][subaction][type]
-     *
-     * array [route=>the path to the class, classname=>the name of the class]
-     */
-    abstract public function generate_route():void;
-    
-    /**
-     * Return would be GET params from butified urls
-     * @return array<string>
-     */
-    abstract public function generate_query():array;
-    
-    /**
-     * Instantiate the first step in the chain, The API class that we got from the route.
-     * Or, an error response, if API does not exist
+     * Works out which API class starts the chain.
      *
      * @throws \Talis\Exception\BadUri
-     * @return \Talis\Chain\aFilteredValidatedChainLink
      */
-    abstract public function get_chainhead(\Talis\Message\Request $Request, \Talis\Message\Response $Response):\Talis\Chain\aChainLink;
-    
+    abstract public function generateRoute(): void;
+
+    /**
+     * The GET params: the ones in the path plus the query string.
+     *
+     * @return array<array-key, mixed>
+     */
+    abstract public function generateQuery(): array;
+
+    /**
+     * Builds the first link of the chain, the API class from the route.
+     *
+     * @throws \Talis\Exception\BadUri
+     */
+    abstract public function getChainHead(\Talis\Message\Request $Request, \Talis\Message\Response $Response): \Talis\Chain\aChainLink;
 }

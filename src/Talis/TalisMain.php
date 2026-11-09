@@ -1,140 +1,102 @@
-<?php namespace Talis;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis;
 
 /**
- * MAIN APP ENTRY POINT!
- * 
- * Responsebility: Parses the user input to identify the API class to instantiate
- * This is the ROUTER
- * 
+ * Main entry point after a Door has read its input.
+ * Routes the request to the API class that heads the chain.
+ *
  * @author Itay Moav
  * @Date  2017-05-19
  */
-class TalisMain{
-    
+class TalisMain
+{
     /**
-     * instantiate this in the app bootstrap
-     * @var string
+     * Root folder of the app. Set it in the app bootstrap.
      */
-    static public string $APP_PATH;
+    public static string $appPath = '';
 
-	/**
-	 * Logger used for all Talis lib log calls. Null until setLogger() is
-	 * called; logger() then falls back to a cached NullLogger.
-	 *
-	 * @var ?\Talis\commons\iLogger
-	 */
-	static private ?\Talis\commons\iLogger $logger = null;
+    /**
+     * Run after the chain head is built, on a good route only.
+     * Apps use it to log someone in or check roles.
+     */
+    public static ?\Closure $registeredInitFunc = null;
 
-	static public function setLogger(\Talis\commons\iLogger $logger):void{
-		self::$logger = $logger;
-	}
+    /**
+     * @var class-string<\Talis\Router\aRouter>
+     */
+    public static string $registeredRouter = \Talis\Router\DefaultRouter::class;
 
-	static public function logger():\Talis\commons\iLogger{
-		return self::$logger ??= new \Talis\commons\NullLogger();
-	}
+    /**
+     * Process state that is not part of the Request or Response.
+     * A fresh one is made at the start of every begin().
+     */
+    public static \Talis\Context $context;
 
-	/**
-	 * I am setting this up in the specific apps using Talis. 
-	 * I usually would like to use  it to login someone or check generic roles etc
-	 * 
-	 * @var ?callable a function to run on init.
-	 */
-    static public $registered_init_func = null;
-	
-	/**
-	 * The name of the router to use to get the API class and GET params.
-	 * This is a string of the namespace + classname.
-	 * Usually you will put it in the bootstrap file.
-	 * 
-	 * @var string
-	 */
-	static public string $registered_router = \Talis\Router\DefaultRouter::class;
-	
-	/**
-	 * Context for this process, which is not part of the Response Request
-	 * @var \Talis\Context
-	 */
-	static public \Talis\Context $Context;
-	
-	/**
-	 * 
-	 * @var \Talis\Router\aRouter
-	 */
-	private \Talis\Router\aRouter $Router;
-	
-	/**
-	 * @var array<mixed>
-	 */
-	private array $extra_params = [];
-	
-	/**
-	 * Body of the request, json decoded string
-	 * @var ?\stdClass
-	 */
-	private ?\stdClass $req_body;
-	
-	/**
-	 * The head of the BL process chain, usually that would be the API head class built from the route,
-	 * but on occassions that would be the error class, in case there where issues
-	 * 
-	 * @var \Talis\Chain\aChainLink $RequestChainHead
-	 */
-	private \Talis\Chain\aChainLink $RequestChainHead;
+    /**
+     * Null until setLogger() is called; logger() then falls back to a cached NullLogger.
+     */
+    private static ?\Talis\commons\iLogger $logger = null;
 
-	/**
-	 * Holds the request parameters (GET/POST etc)
-	 * 
-	 * @var \Talis\Message\Request $Request
-	 */
-	private \Talis\Message\Request $Request;
-	
-	/**
-	 * Main entry point after the Door for a specific protocol is finished (http/rest/stopmp/async etc)
-	 * 
-	 * @param array<string> $request_parts
-	 * @param \stdClass $request_body
-	 * @param string $full_uri
-	 * @return \Talis\TalisMain
-	 */
-	public function begin(array $request_parts,?\stdClass $request_body,string $full_uri):\Talis\TalisMain{
-		$this->req_body = $request_body;
-		self::$Context = new \Talis\Context;
-		$Response = new \Talis\Message\Response;
-		
-		try{
-		    $this->Router = new self::$registered_router($request_parts);
-		    $this->extra_params = $this->Router->generate_query();
-		    $this->build_request($full_uri);
-		    $this->Router->generate_route();
-		    $this->RequestChainHead = $this->Router->get_chainhead($this->Request,$Response);
-			
-			//the dynamic init
-			if(self::$registered_init_func){
-				$func = self::$registered_init_func;
-				$func($this->Request);
-			}
-			
-		} catch(\Talis\Exception\BadUri $e){
-		    $this->RequestChainHead = new Chain\Errors\ApiNotFound($this->Request,$Response,[$e->getMessage()]);
-		}
-		return $this;
-	}
-	
-	/**
-	 * Init the API class and call it's dependency checks
-	 * 
-	 * @return \Talis\commons\iRenderable
-	 */
-	public function nextLinkInchain():\Talis\commons\iRenderable{
-		return $this->RequestChainHead->nextLinkInchain();
-	}
-	
-	/**
-	 * @param string $full_uri
-	 */
-	private function build_request(string $full_uri):void{
-	    self::logger()->debug('BUILDING REQUEST WITH BODY');
-	    self::logger()->debug($this->req_body);
-		$this->Request = new \Talis\Message\Request($full_uri,$this->extra_params,$this->req_body);
-	}
+    /**
+     * Head of the chain: the API class from the route, or ApiNotFound.
+     */
+    private \Talis\Chain\aChainLink $requestChainHead;
+
+    private \Talis\Message\Request $Request;
+
+    public static function setLogger(\Talis\commons\iLogger $logger): void
+    {
+        self::$logger = $logger;
+    }
+
+    public static function logger(): \Talis\commons\iLogger
+    {
+        return self::$logger ??= new \Talis\commons\NullLogger();
+    }
+
+    /**
+     * Builds the Request and the chain head. A bad route gives an ApiNotFound head.
+     *
+     * @param list<string> $requestParts the URI path split on '/'
+     */
+    public function begin(array $requestParts, ?\stdClass $requestBody, string $fullUri): static
+    {
+        self::$context = new \Talis\Context();
+        $Response = new \Talis\Message\Response();
+
+        $router = new self::$registeredRouter($requestParts);
+        self::logger()->debug('BUILDING REQUEST WITH BODY');
+        self::logger()->debug($requestBody);
+        $this->Request = new \Talis\Message\Request($fullUri, $router->generateQuery(), $requestBody);
+
+        try {
+            $router->generateRoute();
+            $this->requestChainHead = $router->getChainHead($this->Request, $Response);
+        } catch (\Talis\Exception\BadUri $e) {
+            $this->requestChainHead = new Chain\Errors\ApiNotFound($this->Request, $Response, [$e->getMessage()]);
+            return $this;
+        }
+
+        if (self::$registeredInitFunc !== null) {
+            (self::$registeredInitFunc)($this->Request);
+        }
+        return $this;
+    }
+
+    /**
+     * Runs the chain and returns its last link, which the Door renders.
+     *
+     * @throws \Talis\Exception\LastLinkNotRenderable
+     */
+    public function nextLinkInChain(): \Talis\Chain\aChainLink&\Talis\commons\iRenderable
+    {
+        $last = $this->requestChainHead->nextLinkInChain();
+        if (!$last instanceof \Talis\commons\iRenderable) {
+            throw new \Talis\Exception\LastLinkNotRenderable($last::class);
+        }
+        return $last;
+    }
 }
