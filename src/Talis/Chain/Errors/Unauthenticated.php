@@ -1,20 +1,20 @@
-<?php namespace Talis\Chain\Errors;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Chain\Errors;
 
 /**
- * Unauthenticated request
- * 
- * @author Itay Moav
- * @date 2022-12-01
+ * Unauthenticated request.
  */
-class Unauthenticated extends aError{
-	protected int $http_code = 401;
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \Talis\Chain\Errors\aError::format_human_message()
-	 */
-	protected function format_human_message():string{
-		$api_uri = $this->Request->getUri();
-		return "Unauthenticated request for {$api_uri}.";
-	}
+class Unauthenticated extends aError
+{
+    protected int $httpCode = 401;
+
+    #[\Override]
+    protected function formatHumanMessage(): string
+    {
+        $apiUri = $this->Request->getUri();
+        return "Unauthenticated request for {$apiUri}.";
+    }
 }

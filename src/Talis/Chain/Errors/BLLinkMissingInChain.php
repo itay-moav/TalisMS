@@ -1,20 +1,20 @@
-<?php namespace Talis\Chain\Errors;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Chain\Errors;
 
 /**
- * API class was not found for the input route
- * 
- * @author Itay Moav
- * @date 2017-05-23
+ * A dependency ran out of chain: there was no BL link left to hand off to.
  */
-class BLLinkMissingInChain extends aError{
-	protected int $http_code = 500;
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \Talis\Chain\Errors\aError::format_human_message()
-	 */
-	protected function format_human_message():string{
-		$api_uri = $this->Request->getUri();
-		return "Missing BL link for URI {$api_uri}. This request chain was not properly configured. The BL Link is missing, probably in the API class.";
-	}
+class BLLinkMissingInChain extends aError
+{
+    protected int $httpCode = 500;
+
+    #[\Override]
+    protected function formatHumanMessage(): string
+    {
+        $apiUri = $this->Request->getUri();
+        return "Missing BL link for URI {$apiUri}. This request chain was not properly configured. The BL Link is missing, probably in the API class.";
+    }
 }

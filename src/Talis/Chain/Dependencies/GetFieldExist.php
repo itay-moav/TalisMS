@@ -1,34 +1,34 @@
-<?php namespace Talis\Chain\Dependencies;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Chain\Dependencies;
+
 /**
- * Making sure that a get field exist in the request
- * 
- * @author Itay Moav
+ * Making sure that a get field exists in the request.
  */
-class GetFieldExist extends aDependency{
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * @see \Talis\Chain\Dependencies\ADependency::validate()
-	 */
-	protected function validate():bool{
-		$valid = isset($this->Request->getAllGetParams()[$this->params['field']]);
-		
-		\Talis\TalisMain::logger()->debug('validaror ' . self::class);
-		\Talis\TalisMain::logger()->debug('params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
-		
-		return $valid;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \Talis\commons\iRenderable::render()
-	 */
-	public function render(\Talis\commons\iEmitter $emitter):void{
-		//\dbgr('RENDER',print_r($this->params,true));
-		$response = new \Talis\Message\Response;
-		$response->markDependency();
-		$response->setMessage("Mising URI PARAM {$this->params['field']}");
-		$response->setStatus(new \Talis\Message\Status\Code400);
-		$emitter->emit($response);
-	}		
+class GetFieldExist extends aDependency
+{
+    #[\Override]
+    protected function validate(): bool
+    {
+        $field = $this->paramString('field');
+        $valid = isset($this->Request->getAllGetParams()[$field]);
+
+        \Talis\TalisMain::logger()->debug('validaror ' . self::class);
+        \Talis\TalisMain::logger()->debug("params: [{$field}] is valid? [{$valid}]");
+
+        return $valid;
+    }
+
+    #[\Override]
+    public function render(\Talis\commons\iEmitter $emitter): void
+    {
+        $field = $this->paramString('field');
+        $response = new \Talis\Message\Response();
+        $response->markDependency();
+        $response->setMessage("Missing URI param [{$field}]");
+        $response->setStatus(new \Talis\Message\Status\Code400());
+        $emitter->emit($response);
+    }
 }

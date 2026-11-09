@@ -1,35 +1,32 @@
-<?php namespace Talis\Chain\Dependencies;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Chain\Dependencies;
 
 /**
- * Making sure that a body with some field was sent
- * 
- * @author Itay Moav
+ * Making sure that a body with some field was sent.
  */
-class BodyFieldExist extends aDependency{
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * @see \Talis\Chain\Dependencies\ADependency::validate()
-	 */
-	protected function validate():bool{
-		$body  = $this->Request->getBody();
-		$field = $this->params['field'];
-		return isset($body->$field);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \Talis\commons\iRenderable::render()
-	 */
-	public function render(\Talis\commons\iEmitter $emitter):void{
+class BodyFieldExist extends aDependency
+{
+    #[\Override]
+    protected function validate(): bool
+    {
+        $field = $this->paramString('field');
+        return isset($this->Request->getBody()->$field);
+    }
 
-	    \Talis\TalisMain::logger()->debug('RENDER input body');
-		\Talis\TalisMain::logger()->debug($this->Request->getBody());
-		
-		$response = new \Talis\Message\Response;
-		$response->setMessage("Mising field [{$this->params['field']}] in request body");
-		$response->markDependency();
-		$response->setStatus(new \Talis\Message\Status\Code400);
-		$emitter->emit($response);
-	}		
+    #[\Override]
+    public function render(\Talis\commons\iEmitter $emitter): void
+    {
+        \Talis\TalisMain::logger()->debug('RENDER input body');
+        \Talis\TalisMain::logger()->debug($this->Request->getBody());
+
+        $field = $this->paramString('field');
+        $response = new \Talis\Message\Response();
+        $response->setMessage("Missing field [{$field}] in request body");
+        $response->markDependency();
+        $response->setStatus(new \Talis\Message\Status\Code400());
+        $emitter->emit($response);
+    }
 }

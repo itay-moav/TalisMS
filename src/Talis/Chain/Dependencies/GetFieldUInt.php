@@ -1,39 +1,43 @@
-<?php namespace Talis\Chain\Dependencies;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Chain\Dependencies;
 
 /**
- * Making sure that a get field is anm integer
- * 
- * @author Itay Moav
+ * Making sure that a get field is an unsigned integer.
  */
-class GetFieldUInt extends aDependency{
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * @see \Talis\Chain\Dependencies\ADependency::validate()
-	 */
-	protected function validate():bool{
-	    $field_to_validate = $this->Request->get_param_exists($this->params['field']);
-	    if(is_numeric($field_to_validate)){//if numeric, cast to number var type.
-	        $field_to_validate = $field_to_validate *1;
-	    }
-	    $valid = is_integer($field_to_validate) && $field_to_validate >= 0;	    
-		
-	    \Talis\TalisMain::logger()->debug('validaror ' . self::class);
-		\Talis\TalisMain::logger()->debug('params: [' . print_r($this->params,true) . "] is valid? [{$valid}]");
-		
-		return $valid;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \Talis\commons\iRenderable::render()
-	 */
-	public function render(\Talis\commons\iEmitter $emitter):void{
-		$response = new \Talis\Message\Response;
-		$response->markDependency();
-		$field = $this->Request->get_param_exists($this->params['field']);
-		$response->setMessage("GET PARAM {$this->params['field']} is not an unsigned int, it is: [{$field}]");
-		$response->setStatus(new \Talis\Message\Status\Code400);
-		$emitter->emit($response);
-	}		
+class GetFieldUInt extends aDependency
+{
+    #[\Override]
+    protected function validate(): bool
+    {
+        $field = $this->paramString('field');
+        $value = $this->Request->getAllGetParams()[$field] ?? null;
+
+        $valid = is_string($value) && preg_match('/^[0-9]+$/D', $value) === 1;
+
+        \Talis\TalisMain::logger()->debug('validaror ' . self::class);
+        \Talis\TalisMain::logger()->debug("params: [{$field}] is valid? [{$valid}]");
+
+        return $valid;
+    }
+
+    #[\Override]
+    public function render(\Talis\commons\iEmitter $emitter): void
+    {
+        $field = $this->paramString('field');
+        $value = $this->Request->getAllGetParams()[$field] ?? null;
+
+        $response = new \Talis\Message\Response();
+        $response->markDependency();
+        if ($value === null) {
+            $response->setMessage("GET param [{$field}] is missing");
+        } else {
+            $shown = is_string($value) ? $value : get_debug_type($value);
+            $response->setMessage("GET param [{$field}] is not an unsigned int, it is: [{$shown}]");
+        }
+        $response->setStatus(new \Talis\Message\Status\Code400());
+        $emitter->emit($response);
+    }
 }

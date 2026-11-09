@@ -1,25 +1,29 @@
-<?php namespace Talis\Chain\Filters;
+<?php
+
+declare(strict_types=1);
+
+namespace Talis\Chain\Filters;
+
 /**
- * Adds a default value to the GET params, if field does not exists
- *
+ * Adds a default value to the GET params, if the field does not exist (or is '').
  */
-class DefaultValueGet extends aFilter{
-    /**
-     * {@inheritDoc}
-     * @see \Talis\Chain\Filters\aFilter::filter()
-     */
-    public function filter(\Talis\Message\Request $Request):void{
-	    $field_name     = $this->params['field'];
-	    $default        = $this->params['default'];
-	    $all_get_params = $this->Request->getAllGetParams();
-	    
-	    if(!isset($all_get_params[$field_name]) || !$all_get_params[$field_name]){
-	       $all_get_params[$field_name] = $default;
-	    }
-	    
-	    $this->Request = new \Talis\Message\Request($Request->getUri(), $all_get_params, $Request->getBody());
-	    
-	    \Talis\TalisMain::logger()->debug('FILTERED REQUEST');
-	    \Talis\TalisMain::logger()->debug($this->Request);
-	}
+class DefaultValueGet extends aFilter
+{
+    #[\Override]
+    public function filter(\Talis\Message\Request $Request): void
+    {
+        $field = $this->paramString('field');
+        $default = $this->paramString('default');
+
+        $allGetParams = $Request->getAllGetParams();
+        $value = $allGetParams[$field] ?? null;
+        if ($value === null || $value === '') {
+            $allGetParams[$field] = $default;
+        }
+
+        $this->Request = new \Talis\Message\Request($Request->getUri(), $allGetParams, $Request->getBody());
+
+        \Talis\TalisMain::logger()->debug('FILTERED REQUEST');
+        \Talis\TalisMain::logger()->debug($this->Request);
+    }
 }
