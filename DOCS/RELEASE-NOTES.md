@@ -302,6 +302,6 @@ If you leave out the `@var` on `$filters` and `$dependencies`, phpstan uses the 
 
 ### Outdated dependencies found
 
-- `phpunit/phpunit` is pinned to `^12` (12.5 installed) and 13.x is out. The other packages `composer outdated` lists are phpunit's own dependencies and move with it. This is a dev dependency only; moving to 13 is left for a later release.
+- `phpunit/phpunit` moved to `^13` (dev dependency only). The whole suite runs on 13 with no changes and no deprecation notices.
 - `phpstan/phpstan ^2` and `phpstan/phpstan-phpunit ^2` are up to date.
 - `director-moav/zimlogger` was removed from the dev dependencies; Talis no longer needs it.
